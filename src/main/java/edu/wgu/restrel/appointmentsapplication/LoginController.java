@@ -14,7 +14,10 @@ public class LoginController {
     @FXML
     private TextField passwordField;
 
-    public void onSubmitButtonClick(ActionEvent actionEvent) {
+    /**
+     * login submission button click event handler
+     */
+    public void onSubmitButtonClick() {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
@@ -28,7 +31,6 @@ public class LoginController {
 
             } else {
                 // show an error message if the username and password combination is not found
-                System.out.println("Incorrect username or password.");
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Incorrect username or password.");
                 alert.showAndWait();
             }
