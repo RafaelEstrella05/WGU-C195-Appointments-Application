@@ -16,10 +16,7 @@ Date:
 
 
 Resources Used:
+
 Java SE Development Kit 17.0.6
-
 MYSQL Server 8.0.25
-
-
-JDBC Driver 
-Connector/J 8.0.33 - X86
+JDBC Driver Connector/J 8.0.33 - X86
