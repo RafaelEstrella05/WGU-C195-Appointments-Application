@@ -8,11 +8,20 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class AppointmentsApplication extends Application {
+
+    Stage stage;
+
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(AppointmentsApplication.class.getResource("login.fxml"));
+        this.stage = stage;
+
+        setShowScene("login.fxml", "Appointment Manager");
+    }
+
+    public void setShowScene(String fxml, String title) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(AppointmentsApplication.class.getResource(fxml));
         Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Appointment Manager");
+        stage.setTitle(title);
         stage.setScene(scene);
         stage.show();
     }
