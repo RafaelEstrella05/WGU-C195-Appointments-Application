@@ -1,4 +1,4 @@
-package edu.wgu.restrel.appointmentsapplication;
+package edu.wgu.restrel.appointmentsapplication.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,9 +6,9 @@ import java.io.IOException;
 /**
  * This class contains methods that help with reading and writing to text files.
  */
-public class TextFileManager {
+public class FileManager {
 
-    public static void writeToFile(String filename, String text) {
+    public static void writeToTextFile(String filename, String text) {
 
         // if no file exists, create it ADD HERE
         File file = new File(filename);

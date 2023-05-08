@@ -1,51 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <?import javafx.geometry.Insets?>
+
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="edu.wgu.restrel.appointmentsapplication.MainController"
-            prefHeight="400.0" prefWidth="600.0">
+            fx:controller="edu.wgu.restrel.appointmentsapplication.Controllers.MainController"
+            prefHeight="400.0" prefWidth="600.0"
+            stylesheets="@app.css"
+            styleClass="main"
+            >
 
-
-    <!--
-        3 Toggable Panes Customers, Appointments, Reports
-        3 Buttons for Customers, Appointments TableView, Add, Edit, Delete
-        no options buttons for Reports table, will display reports in separate panel within main window
-
-        3 buttons for each Pane Customers, Appointments, Reports
-    -->
-
-    <VBox alignment="CENTER" spacing="20.0" prefHeight="400.0" prefWidth="600.0">
-        <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-        </padding>
-
-        <Label text="Appointments Application" />
-
-        <HBox alignment="CENTER" spacing="10.0">
-            <Button text="Customers" onAction="#onCustomersButtonClick"/>
-            <Button text="Appointments" onAction="#onAppointmentsButtonClick"/>
-            <Button text="Reports" onAction="#onReportsButtonClick"/>
+        <!--add navbar stuck to the top with the three buttons Customers, Appointments, Reports-->
+        <HBox alignment="TOP_LEFT" spacing="3.0" styleClass="navbar" AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <Button fx:id="customersButton" styleClass="navbar-selection-button" text="Customers" onAction="#onCustomersButtonClick"/>
+            <Button fx:id="appointmentsButton" styleClass="navbar-selection-button" text="Appointments" onAction="#onAppointmentsButtonClick"/>
+            <Button fx:id="reportsButton" styleClass="navbar-selection-button" text="Reports" onAction="#onReportsButtonClick"/>
         </HBox>
 
-        <HBox alignment="CENTER" spacing="10.0">
-            <Button text="Add" onAction="#onAddButtonClick"/>
-            <Button text="Edit" onAction="#onEditButtonClick"/>
-            <Button text="Delete" onAction="#onDeleteButtonClick"/>
-        </HBox>
 
-        <HBox alignment="CENTER" spacing="10.0">
-            <Button text="Exit" onAction="#onExitButtonClick"/>
-        </HBox>
+ 
 
-    </VBox>
+        <!--customer section-->
+        <VBox fx:id="customersVBox" styleClass="vboxclass" AnchorPane.topAnchor="100.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
 
-    
+            <Label styleClass="section-labels" text="Customers" />
+
+            <!--add a tableview to display the data-->
+            <TableView fx:id="customerTableView" prefHeight="200.0" prefWidth="200.0">
+                <columns>
+                    <!--customer name, address, postal code, and phone number.-->
+                    <TableColumn fx:id="customerNameColumn" text="Customer Name"/>
+                    <TableColumn fx:id="addressColumn" text="Address"/>
+                    <TableColumn fx:id="postalCodeColumn" text="Postal Code"/>
+                    <TableColumn fx:id="phoneNumberColumn" text="Phone Number"/>
+                </columns>
+            </TableView>
+
+            <HBox alignment="TOP_RIGHT" spacing="10.0">
+                <Button styleClass="option-button" text="Add" onAction="#onAddCustomerButtonClick"/>
+                <Button styleClass="option-button" text="Modify" onAction="#onModifyCustomerButtonClick"/>
+                <Button styleClass="option-button" text="Delete" onAction="#onDeleteCustomerButtonClick"/>
+            </HBox>
+        </VBox>
+
+        <!--appointment section-->
+        <VBox fx:id="appointmentsVBox" styleClass="vboxclass" AnchorPane.topAnchor="100.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" >
+
+            <Label styleClass="section-labels" text="Appointments" />
+
+            <!--add a tableview to display the data-->
+            <TableView fx:id="appointmentTableView" prefHeight="200.0" prefWidth="200.0">
+                <columns>
+                    <!--appointment title, description, location, contact, type, start, and end.-->
+                    <TableColumn fx:id="appointmentTitleColumn" text="Title"/>
+                    <TableColumn fx:id="appointmentDescriptionColumn" text="Description"/>
+                    <TableColumn fx:id="appointmentLocationColumn" text="Location"/>
+                    <TableColumn fx:id="appointmentContactColumn" text="Contact"/>
+                    <TableColumn fx:id="appointmentTypeColumn" text="Type"/>
+                    <TableColumn fx:id="appointmentStartColumn" text="Start"/>
+                    <TableColumn fx:id="appointmentEndColumn" text="End"/>
+                </columns>
+            </TableView>
+
+
+            <HBox alignment="TOP_RIGHT" spacing="10.0">
+                <Button styleClass="option-button" text="Add" onAction="#onAddAppointmentButtonClick"/>
+                <Button styleClass="option-button" text="Modify" onAction="#onModifyAppointmentButtonClick"/>
+                <Button styleClass="option-button" text="Delete" onAction="#onDeleteAppointmentButtonClick"/>
+            </HBox>
+        </VBox>
+
+        <!--reports section-->
+        <VBox fx:id="reportsVBox" styleClass="vboxclass" AnchorPane.topAnchor="100.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" >
+
+            <Label styleClass="section-labels" text="Reports" />
+
+            <!--data report table (dynamic)-->
+            <TableView fx:id="reportTableView" prefHeight="200.0" prefWidth="200.0">
+                <!--columns will be added dynamically depending on the data set required. uses lambda expression-->
+            </TableView>
+
+            <!--button to get report-->
+            <HBox alignment="TOP_RIGHT" spacing="10.0">
+                <Button styleClass="option-button" text="Get Report" onAction="#onGetReportButtonClick"/>
+            </HBox>
+        
+        </VBox>
+
+
 
 </AnchorPane>

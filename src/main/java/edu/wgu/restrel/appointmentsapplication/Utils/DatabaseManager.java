@@ -1,4 +1,4 @@
-package edu.wgu.restrel.appointmentsapplication;
+package edu.wgu.restrel.appointmentsapplication.Utils;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,4 +1,4 @@
-package edu.wgu.restrel.appointmentsapplication;
+package edu.wgu.restrel.appointmentsapplication.Models;
 
 public class User {
     private int id;
@@ -13,6 +13,7 @@ public class User {
 
     /**
      * Returns the ID of the user that is logged in
+     * 
      * @return id
      */
     public int getId() {
@@ -21,6 +22,7 @@ public class User {
 
     /**
      * Returns the user name
+     * 
      * @return userName
      */
     public String getUserName() {
@@ -29,6 +31,7 @@ public class User {
 
     /**
      * Returns the password
+     * 
      * @return
      */
     public String getPassword() {

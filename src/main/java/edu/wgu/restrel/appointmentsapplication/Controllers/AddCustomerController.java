@@ -1,4 +1,4 @@
-package edu.wgu.restrel.appointmentsapplication;
+package edu.wgu.restrel.appointmentsapplication.Controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;

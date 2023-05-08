@@ -1,12 +1,16 @@
-package edu.wgu.restrel.appointmentsapplication;
+package edu.wgu.restrel.appointmentsapplication.Controllers;
 
-import javafx.event.ActionEvent;
+import edu.wgu.restrel.appointmentsapplication.Interfaces.AppController;
+import edu.wgu.restrel.appointmentsapplication.Utils.DatabaseManager;
+import edu.wgu.restrel.appointmentsapplication.Utils.FileManager;
+import edu.wgu.restrel.appointmentsapplication.Models.User;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
-public class LoginController extends AppController{
+import java.io.IOException;
+
+public class LoginController extends AppController {
 
     @FXML
     private TextField usernameField;
@@ -23,7 +27,7 @@ public class LoginController extends AppController{
 
         DatabaseManager dbmanager = new DatabaseManager();
 
-        // search user table for user name and password
+        // run mysql query to search users table for user name and password
         dbmanager.runQuery("SELECT * FROM client_schedule.users where User_Name = ? and Password = ?", (rs) -> {
             String activity;
             String date = java.time.LocalDate.now().toString();
@@ -35,7 +39,17 @@ public class LoginController extends AppController{
 
                 activity = "Login Successful: by " + username + " date: " + date + " " + time;
 
+                // set the user
+                User user = new User(rs.getInt("User_ID"), rs.getString("User_Name"), rs.getString("Password"));
+                app.setUser(user);
 
+                try {
+                    AppController appController = app.setShowScene("main.fxml", "Appointment Manager");
+                    app.setMainController((MainController) appController);
+
+                } catch (IOException e) {
+                    System.out.println("Error: " + e.getMessage());
+                }
 
             } else {
 
@@ -47,11 +61,21 @@ public class LoginController extends AppController{
             }
 
             // log the activity in a text file
-            TextFileManager.writeToFile("login_activity.txt", activity);
+            FileManager.writeToTextFile("login_activity.txt", activity);
 
         }, username, password);
 
         dbmanager.disconnect();
+    }
+
+    /**
+     * temporary login credentials for testing, remove when done
+     */
+    public void tempLoginPass() {
+        usernameField.setText("Admin");
+        passwordField.setText("Admin");
+
+        onSubmitButtonClick();
     }
 
 }
