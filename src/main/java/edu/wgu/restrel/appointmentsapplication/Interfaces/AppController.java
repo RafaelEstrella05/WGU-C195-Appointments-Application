@@ -15,4 +15,11 @@ public abstract class AppController {
         this.app = app;
     }
 
+    /**
+     * Getter for app
+     */
+    public AppointmentsApplication getApp() {
+        return this.app;
+    }
+
 }

@@ -1,6 +1,10 @@
 package edu.wgu.restrel.appointmentsapplication.Controllers;
 
 import edu.wgu.restrel.appointmentsapplication.Interfaces.AppController;
+import edu.wgu.restrel.appointmentsapplication.Models.Country;
+import edu.wgu.restrel.appointmentsapplication.Models.Customer;
+import edu.wgu.restrel.appointmentsapplication.Models.Division;
+import edu.wgu.restrel.appointmentsapplication.Utils.DatabaseManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
@@ -8,6 +12,9 @@ import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 
 public class MainController extends AppController {
+
+    /* attributes */
+    private ArrayList<Customer> customers;
 
     /* nav bar buttons */
     @FXML
@@ -78,7 +85,7 @@ public class MainController extends AppController {
         vboxes.add(appointmentsVBox);
         vboxes.add(reportsVBox);
 
-        // set the default selected button
+        // set the default selected button (customers)
         selectNavButton(customersButton);
 
     }
@@ -92,6 +99,8 @@ public class MainController extends AppController {
     private void onCustomersButtonClick() {
         System.out.println("Customers button clicked");
         selectNavButton(customersButton);
+
+        // generate the customer table
 
     }
 
@@ -148,7 +157,7 @@ public class MainController extends AppController {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     private void onAddAppointmentButtonClick() {
@@ -206,6 +215,73 @@ public class MainController extends AppController {
             reportsVBox.setVisible(true);
 
         }
+    }
+
+    /**
+     * This method will get the countries from the database and populate the
+     * countries in the countries array list in the app
+     */
+    public void getCountriesFromDB() {
+        DatabaseManager dbmanager = new DatabaseManager();
+
+        // get all divisions from countries from the database
+        String query = "SELECT c.Country_ID, c.Country, Division_ID, Division FROM first_level_divisions dv INNER JOIN countries c on c.Country_ID = dv.Country_ID order by Country_ID, Division_ID;";
+        dbmanager.runQuery(query, (rs) -> {
+            try {
+                Country country = null;
+                while (rs.next()) {
+                    if (country == null || country.getCountryId() != rs.getInt("Country_ID")) {
+                        // add the previous country to the list, if it exists
+                        if (country != null) {
+                            getApp().getCountries().add(country);
+                        }
+                        // create a new country object
+                        country = new Country();
+                        country.setCountryId(rs.getInt("Country_ID"));
+                        country.setCountry(rs.getString("Country"));
+                    }
+                    // add the current division to the country
+                    country.addAssociatedDivision(
+                            new Division(rs.getInt("Division_ID"), rs.getString("Division"), rs.getInt("Country_ID")));
+                }
+                // add the last country to the list
+                if (country != null) {
+                    getApp().getCountries().add(country);
+                }
+
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+
+            this.getApp().printDivisions();
+
+        });
+
+        dbmanager.disconnect();
+    }
+
+    /**
+     * This method will get the customers from the database and populate the
+     * customers in the customers array list in the main controller
+     */
+    public void getCustomersFromDB() {
+        DatabaseManager dbmanager = new DatabaseManager();
+
+        // get customers from the database
+        String query = "SELECT c.Customer_ID, Customer_Name, Address, Postal_Code, Phone, f.Division_ID, Division, cnt.Country_ID, Country FROM customers c INNER JOIN first_level_divisions f on f.Division_ID = c.Division_ID INNER JOIN countries cnt on cnt.Country_ID = f.Country_ID;";
+
+        dbmanager.runQuery(query, (rs) -> {
+            try {
+                while (rs.next()) {
+                    System.out.println(rs.getString("Customer_Name"));
+
+                }
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+        });
+
+        dbmanager.disconnect();
     }
 
 }

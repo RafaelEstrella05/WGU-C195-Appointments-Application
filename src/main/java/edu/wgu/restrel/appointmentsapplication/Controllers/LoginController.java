@@ -44,8 +44,12 @@ public class LoginController extends AppController {
                 app.setUser(user);
 
                 try {
-                    AppController appController = app.setShowScene("main.fxml", "Appointment Manager");
+                    AppController appController = this.getApp().setShowScene("main.fxml", "Appointment Manager");
+                    ((MainController)appController).setApp(this.getApp());
                     app.setMainController((MainController) appController);
+
+                    ((MainController)appController).getCountriesFromDB();
+                    ((MainController)appController).getCustomersFromDB();
 
                 } catch (IOException e) {
                     System.out.println("Error: " + e.getMessage());
@@ -69,7 +73,7 @@ public class LoginController extends AppController {
     }
 
     /**
-     * temporary login credentials for testing, remove when done
+     * FIX ME: temporary login credentials for testing, remove when done
      */
     public void tempLoginPass() {
         usernameField.setText("Admin");
