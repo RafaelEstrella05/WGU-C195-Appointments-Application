@@ -45,11 +45,15 @@ public class LoginController extends AppController {
 
                 try {
                     AppController appController = this.getApp().setShowScene("main.fxml", "Appointment Manager");
-                    ((MainController)appController).setApp(this.getApp());
+                    ((MainController) appController).setApp(this.getApp());
                     app.setMainController((MainController) appController);
 
-                    ((MainController)appController).getCountriesFromDB();
-                    ((MainController)appController).getCustomersFromDB();
+                    // get data from database and populate the lists
+                    ((MainController) appController).getCountriesFromDB();
+                    ((MainController) appController).getCustomersFromDB();
+
+                    // display data in the table
+                    ((MainController) appController).displayCustomersInTable();
 
                 } catch (IOException e) {
                     System.out.println("Error: " + e.getMessage());

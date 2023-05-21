@@ -30,7 +30,7 @@
             <Label styleClass="section-labels" text="Customers" />
 
             <!--add a tableview to display the data-->
-            <TableView fx:id="customerTableView" prefHeight="200.0" prefWidth="200.0">
+            <TableView fx:id="customersTable" prefHeight="200.0" prefWidth="200.0">
                 <columns>
                     <!--customer name, address, postal code, phone number, division, country-->
                     <TableColumn fx:id="customerIdColumn" text="Customer ID"/>
@@ -39,7 +39,6 @@
                     <TableColumn fx:id="postalCodeColumn" text="Postal Code"/>
                     <TableColumn fx:id="phoneNumberColumn" text="Phone Number"/>
                     <TableColumn fx:id="divisionColumn" text="Division"/>
-                    <TableColumn fx:id="countryColumn" text="Country"/>
                 </columns>
             </TableView>
 

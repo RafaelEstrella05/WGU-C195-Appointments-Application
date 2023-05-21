@@ -4,9 +4,12 @@ import edu.wgu.restrel.appointmentsapplication.Controllers.LoginController;
 import edu.wgu.restrel.appointmentsapplication.Controllers.MainController;
 import edu.wgu.restrel.appointmentsapplication.Interfaces.AppController;
 import edu.wgu.restrel.appointmentsapplication.Models.Country;
+import edu.wgu.restrel.appointmentsapplication.Models.Customer;
 import edu.wgu.restrel.appointmentsapplication.Models.Division;
 import edu.wgu.restrel.appointmentsapplication.Models.User;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -22,11 +25,14 @@ public class AppointmentsApplication extends Application {
     private LoginController loginController;
     private MainController mainController;
 
-    private ArrayList<Country> countries = new ArrayList<Country>();;
+    private ArrayList<Country> countries = new ArrayList<Country>();
+    private ObservableList<Customer> customers;
 
     @Override
     public void start(Stage stage) throws IOException {
         this.stage = stage;
+
+        customers = FXCollections.observableArrayList();
 
         // Load the login scene
         loginController = (LoginController) setShowScene("login.fxml", "Appointment Manager");
@@ -101,6 +107,33 @@ public class AppointmentsApplication extends Application {
      */
     public ArrayList<Country> getCountries() {
         return this.countries;
+    }
+
+    /**
+     * Set the customers
+     * 
+     * @param customers
+     */
+    public void setCustomers(ObservableList<Customer> customers) {
+        this.customers = customers;
+    }
+
+    /**
+     * Get the customers
+     * 
+     * @return ArrayList<Customer>
+     */
+    public ObservableList<Customer> getCustomers() {
+        return this.customers;
+    }
+
+    /**
+     * add customer to customers
+     * 
+     * @param customer
+     */
+    public void addCustomer(Customer customer) {
+        this.customers.add(customer);
     }
 
     /**
