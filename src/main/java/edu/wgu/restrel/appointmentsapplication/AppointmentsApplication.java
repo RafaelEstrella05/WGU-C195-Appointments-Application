@@ -2,7 +2,8 @@ package edu.wgu.restrel.appointmentsapplication;
 
 import edu.wgu.restrel.appointmentsapplication.Controllers.LoginController;
 import edu.wgu.restrel.appointmentsapplication.Controllers.MainController;
-import edu.wgu.restrel.appointmentsapplication.Interfaces.AppController;
+import edu.wgu.restrel.appointmentsapplication.AbstractClass.AppController;
+import edu.wgu.restrel.appointmentsapplication.Models.Appointment;
 import edu.wgu.restrel.appointmentsapplication.Models.Country;
 import edu.wgu.restrel.appointmentsapplication.Models.Customer;
 import edu.wgu.restrel.appointmentsapplication.Models.Division;
@@ -15,7 +16,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 
 public class AppointmentsApplication extends Application {
@@ -27,12 +27,14 @@ public class AppointmentsApplication extends Application {
 
     private ArrayList<Country> countries = new ArrayList<Country>();
     private ObservableList<Customer> customers;
+    private ObservableList<Appointment> appointments;
 
     @Override
     public void start(Stage stage) throws IOException {
         this.stage = stage;
 
         customers = FXCollections.observableArrayList();
+        appointments = FXCollections.observableArrayList();
 
         // Load the login scene
         loginController = (LoginController) setShowScene("login.fxml", "Appointment Manager");
@@ -153,6 +155,44 @@ public class AppointmentsApplication extends Application {
         return null;
     }
 
+    /**
+     * Find a division by name
+     * 
+     * @param name
+     * @return Division
+     */
+    public Division findDivisionByName(String name) {
+        for (Country country : countries) {
+
+            for (Division division : country.getAssociatedDivisions()) {
+                if (division.getDivision().equals(name)) {
+                    return division;
+                }
+            }
+
+        }
+
+        return null;
+    }
+
+    /**
+     * Find a country by Name
+     * 
+     * @param name
+     * @return Country
+     */
+    public Country findCountryByName(String name) {
+        for (Country country : getCountries()) {
+            if (country.getCountry().equals(name)) {
+                return country;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * print the division information, country and divisions
+     */
     public void printDivisions() {
         System.out.println("Countries: " + getCountries().size());
         for (int i = 0; i < getCountries().size(); i++) {
@@ -169,4 +209,5 @@ public class AppointmentsApplication extends Application {
     public static void main(String[] args) {
         launch();
     }
+
 }

@@ -11,15 +11,25 @@ import java.sql.*;
 public class DatabaseManager {
     Connection conn = null; // connection to database
 
-    private static String URL = "jdbc:mysql://localhost:3306/client_schedule";
-    private static String USERNAME = "restrella";
-    private static String PASSWORD = "@369_rE!";
+    private static String URL;
+    private static String USERNAME;
+    private static String PASSWORD;
 
     /**
      * Connect to the database upon instantiation.
      */
     public DatabaseManager() {
+
+        URL = "jdbc:mysql://localhost:3306/client_schedule";
+        USERNAME = "restrella";
+        PASSWORD = "@369_rE!";
+
         connect();
+
+    }
+
+    public void setUrl(String url) {
+        URL = url;
     }
 
     /**
@@ -62,15 +72,14 @@ public class DatabaseManager {
 
     /**
      * Runs a query on the database and passes the result set to the given executor.
-     * LAMDA EXPRESSION USED
      * accepts a string of the query and a QueryExecutor object as well as any
      * number of parameters that the query needs
      * 
      * @param sql
      * @param executor
-     * @param args
+     * @param args     1,2,3,...,n
      */
-    public void runQuery(String sql, QueryExecutor executor, Object... args) {
+    public void executeQuery(String sql, QueryExecutor executor, Object... args) {
         try (Connection conn = getConnection();
                 Statement stmt = conn.createStatement()) {
 
@@ -83,6 +92,66 @@ public class DatabaseManager {
             // execute the query and pass the result set to the executor
             try (ResultSet rs = pstmt.executeQuery()) {
                 executor.execute(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * this method is used to execute an insert statement on the database, accepts a
+     * string of the query, an executor and any number of parameters that the query
+     * needs
+     * 
+     * @param sql
+     * @param executor
+     * @param args     1,2,3,...,n
+     */
+    public void executeInsert(String sql, QueryExecutor executor, Object... args) {
+        try (Connection conn = getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            for (int i = 0; i < args.length; i++) {
+                pstmt.setObject(i + 1, args[i]);
+            }
+
+            pstmt.executeUpdate();
+            System.out.println("Insert statement executed successfully.");
+
+            // Pass the ResultSet to the QueryExecutor
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                executor.execute(rs);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * this method is used to execute an update statement on the database, accepts
+     * multiple parameters
+     * 
+     * @param sql
+     * @param executor
+     * @param args
+     */
+    public void executeUpdate(String sql, QueryExecutor executor, Object... args) {
+        try (Connection conn = getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            for (int i = 0; i < args.length; i++) {
+                pstmt.setObject(i + 1, args[i]);
+            }
+
+            pstmt.executeUpdate();
+            System.out.println("Update statement executed successfully.");
+
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                executor.execute(rs);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -1,6 +1,6 @@
 package edu.wgu.restrel.appointmentsapplication.Controllers;
 
-import edu.wgu.restrel.appointmentsapplication.Interfaces.AppController;
+import edu.wgu.restrel.appointmentsapplication.AbstractClass.AppController;
 import edu.wgu.restrel.appointmentsapplication.Utils.DatabaseManager;
 import edu.wgu.restrel.appointmentsapplication.Utils.FileManager;
 import edu.wgu.restrel.appointmentsapplication.Models.User;
@@ -28,7 +28,7 @@ public class LoginController extends AppController {
         DatabaseManager dbmanager = new DatabaseManager();
 
         // run mysql query to search users table for user name and password
-        dbmanager.runQuery("SELECT * FROM client_schedule.users where User_Name = ? and Password = ?", (rs) -> {
+        dbmanager.executeQuery("SELECT * FROM client_schedule.users where User_Name = ? and Password = ?", (rs) -> {
             String activity;
             String date = java.time.LocalDate.now().toString();
             String time = java.time.LocalTime.now().toString();
@@ -47,13 +47,8 @@ public class LoginController extends AppController {
                     AppController appController = this.getApp().setShowScene("main.fxml", "Appointment Manager");
                     ((MainController) appController).setApp(this.getApp());
                     app.setMainController((MainController) appController);
-
-                    // get data from database and populate the lists
-                    ((MainController) appController).getCountriesFromDB();
-                    ((MainController) appController).getCustomersFromDB();
-
                     // display data in the table
-                    ((MainController) appController).displayCustomersInTable();
+                    ((MainController) appController).refreshCustomerContent();
 
                 } catch (IOException e) {
                     System.out.println("Error: " + e.getMessage());

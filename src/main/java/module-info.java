@@ -12,6 +12,6 @@ module edu.wgu.restrel.appointmentsapplication {
     opens edu.wgu.restrel.appointmentsapplication.Controllers to javafx.fxml;
     exports edu.wgu.restrel.appointmentsapplication.Utils;
     opens edu.wgu.restrel.appointmentsapplication.Utils to javafx.fxml;
-    exports edu.wgu.restrel.appointmentsapplication.Interfaces;
-    opens edu.wgu.restrel.appointmentsapplication.Interfaces to javafx.fxml;
+    exports edu.wgu.restrel.appointmentsapplication.AbstractClass;
+    opens edu.wgu.restrel.appointmentsapplication.AbstractClass to javafx.fxml;
 }

@@ -8,6 +8,13 @@ public class Customer {
     private String postalCode;
     private String phone;
     private int divisionId;
+    private String division;
+    private int countyId;
+    private String country;
+
+    // default constructor
+    public Customer() {
+    }
 
     /**
      * Constructor
@@ -20,17 +27,20 @@ public class Customer {
      * @param divisionId
      */
     public Customer(int customerId, String customer_Name, String address, String postalCode, String phone,
-            int divisionId) {
+            int divisionId, String division, int countryId, String country) {
         this.customerId = customerId;
         customerName = customer_Name;
         this.address = address;
         this.postalCode = postalCode;
         this.phone = phone;
         this.divisionId = divisionId;
+        this.division = division;
+        this.countyId = countryId;
+        this.country = country;
     }
 
     /**
-     * Getter for Customer_ID
+     * Getter for CustomerId
      * 
      * @return customerId
      */
@@ -40,7 +50,7 @@ public class Customer {
     }
 
     /**
-     * Setter for Customer_ID
+     * Setter for CustomerId
      * 
      * @param customerId
      */
@@ -122,7 +132,7 @@ public class Customer {
     }
 
     /**
-     * Getter for Division_ID
+     * Getter for DivisionId
      * 
      * @return divisionId
      */
@@ -132,12 +142,66 @@ public class Customer {
     }
 
     /**
-     * Setter for Division_ID
+     * Setter for DivisionId
      * 
      * @param divisionId
      */
     public void setDivisionId(int divisionId) {
         this.divisionId = divisionId;
+    }
+
+    /**
+     * Getter for Division
+     * 
+     * @return division
+     */
+    public String getDivision() {
+        return division;
+    }
+
+    /**
+     * Setter for Division
+     * 
+     * @param division
+     */
+    public void setDivision(String division) {
+        this.division = division;
+    }
+
+    /**
+     * Getter for CountryId
+     * 
+     * @return countryId
+     */
+    public void getCountryId(int countryId) {
+        this.countyId = countryId;
+    }
+
+    /**
+     * Setter for CountryId
+     * 
+     * @param countryId
+     */
+    public void setCountryId(int countryId) {
+        this.countyId = countryId;
+    }
+
+    /**
+     * Getter for Country
+     * 
+     * @return country
+     */
+    public String getCountry() {
+        return country;
+    }
+
+    /**
+     * Setter for Country
+     * 
+     * @param country
+     */
+    public void setCountry(String country) {
+        this.country = country;
     }
 
 }

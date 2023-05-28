@@ -9,7 +9,7 @@
 
 /*Navbar*/
 .navbar{
-    -fx-background-color: white;
+    -fx-background-color: rgb(242, 243, 245);
     /*padding top*/
     -fx-padding: 10px 0 0 0;
 
@@ -31,6 +31,11 @@
     /*-fx-background-color: red;*/
 }
 
+.form_label{
+    -fx-font-size: 20px;
+    -fx-text-fill: rgb(0, 0, 0);
+}
+
 /*main*/
 .main {
     -fx-background-color: rgb(82, 107, 169);
@@ -49,3 +54,5 @@
     -fx-text-fill: black;
     -fx-padding: 10px;
 }
+
+

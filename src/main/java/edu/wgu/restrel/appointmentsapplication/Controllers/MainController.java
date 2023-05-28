@@ -1,39 +1,27 @@
 package edu.wgu.restrel.appointmentsapplication.Controllers;
 
-import edu.wgu.restrel.appointmentsapplication.Interfaces.AppController;
+import edu.wgu.restrel.appointmentsapplication.AbstractClass.AppController;
 import edu.wgu.restrel.appointmentsapplication.Models.Country;
 import edu.wgu.restrel.appointmentsapplication.Models.Customer;
 import edu.wgu.restrel.appointmentsapplication.Models.Division;
+import edu.wgu.restrel.appointmentsapplication.Models.ValidationState;
 import edu.wgu.restrel.appointmentsapplication.Utils.DatabaseManager;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MainController extends AppController {
 
     /* Customers TableView Components */
-
-    /*
-     * <TableView fx:id="customerTable" prefHeight="200.0" prefWidth="200.0">
-     * <columns>
-     * <!--customer name, address, postal code, phone number, division, country-->
-     * <TableColumn fx:id="customerIdColumn" text="Customer ID"/>
-     * <TableColumn fx:id="customerNameColumn" text="Customer Name"/>
-     * <TableColumn fx:id="addressColumn" text="Address"/>
-     * <TableColumn fx:id="postalCodeColumn" text="Postal Code"/>
-     * <TableColumn fx:id="phoneNumberColumn" text="Phone Number"/>
-     * <TableColumn fx:id="divisionColumn" text="Division"/>
-     * <TableColumn fx:id="countryColumn" text="Country"/>
-     * </columns>
-     * </TableView>
-     */
 
     @FXML
     private TableView<Customer> customersTable;
@@ -55,6 +43,9 @@ public class MainController extends AppController {
 
     @FXML
     private TableColumn<Customer, Integer> divisionColumn;
+
+    @FXML
+    private TableColumn<Customer, String> countryColumn;
 
     /* attributes */
     // private ArrayList<Customer> customers;
@@ -137,7 +128,8 @@ public class MainController extends AppController {
         addressColumn.setCellValueFactory(new PropertyValueFactory<Customer, String>("address"));
         postalCodeColumn.setCellValueFactory(new PropertyValueFactory<Customer, String>("postalCode"));
         phoneNumberColumn.setCellValueFactory(new PropertyValueFactory<Customer, String>("phone"));
-        divisionColumn.setCellValueFactory(new PropertyValueFactory<Customer, Integer>("divisionId"));
+        divisionColumn.setCellValueFactory(new PropertyValueFactory<Customer, Integer>("division"));
+        countryColumn.setCellValueFactory(new PropertyValueFactory<Customer, String>("country"));
 
     }
 
@@ -151,6 +143,8 @@ public class MainController extends AppController {
         System.out.println("Customers button clicked");
         selectNavButton(customersButton);
 
+        // refresh the customers table
+        this.refreshCustomerContent();
     }
 
     /**
@@ -162,6 +156,9 @@ public class MainController extends AppController {
     private void onAppointmentsButtonClick() {
         System.out.println("Appointments button clicked");
         selectNavButton(appointmentsButton);
+
+        // refresh the appointments table
+        refreshAppointmentContent();
     }
 
     /**
@@ -183,6 +180,16 @@ public class MainController extends AppController {
     @FXML
     private void onAddCustomerButtonClick() {
         System.out.println("Add customer button clicked");
+
+        try {
+            AppController appController = this.getApp().setShowScene("customer.fxml", "Customer Form");
+            ((CustomerController) appController).setApp(this.getApp());
+            // based on the countrys list from the app controller populate the combo box
+            ((CustomerController) appController).populateCountryComboBox(this.getApp().getCountries());
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
     }
 
     /**
@@ -193,6 +200,35 @@ public class MainController extends AppController {
     @FXML
     private void onModifyCustomerButtonClick() {
         System.out.println("Modify customer button clicked");
+
+        // get the selected customer from the table
+        Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
+
+        // if no customer is selected then return
+        if (selectedCustomer == null) {
+            // alert the user that they need to select a customer
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Please select a customer to modify");
+            alert.showAndWait();
+
+        } else {
+            try {
+                AppController appController = this.getApp().setShowScene("customer.fxml", "Customer Form");
+                ((CustomerController) appController).setApp(this.getApp());
+
+                // based on the countrys list from the app controller populate the combo box
+                ((CustomerController) appController).populateCountryComboBox(this.getApp().getCountries());
+
+                // populate the form with the selected customer
+                ((CustomerController) appController).populateForm(selectedCustomer);
+
+            } catch (IOException e) {
+                System.out.println("Error: " + e.getMessage());
+            } catch (NullPointerException e) {
+                System.out.println("Error: " + e.getMessage());
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+        }
     }
 
     /**
@@ -203,6 +239,42 @@ public class MainController extends AppController {
     @FXML
     private void onDeleteCustomerButtonClick() {
         System.out.println("Delete customer button clicked");
+
+        // prompt the user to confirm that they want to delete the customer
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this customer?");
+        alert.showAndWait();
+
+        if (alert.getResult().getText().equals("Cancel")) {
+            return;
+        } else {
+            System.out.println("attempting to delete customer");
+
+            // get the selected customer from the table
+            Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
+
+            // request validation for delete
+            ValidationState validationState = requestCustomerDeletionValidation(selectedCustomer);
+
+            if (validationState.isValid()) {
+                System.out.println("validation passed");
+
+                // delete the customer from the database
+                DatabaseManager dbmanager = new DatabaseManager();
+
+                String query = "DELETE FROM customers WHERE Customer_ID = ? ;";
+
+            } else {
+
+                // alert the user that they need to select a customer
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR, validationState.getMessage());
+                errorAlert.showAndWait();
+
+                return;
+
+            }
+
+        }
+
     }
 
     /**
@@ -266,17 +338,42 @@ public class MainController extends AppController {
         }
     }
 
+    /*
+     * this method will refresh the content of the main view when called
+     */
+    public void refreshCustomerContent() {
+        System.out.println("refreshing content");
+
+        this.getCountriesFromDB();
+        this.getCustomersFromDB();
+        this.displayCustomersInTable();
+
+    }
+
+    /**
+     * This method will get the appointments from the database and populate the
+     * appointments table
+     */
+    public void refreshAppointmentContent() {
+        System.out.println("refreshing appointment content");
+
+        this.getCountriesFromDB();
+    }
+
     /**
      * This method will get the countries from the database and populate the
      * countries in the countries array list in the app
      */
-    public void getCountriesFromDB() {
+    private void getCountriesFromDB() {
         DatabaseManager dbmanager = new DatabaseManager();
 
         // get all divisions from countries from the database
         String query = "SELECT c.Country_ID, c.Country, Division_ID, Division FROM first_level_divisions dv INNER JOIN countries c on c.Country_ID = dv.Country_ID order by Country_ID, Division_ID;";
-        dbmanager.runQuery(query, (rs) -> {
+        dbmanager.executeQuery(query, (rs) -> {
             try {
+
+                getApp().getCountries().clear();
+
                 Country country = null;
                 while (rs.next()) {
                     if (country == null || country.getCountryId() != rs.getInt("Country_ID")) {
@@ -313,16 +410,17 @@ public class MainController extends AppController {
      * This method will get the customers from the database and populate the
      * customers in the customers array list in the main controller
      */
-    public void getCustomersFromDB() {
+    private void getCustomersFromDB() {
         // clear the customers array list
         getApp().getCustomers().clear();
 
         DatabaseManager dbmanager = new DatabaseManager();
 
         // get customers from the database
-        String query = "SELECT c.Customer_ID, Customer_Name, Address, Postal_Code, Phone, f.Division_ID, Division, cnt.Country_ID, Country FROM customers c INNER JOIN first_level_divisions f on f.Division_ID = c.Division_ID INNER JOIN countries cnt on cnt.Country_ID = f.Country_ID;";
+        String query = "SELECT c.Customer_ID, Customer_Name, Address, Postal_Code, Phone, f.Division_ID, Division, cnt.Country_ID, Country FROM customers c INNER JOIN first_level_divisions f on f.Division_ID = c.Division_ID INNER JOIN countries cnt on cnt.Country_ID = f.Country_ID order by Customer_ID;";
 
-        dbmanager.runQuery(query, (rs) -> {
+        // execute the query
+        dbmanager.executeQuery(query, (rs) -> {
             try {
                 while (rs.next()) {
                     System.out.println(rs.getString("Customer_Name"));
@@ -333,7 +431,8 @@ public class MainController extends AppController {
                     // create a new customer object
                     Customer customer = new Customer(rs.getInt("Customer_ID"), rs.getString("Customer_Name"),
                             rs.getString("Address"), rs.getString("Postal_Code"), rs.getString("Phone"),
-                            rs.getInt("Division_ID"));
+                            rs.getInt("Division_ID"), rs.getString("Division"), rs.getInt("Country_ID"),
+                            rs.getString("Country"));
 
                     // add the customer to the customers array list
                     getApp().addCustomer(customer);
@@ -351,10 +450,58 @@ public class MainController extends AppController {
     }
 
     /**
-     * This method will display the customers in the customers table view based on
-     * the customers array list in the main controller
+     * This method will check the database to see if there are any appointments
+     * associated with the customer.
+     * If there are, the customer will not be deleted and an error message will be
+     * displayed.
+     * If there are no appointments associated with the customer, the customer will
+     * be deleted from the database and data refreshed.
+     * 
+     * @param customer
+     * @return validationState
      */
-    public void displayCustomersInTable() {
+    private ValidationState requestCustomerDeletionValidation(Customer customer) {
+
+        ValidationState validationState;
+        AtomicBoolean isValid = new AtomicBoolean(true);
+        AtomicReference<String> errorMessage = new AtomicReference<>("");
+
+        // make a query to the database to see if there are any appointments associated
+        // with the customer
+        DatabaseManager dbmanager = new DatabaseManager();
+
+        // get customers from the database
+        String query = "SELECT * FROM appointments WHERE Customer_ID = ? ;";
+
+        // execute the query
+        dbmanager.executeQuery(query, (rs) -> {
+            try {
+                while (rs.next()) {
+                    System.out.println(rs.getString("Title"));
+
+                    // if there are appointments associated with the customer, set isValid to false
+                    isValid.set(false);
+                    errorMessage.set(
+                            "Cannot delete customer. There are appointments associated with this customer that need to be deleted first.");
+
+                }
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+
+        }, customer.getCustomerId());
+
+        validationState = new ValidationState(isValid.get(), errorMessage.get());
+
+        return validationState;
+
+    }
+
+    /**
+     * This method will display the customers in the customers table view based on
+     * the customers array list in the app
+     */
+    private void displayCustomersInTable() {
 
         System.out.println("displaying customers table");
 
@@ -366,7 +513,7 @@ public class MainController extends AppController {
             }
 
             // Clear existing data from the table
-            customersTable.getItems().clear();
+            // customersTable.getItems().clear();
 
             // Add the customers to the table
             // customersTable.setItems(getApp().getCustomers());

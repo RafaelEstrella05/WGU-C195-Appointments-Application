@@ -28,7 +28,7 @@ public class Country {
     }
 
     /**
-     * Getter for Country_ID
+     * Getter for CountryId
      * 
      * @return
      */
@@ -37,7 +37,7 @@ public class Country {
     }
 
     /**
-     * Setter for Country_ID
+     * Setter for CountryId
      * 
      * @param countryId
      */
@@ -98,7 +98,7 @@ public class Country {
      */
     public Division findDivisionById(int id) {
         for (Division division : associatedDivisions) {
-            if (division.getDivision_ID() == id) {
+            if (division.getDivisionId() == id) {
                 return division;
             }
         }

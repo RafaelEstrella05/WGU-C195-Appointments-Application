@@ -2,39 +2,39 @@ package edu.wgu.restrel.appointmentsapplication.Models;
 
 public class Division {
 
-    private int Division_ID;
+    private int DivisionId;
     private String Division;
-    private int Country_ID;
+    private int CountryId;
 
     /**
      * Constructor
      * 
-     * @param division_ID
+     * @param divisionId
      * @param division
-     * @param country_ID
+     * @param countryId
      */
-    public Division(int division_ID, String division, int country_ID) {
-        Division_ID = division_ID;
+    public Division(int divisionId, String division, int countryId) {
+        DivisionId = divisionId;
         Division = division;
-        Country_ID = country_ID;
+        CountryId = countryId;
     }
 
     /**
-     * Getter for Division_ID
+     * Getter for DivisionId
      * 
      * @return
      */
-    public int getDivision_ID() {
-        return Division_ID;
+    public int getDivisionId() {
+        return DivisionId;
     }
 
     /**
-     * Setter for Division_ID
+     * Setter for DivisionId
      * 
-     * @param division_ID
+     * @param divisionId
      */
-    public void setDivision_ID(int division_ID) {
-        Division_ID = division_ID;
+    public void setDivisionId(int divisionId) {
+        DivisionId = divisionId;
     }
 
     /**
@@ -56,21 +56,21 @@ public class Division {
     }
 
     /**
-     * Getter for Country_ID
+     * Getter for CountryId
      * 
      * @return
      */
-    public int getCountry_ID() {
-        return Country_ID;
+    public int getCountryId() {
+        return CountryId;
     }
 
     /**
-     * Setter for Country_ID
+     * Setter for CountryId
      * 
-     * @param country_ID
+     * @param countryId
      */
-    public void setCountry_ID(int country_ID) {
-        Country_ID = country_ID;
+    public void setCountryId(int countryId) {
+        CountryId = countryId;
     }
 
 }

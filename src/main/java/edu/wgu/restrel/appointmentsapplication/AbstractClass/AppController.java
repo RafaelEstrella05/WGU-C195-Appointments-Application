@@ -1,4 +1,4 @@
-package edu.wgu.restrel.appointmentsapplication.Interfaces;
+package edu.wgu.restrel.appointmentsapplication.AbstractClass;
 
 import edu.wgu.restrel.appointmentsapplication.AppointmentsApplication;
 
