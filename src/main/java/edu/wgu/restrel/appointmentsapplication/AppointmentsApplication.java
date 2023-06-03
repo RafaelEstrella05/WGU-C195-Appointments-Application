@@ -139,6 +139,33 @@ public class AppointmentsApplication extends Application {
     }
 
     /**
+     * Set the appointments
+     * 
+     * @param appointments
+     */
+    public void setAppointments(ObservableList<Appointment> appointments) {
+        this.appointments = appointments;
+    }
+
+    /**
+     * Get the appointments
+     * 
+     * @return ArrayList<Appointment>
+     */
+    public ObservableList<Appointment> getAppointments() {
+        return this.appointments;
+    }
+
+    /**
+     * Add appointment to appointments
+     * 
+     * @param appointment
+     */
+    public void addAppointment(Appointment appointment) {
+        this.appointments.add(appointment);
+    }
+
+    /**
      * Find a division by id
      * 
      * @param id

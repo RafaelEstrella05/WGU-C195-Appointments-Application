@@ -56,9 +56,9 @@
             <Label styleClass="section-labels" text="Appointments" />
 
             <!--add a tableview to display the data-->
-            <TableView fx:id="appointmentTableView" prefHeight="200.0" prefWidth="200.0">
+            <TableView fx:id="appointmentsTable" prefHeight="200.0" prefWidth="200.0">
                 <columns>
-                    <!--appointment title, description, location, contact, type, start, and end.-->
+                    <TableColumn fx:id="appointmentIdColumn" text="Appointment ID"/>
                     <TableColumn fx:id="appointmentTitleColumn" text="Title"/>
                     <TableColumn fx:id="appointmentDescriptionColumn" text="Description"/>
                     <TableColumn fx:id="appointmentLocationColumn" text="Location"/>
@@ -66,6 +66,8 @@
                     <TableColumn fx:id="appointmentTypeColumn" text="Type"/>
                     <TableColumn fx:id="appointmentStartColumn" text="Start"/>
                     <TableColumn fx:id="appointmentEndColumn" text="End"/>
+                    <TableColumn fx:id="appointmentCustomerIdColumn" text="Customer ID"/>
+                    <TableColumn fx:id="appointmentUserIdColumn" text="User ID"/>
                 </columns>
             </TableView>
 

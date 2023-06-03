@@ -1,10 +1,7 @@
 package edu.wgu.restrel.appointmentsapplication.Controllers;
 
 import edu.wgu.restrel.appointmentsapplication.AbstractClass.AppController;
-import edu.wgu.restrel.appointmentsapplication.Models.Country;
-import edu.wgu.restrel.appointmentsapplication.Models.Customer;
-import edu.wgu.restrel.appointmentsapplication.Models.Division;
-import edu.wgu.restrel.appointmentsapplication.Models.ValidationState;
+import edu.wgu.restrel.appointmentsapplication.Models.*;
 import edu.wgu.restrel.appointmentsapplication.Utils.DatabaseManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -47,9 +44,39 @@ public class MainController extends AppController {
     @FXML
     private TableColumn<Customer, String> countryColumn;
 
-    /* attributes */
-    // private ArrayList<Customer> customers;
-    // observable list of customers
+    /* Appointments TableView Components */
+    @FXML
+    private TableView<Appointment> appointmentsTable;
+
+    @FXML
+    private TableColumn<Appointment, Integer> appointmentIdColumn;
+
+    @FXML
+    private TableColumn<Appointment, String> appointmentTitleColumn;
+
+    @FXML
+    private TableColumn<Appointment, String> appointmentDescriptionColumn;
+
+    @FXML
+    private TableColumn<Appointment, String> appointmentLocationColumn;
+
+    @FXML
+    private TableColumn<Appointment, String> appointmentContactColumn;
+
+    @FXML
+    private TableColumn<Appointment, String> appointmentTypeColumn;
+
+    @FXML
+    private TableColumn<Appointment, String> appointmentStartColumn;
+
+    @FXML
+    private TableColumn<Appointment, String> appointmentEndColumn;
+
+    @FXML
+    private TableColumn<Appointment, Integer> appointmentCustomerIdColumn;
+
+    @FXML
+    private TableColumn<Appointment, Integer> appointmentUserIdColumn;
 
     /* nav bar buttons */
     @FXML
@@ -122,7 +149,7 @@ public class MainController extends AppController {
         // set the default selected button (customers)
         selectNavButton(customersButton);
 
-        // table columns
+        // columns for customers table
         customerIdColumn.setCellValueFactory(new PropertyValueFactory<Customer, Integer>("customerId"));
         customerNameColumn.setCellValueFactory(new PropertyValueFactory<Customer, String>("customerName"));
         addressColumn.setCellValueFactory(new PropertyValueFactory<Customer, String>("address"));
@@ -130,6 +157,19 @@ public class MainController extends AppController {
         phoneNumberColumn.setCellValueFactory(new PropertyValueFactory<Customer, String>("phone"));
         divisionColumn.setCellValueFactory(new PropertyValueFactory<Customer, Integer>("division"));
         countryColumn.setCellValueFactory(new PropertyValueFactory<Customer, String>("country"));
+
+        // columns for appointments table
+        appointmentIdColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("appointmentId"));
+        appointmentTitleColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("title"));
+        appointmentDescriptionColumn
+                .setCellValueFactory(new PropertyValueFactory<Appointment, String>("description"));
+        appointmentLocationColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("location"));
+        appointmentContactColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("contact"));
+        appointmentTypeColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("type"));
+        appointmentStartColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("start"));
+        appointmentEndColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("end"));
+        appointmentCustomerIdColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("customerId"));
+        appointmentUserIdColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("userId"));
 
     }
 
@@ -358,6 +398,8 @@ public class MainController extends AppController {
         System.out.println("refreshing appointment content");
 
         this.getCountriesFromDB();
+        this.getAppointmentsFromDB();
+        this.displayAppointmentsTable();
     }
 
     /**
@@ -449,6 +491,45 @@ public class MainController extends AppController {
         dbmanager.disconnect();
     }
 
+    // getAppointmentsFromDB
+    private void getAppointmentsFromDB() {
+        // clear the appointments array list
+        getApp().getAppointments().clear();
+
+        DatabaseManager dbmanager = new DatabaseManager();
+
+        // get appointments from the database
+        String query = "SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, contacts.Contact_ID, Contact_Name FROM appointments appt INNER JOIN contacts contacts ON contacts.Contact_ID = appt.Contact_ID; ";
+
+        // execute the query
+        dbmanager.executeQuery(query, (rs) -> {
+            try {
+                while (rs.next()) {
+                    System.out.println(rs.getString("Title"));
+
+                    // create a new appointment object
+                    Appointment appointment = new Appointment(rs.getInt("Appointment_ID"), rs.getString("Title"),
+                            rs.getString("Description"), rs.getString("Location"), rs.getString("Type"),
+                            rs.getString("Start"), rs.getString("End"), rs.getInt("Customer_ID"),
+                            rs.getInt("User_ID"), rs.getInt("Contact_ID"), rs.getString("Contact_Name"));
+
+                    // add the appointment to the appointments array list
+                    getApp().addAppointment(appointment);
+
+                    System.out.println("appointment added: " + appointment.getTitle());
+
+                }
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+
+            // display the appointments on the table view
+
+        });
+
+        dbmanager.disconnect();
+    }
+
     /**
      * This method will check the database to see if there are any appointments
      * associated with the customer.
@@ -471,7 +552,7 @@ public class MainController extends AppController {
         DatabaseManager dbmanager = new DatabaseManager();
 
         // get customers from the database
-        String query = "SELECT * FROM appointments WHERE Customer_ID = ? ;";
+        String query = "SELECT top 1 Customer_ID FROM appointments WHERE Customer_ID = ? ;";
 
         // execute the query
         dbmanager.executeQuery(query, (rs) -> {
@@ -520,6 +601,31 @@ public class MainController extends AppController {
             customersTable.setItems(getApp().getCustomers());
         } else {
             System.out.println("customers is null");
+        }
+    }
+
+    /**
+     * This method will display the appointments in the appointments table view
+     * based on the appointments array list in the app
+     */
+    private void displayAppointmentsTable() {
+
+        System.out.println("displaying appointments table");
+
+        if (getApp().getAppointments() != null) {
+
+            // loop and print appointments
+            for (Appointment appointment : getApp().getAppointments()) {
+                System.out.println(appointment.getTitle());
+            }
+
+            // Clear existing data from the table
+            // appointmentsTable.getItems().clear();
+
+            // Add the appointments to the table
+            appointmentsTable.setItems(getApp().getAppointments());
+        } else {
+            System.out.println("appointments is null");
         }
     }
 

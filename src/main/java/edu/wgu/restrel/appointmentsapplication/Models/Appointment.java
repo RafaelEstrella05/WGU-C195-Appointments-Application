@@ -1,5 +1,8 @@
 package edu.wgu.restrel.appointmentsapplication.Models;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 /**
  * This is the Appointment class. It is used to keep track of appointment
  * information related to a customer.
@@ -16,6 +19,9 @@ public class Appointment {
     private int customerId;
     private int userId;
     private int contactId;
+    private String contact;
+    private LocalDateTime startDateTime;
+    private LocalDateTime endDateTime;
 
     /**
      * Constructor for Appointment class.
@@ -32,7 +38,7 @@ public class Appointment {
      * @param contactId
      */
     public Appointment(int appointmentId, String title, String description, String location, String type, String start,
-            String end, int customerId, int userId, int contactId) {
+            String end, int customerId, int userId, int contactId, String contact) {
 
         this.appointmentId = appointmentId;
         this.title = title;
@@ -41,9 +47,12 @@ public class Appointment {
         this.type = type;
         this.start = start;
         this.end = end;
+        this.startDateTime = convertStringToLocalDateTime(start);
+        this.endDateTime = convertStringToLocalDateTime(end);
         this.customerId = customerId;
         this.userId = userId;
         this.contactId = contactId;
+        this.contact = contact;
 
     }
 
@@ -173,6 +182,28 @@ public class Appointment {
         this.end = end;
     }
 
+    public LocalDateTime getStartDateTime() {
+        return this.startDateTime;
+    }
+
+    public void setStartDateTime(LocalDateTime startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    public LocalDateTime getEndDateTime() {
+        return this.endDateTime;
+    }
+
+    public void getEndDateTime(LocalDateTime endDateTime) {
+        this.endDateTime = endDateTime;
+    }
+
+    // Helper method to convert a string to LocalDateTime
+    private LocalDateTime convertStringToLocalDateTime(String dateTimeString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return LocalDateTime.parse(dateTimeString, formatter);
+    }
+
     /**
      * Getter for customerId.
      * 
@@ -225,6 +256,24 @@ public class Appointment {
      */
     public void setContactId(int contactId) {
         this.contactId = contactId;
+    }
+
+    /**
+     * Getter for contact.
+     * 
+     * @return contact
+     */
+    public String getContact() {
+        return this.contact;
+    }
+
+    /**
+     * Setter for contact.
+     * 
+     * @param contact
+     */
+    public void setContact(String contact) {
+        this.contact = contact;
     }
 
 }
