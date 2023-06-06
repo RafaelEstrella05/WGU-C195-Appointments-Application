@@ -303,6 +303,21 @@ public class MainController extends AppController {
 
                 String query = "DELETE FROM customers WHERE Customer_ID = ? ;";
 
+                // execute the query
+                dbmanager.executeUpdate(query, (rs) -> {
+                    try {
+                        System.out.println("customer deleted");
+                    } catch (Exception e) {
+                        System.out.println("Error: " + e.getMessage());
+                    }
+
+                }, selectedCustomer.getCustomerId());
+
+                dbmanager.disconnect();
+
+                // refresh the customers table
+                this.refreshCustomerContent();
+
             } else {
 
                 // alert the user that they need to select a customer
@@ -323,6 +338,14 @@ public class MainController extends AppController {
     @FXML
     private void onAddAppointmentButtonClick() {
         System.out.println("Add appointment button clicked");
+
+        try {
+            AppController appController = this.getApp().setShowScene("appointments.fxml", "Appointment Form");
+            ((AppointmentsController) appController).setApp(this.getApp());
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
     }
 
     @FXML
@@ -536,45 +559,50 @@ public class MainController extends AppController {
      * If there are, the customer will not be deleted and an error message will be
      * displayed.
      * If there are no appointments associated with the customer, the customer will
-     * be deleted from the database and data refreshed.
+     * be deleted from the database
      * 
      * @param customer
      * @return validationState
      */
     private ValidationState requestCustomerDeletionValidation(Customer customer) {
 
-        ValidationState validationState;
-        AtomicBoolean isValid = new AtomicBoolean(true);
-        AtomicReference<String> errorMessage = new AtomicReference<>("");
+        if (customer != null) {
 
-        // make a query to the database to see if there are any appointments associated
-        // with the customer
-        DatabaseManager dbmanager = new DatabaseManager();
+            ValidationState validationState;
+            AtomicBoolean isValid = new AtomicBoolean(true);
+            AtomicReference<String> errorMessage = new AtomicReference<>("");
 
-        // get customers from the database
-        String query = "SELECT top 1 Customer_ID FROM appointments WHERE Customer_ID = ? ;";
+            // make a query to the database to see if there are any appointments associated
+            // with the customer
+            DatabaseManager dbmanager = new DatabaseManager();
 
-        // execute the query
-        dbmanager.executeQuery(query, (rs) -> {
-            try {
-                while (rs.next()) {
-                    System.out.println(rs.getString("Title"));
+            // get customers from the database
+            String query = "SELECT Customer_ID FROM appointments WHERE Customer_ID = ? LIMIT 1;";
 
-                    // if there are appointments associated with the customer, set isValid to false
-                    isValid.set(false);
-                    errorMessage.set(
-                            "Cannot delete customer. There are appointments associated with this customer that need to be deleted first.");
+            // execute the query
+            dbmanager.executeQuery(query, (rs) -> {
+                try {
+                    if (rs.next()) {
 
+                        // if there are appointments associated with the customer, set isValid to false
+                        isValid.set(false);
+                        errorMessage.set(
+                                "Please delete all customer associated appointments ");
+
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error: " + e.getMessage());
                 }
-            } catch (Exception e) {
-                System.out.println("Error: " + e.getMessage());
-            }
 
-        }, customer.getCustomerId());
+            }, customer.getCustomerId());
 
-        validationState = new ValidationState(isValid.get(), errorMessage.get());
+            validationState = new ValidationState(isValid.get(), errorMessage.get());
 
-        return validationState;
+            return validationState;
+
+        } else {
+            return new ValidationState(false, "Please select a customer to delete");
+        }
 
     }
 
@@ -587,11 +615,6 @@ public class MainController extends AppController {
         System.out.println("displaying customers table");
 
         if (getApp().getCustomers() != null) {
-
-            // loop and print customers
-            for (Customer customer : getApp().getCustomers()) {
-                System.out.println(customer.getCustomerName());
-            }
 
             // Clear existing data from the table
             // customersTable.getItems().clear();

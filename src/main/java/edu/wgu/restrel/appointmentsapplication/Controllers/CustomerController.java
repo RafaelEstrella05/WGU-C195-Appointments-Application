@@ -2,6 +2,8 @@ package edu.wgu.restrel.appointmentsapplication.Controllers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import edu.wgu.restrel.appointmentsapplication.Models.*;
 import edu.wgu.restrel.appointmentsapplication.AbstractClass.AppController;
@@ -126,6 +128,7 @@ public class CustomerController extends AppController {
     public ValidationState getFormInputValidationState() throws ValidationException {
 
         ValidationState validationState;
+
         boolean isValid = true;
         String errorMessage = "";
 
@@ -225,8 +228,6 @@ public class CustomerController extends AppController {
      * @param customer
      */
     public void setSelectedCustomer(Customer customer) {
-        // change label to indicate we are editing an existing customer
-        formStateLabel.setText("Edit Customer");
 
         this.selectedCustomer = customer;
     }
@@ -246,6 +247,10 @@ public class CustomerController extends AppController {
      * @throws Exception
      */
     public void populateForm(Customer customer) throws Exception {
+
+        // change label to indicate we are editing an existing customer
+        formStateLabel.setText("Modify Customer");
+
         setSelectedCustomer(customer);
 
         if (customer != null) {
@@ -271,22 +276,17 @@ public class CustomerController extends AppController {
     /**
      * This method populates the country choice box to its default
      * state.
+     * 
+     * @param countries
      */
     public void populateCountryComboBox(ArrayList<Country> countries) {
+        List<String> countryNames = countries.stream()
+                .map(Country::getCountry)
+                .collect(Collectors.toList());
 
-        // clear the country choice box
         countryChoiceBox.getItems().clear();
-
-        // iterate throught the countries
-        for (Country country : countries) {
-
-            // add the country to the country choice box
-            countryChoiceBox.getItems().add(country.getCountry());
-        }
-
-        // disable the division choice box until the country is selected
+        countryChoiceBox.getItems().addAll(countryNames);
         divisionChoiceBox.setDisable(true);
-
     }
 
     /**
@@ -324,7 +324,7 @@ public class CustomerController extends AppController {
         DatabaseManager dbmanager = new DatabaseManager();
 
         // run the insert query
-        dbmanager.executeInsert(
+        dbmanager.executeUpdate(
                 "INSERT INTO customers (Customer_Name, Address, Postal_Code, Phone, Create_Date, Created_By, Last_Update, Last_Updated_By, Division_ID) VALUES (?, ?, ?, ?, NOW(), ?, NOW(), ?, ?)",
                 (rs) -> {
                     System.out.println("Insert query executed");

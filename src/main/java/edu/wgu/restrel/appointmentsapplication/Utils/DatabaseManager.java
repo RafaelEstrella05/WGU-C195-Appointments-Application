@@ -1,8 +1,12 @@
 package edu.wgu.restrel.appointmentsapplication.Utils;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * DatabaseManager singleton class for connecting to the database and running
@@ -20,12 +24,31 @@ public class DatabaseManager {
      */
     public DatabaseManager() {
 
-        URL = "jdbc:mysql://localhost:3306/client_schedule";
-        USERNAME = "restrella";
-        PASSWORD = "@369_rE!";
-
+        loadDatabaseProperties();
         connect();
 
+    }
+
+    private void loadDatabaseProperties() {
+        try {
+            Properties properties = new Properties();
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("database.properties");
+
+            if (inputStream != null) {
+                properties.load(inputStream);
+                inputStream.close();
+
+                URL = properties.getProperty("url");
+                USERNAME = properties.getProperty("username");
+                PASSWORD = properties.getProperty("password");
+
+                connect();
+            } else {
+                throw new FileNotFoundException("database.properties file not found.");
+            }
+        } catch (IOException e) {
+            System.out.println("Error loading database properties: " + e.getMessage());
+        }
     }
 
     public void setUrl(String url) {
@@ -85,8 +108,11 @@ public class DatabaseManager {
 
             // create a PreparedStatement with the given SQL and parameters
             java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);
-            for (int i = 0; i < args.length; i++) {
-                pstmt.setObject(i + 1, args[i]);
+
+            // set the parameters using a List
+            List<Object> argList = Arrays.asList(args);
+            for (int i = 0; i < argList.size(); i++) {
+                pstmt.setObject(i + 1, argList.get(i));
             }
 
             // execute the query and pass the result set to the executor
@@ -99,39 +125,8 @@ public class DatabaseManager {
     }
 
     /**
-     * this method is used to execute an insert statement on the database, accepts a
-     * string of the query, an executor and any number of parameters that the query
-     * needs
-     * 
-     * @param sql
-     * @param executor
-     * @param args     1,2,3,...,n
-     */
-    public void executeInsert(String sql, QueryExecutor executor, Object... args) {
-        try (Connection conn = getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            for (int i = 0; i < args.length; i++) {
-                pstmt.setObject(i + 1, args[i]);
-            }
-
-            pstmt.executeUpdate();
-            System.out.println("Insert statement executed successfully.");
-
-            // Pass the ResultSet to the QueryExecutor
-            try (ResultSet rs = pstmt.getGeneratedKeys()) {
-                executor.execute(rs);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * this method is used to execute an update statement on the database, accepts
-     * multiple parameters
+     * this method is used to execute an update, delete or insert statement
+     * accepts multiple parameters
      * 
      * @param sql
      * @param executor
@@ -141,10 +136,13 @@ public class DatabaseManager {
         try (Connection conn = getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            for (int i = 0; i < args.length; i++) {
-                pstmt.setObject(i + 1, args[i]);
+            // set the parameters using a List
+            List<Object> argList = Arrays.asList(args);
+            for (int i = 0; i < argList.size(); i++) {
+                pstmt.setObject(i + 1, argList.get(i));
             }
 
+            // execute the query and pass the result set to the executor
             pstmt.executeUpdate();
             System.out.println("Update statement executed successfully.");
 

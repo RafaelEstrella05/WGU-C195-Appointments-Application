@@ -6,10 +6,19 @@ import edu.wgu.restrel.appointmentsapplication.Utils.FileManager;
 import edu.wgu.restrel.appointmentsapplication.Models.User;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import java.io.IOException;
+import java.time.ZoneId;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
+/**
+ * LoginController class for the login.fxml view
+ * User login and authentication is handled here
+ */
 public class LoginController extends AppController {
 
     @FXML
@@ -17,6 +26,23 @@ public class LoginController extends AppController {
 
     @FXML
     private TextField passwordField;
+
+    @FXML
+    private Label signInLabel;
+
+    @FXML
+    private Label userNameLabel;
+
+    @FXML
+    private Label passwordLabel;
+
+    @FXML
+    private Label locationLabel;
+
+    @FXML
+    private Button submitButton;
+
+    ResourceBundle resources;
 
     /**
      * login submission button click event handler
@@ -59,7 +85,7 @@ public class LoginController extends AppController {
                 activity = "Login Failed: by " + username + " date: " + date + " " + time;
 
                 // show an error message if the username and password combination is not found
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Incorrect username or password.");
+                Alert alert = new Alert(Alert.AlertType.ERROR, resources.getString("login_error_message"));
                 alert.showAndWait();
             }
 
@@ -79,6 +105,28 @@ public class LoginController extends AppController {
         passwordField.setText("Admin");
 
         onSubmitButtonClick();
+    }
+
+    public void initialize() {
+
+        // Get the user's default locale
+        Locale locale = Locale.getDefault();
+
+        // Load the appropriate resource bundle based on the locale
+        resources = ResourceBundle.getBundle("login", locale); // FIX ME:
+
+        // set the text for the labels and button
+        signInLabel.setText(resources.getString("sign_in_label"));
+        userNameLabel.setText(resources.getString("username_label"));
+        passwordLabel.setText(resources.getString("password_label"));
+        submitButton.setText(resources.getString("submit_button"));
+
+        // Get the user's default time zone
+        ZoneId defaultTimeZone = ZoneId.systemDefault();
+
+        // Display the user's time zone in the location label
+        locationLabel.setText(resources.getString("location_label") + " " + defaultTimeZone.getId());
+
     }
 
 }

@@ -40,7 +40,7 @@ public class AppointmentsApplication extends Application {
         loginController = (LoginController) setShowScene("login.fxml", "Appointment Manager");
         loginController.setApp(this);
 
-        loginController.tempLoginPass(); // FIX ME: remove when done testing
+        // loginController.tempLoginPass(); // FIX ME: remove when done testing
     }
 
     /**
@@ -166,40 +166,17 @@ public class AppointmentsApplication extends Application {
     }
 
     /**
-     * Find a division by id
-     * 
-     * @param id
-     * @return Division
-     */
-    public Division findDivisionById(int id) {
-        for (Country country : countries) {
-            // use country.findDivisionById(id) to find division
-            Division division = country.findDivisionById(id);
-            if (division != null) {
-                return division;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Find a division by name
      * 
      * @param name
      * @return Division
      */
     public Division findDivisionByName(String name) {
-        for (Country country : countries) {
-
-            for (Division division : country.getAssociatedDivisions()) {
-                if (division.getDivision().equals(name)) {
-                    return division;
-                }
-            }
-
-        }
-
-        return null;
+        return countries.stream()
+                .flatMap(country -> country.getAssociatedDivisions().stream())
+                .filter(division -> division.getDivision().equals(name))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -209,12 +186,10 @@ public class AppointmentsApplication extends Application {
      * @return Country
      */
     public Country findCountryByName(String name) {
-        for (Country country : getCountries()) {
-            if (country.getCountry().equals(name)) {
-                return country;
-            }
-        }
-        return null;
+        return getCountries().stream()
+                .filter(country -> country.getCountry().equals(name))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
