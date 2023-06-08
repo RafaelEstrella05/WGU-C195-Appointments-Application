@@ -85,8 +85,7 @@ public class LoginController extends AppController {
                 activity = "Login Failed: by " + username + " date: " + date + " " + time;
 
                 // show an error message if the username and password combination is not found
-                Alert alert = new Alert(Alert.AlertType.ERROR, resources.getString("login_error_message"));
-                alert.showAndWait();
+                alertError(resources.getString("login_error_message"), resources.getString("login_error_title"));
             }
 
             // log the activity in a text file
@@ -113,7 +112,7 @@ public class LoginController extends AppController {
         Locale locale = Locale.getDefault();
 
         // Load the appropriate resource bundle based on the locale
-        resources = ResourceBundle.getBundle("login", locale); // FIX ME:
+        resources = ResourceBundle.getBundle("login", locale);
 
         // set the text for the labels and button
         signInLabel.setText(resources.getString("sign_in_label"));

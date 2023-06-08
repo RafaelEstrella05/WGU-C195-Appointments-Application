@@ -44,6 +44,7 @@
             </TableView>
 
             <HBox alignment="TOP_RIGHT" spacing="10.0">
+                <Button styleClass="option-button" text="Schedule Appointment" onAction="#onAddAppointmentButtonClick"/>
                 <Button styleClass="option-button" text="Add" onAction="#onAddCustomerButtonClick"/>
                 <Button styleClass="option-button" text="Modify" onAction="#onModifyCustomerButtonClick"/>
                 <Button styleClass="option-button" text="Delete" onAction="#onDeleteCustomerButtonClick"/>
@@ -73,7 +74,6 @@
 
 
             <HBox alignment="TOP_RIGHT" spacing="10.0">
-                <Button styleClass="option-button" text="Add" onAction="#onAddAppointmentButtonClick"/>
                 <Button styleClass="option-button" text="Modify" onAction="#onModifyAppointmentButtonClick"/>
                 <Button styleClass="option-button" text="Delete" onAction="#onDeleteAppointmentButtonClick"/>
             </HBox>

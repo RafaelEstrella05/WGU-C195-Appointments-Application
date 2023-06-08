@@ -1,6 +1,6 @@
 package edu.wgu.restrel.appointmentsapplication.Models;
 
-public class ValidationState {
+public class FormValidationState {
 
     private boolean isValid;
     private String message;
@@ -11,7 +11,7 @@ public class ValidationState {
      * @param isValid
      * @param message
      */
-    public ValidationState(boolean isValid, String message) {
+    public FormValidationState(boolean isValid, String message) {
         this.isValid = isValid;
         this.message = message;
     }

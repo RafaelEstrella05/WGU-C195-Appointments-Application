@@ -1,14 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+
+
 <VBox xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="edu.wgu.restrel.appointmentsapplication.Controllers.AppointmentsController"
-            prefHeight="400.0" prefWidth="600.0">
+            prefHeight="400.0" prefWidth="600.0"
+            stylesheets="@app.css"
+            styleClass="appointments_view"
+>
+
+    <!--Appointments Form -->
+    <!--Appointment_ID, Title, Description, Location, Contact, Type, Start, End, -->
+
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    </padding>
+
+    <!--customer name, address, postal code, and phone number-->
+    <Label fx:id="formStateLabel" text="Schedule an Appointment" styleClass="form_label" />
+
+    <HBox alignment="CENTER" spacing="30.0" styleClass="appointment_content">
+
+        <VBox alignment="CENTER" spacing="10.0"  styleClass="appointment_section">
+            <!--customer id is disable, view only-->
+            <Label text="Appointment ID:" />
+            <TextField fx:id="appointmentIdField"  promptText="Auto-generated" editable="false"/>
+
+            <Label text="Title:" />
+
+            <TextField fx:id="titleField"/>
+
+            <Label text="Description:" />
+
+            <TextField fx:id="descriptionField" />
+
+            <Label text="Location:" />
+
+            <TextField fx:id="locationField" />
+
+            <Label text="Type:" />
+
+            <TextField fx:id="typeField" />
+
+
+            
+
+        </VBox>
+
+        <VBox alignment="CENTER" spacing="10.0"  styleClass="contact_section">
+            <Label text="Contact:" />
+
+            <ChoiceBox fx:id="contactChoiceBox"/>
+
+            <Label text="Date:" />
+
+            <DatePicker fx:id="datePicker" />
+
+            <Label text="Start Time:" />
+
+            <HBox spacing="10.0">
+                <ChoiceBox fx:id="startHourChoiceBox" />
+                <Label text=" : " />
+                <ChoiceBox fx:id="startMinuteChoiceBox" />
+                <ChoiceBox fx:id="startAmPmChoiceBox" />
+            </HBox>
+
+
+            <Label text="End Time:" />
+
+            <HBox spacing="10.0">
+                <ChoiceBox fx:id="endHourChoiceBox" />
+                <Label text=" : " />
+                <ChoiceBox fx:id="endMinuteChoiceBox" />
+                <ChoiceBox fx:id="endAmPmChoiceBox" />
+            </HBox>
+
+        </VBox>
+
+        <VBox alignment="CENTER" spacing="30.0"  styleClass="time_section">
+            <Label fx:id="businessHoursLabel" text="Bussiness Hours: " />
+            
+
+        </VBox>
+
+    </HBox>
+
+    <HBox styleClass="form_selection_buttons" spacing="10.0" alignment="TOP_CENTER">
+        <Button text="Submit" onAction="#onSubmitButtonClick"/>
+        <Button text="Cancel" onAction="#onCancelButtonClick"/>
+    </HBox>
+
 
 </VBox>

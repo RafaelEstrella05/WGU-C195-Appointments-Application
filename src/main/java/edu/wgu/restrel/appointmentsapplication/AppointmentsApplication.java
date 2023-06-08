@@ -40,7 +40,7 @@ public class AppointmentsApplication extends Application {
         loginController = (LoginController) setShowScene("login.fxml", "Appointment Manager");
         loginController.setApp(this);
 
-        // loginController.tempLoginPass(); // FIX ME: remove when done testing
+        loginController.tempLoginPass(); // FIX ME: remove when done testing
     }
 
     /**

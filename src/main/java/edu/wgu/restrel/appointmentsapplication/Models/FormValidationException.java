@@ -1,9 +1,9 @@
 package edu.wgu.restrel.appointmentsapplication.Models;
 
-public class ValidationException extends Exception {
+public class FormValidationException extends Exception {
     private String fieldName;
 
-    public ValidationException(String message, String fieldName) {
+    public FormValidationException(String message) {
         super(message);
         this.fieldName = fieldName;
     }
@@ -14,6 +14,6 @@ public class ValidationException extends Exception {
 
     @Override
     public String getMessage() {
-        return "Validation error for field '" + fieldName + "': " + super.getMessage();
+        return "Validation error: " + super.getMessage();
     }
 }

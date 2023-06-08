@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import edu.wgu.restrel.appointmentsapplication.Models.*;
 import edu.wgu.restrel.appointmentsapplication.AbstractClass.AppController;
 import edu.wgu.restrel.appointmentsapplication.Utils.DatabaseManager;
+import edu.wgu.restrel.appointmentsapplication.interfaces.FormValidation;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
@@ -17,7 +18,7 @@ import javafx.scene.control.TextField;
 /**
  * This controller handles the customer view and actions for the application
  */
-public class CustomerController extends AppController {
+public class CustomerController extends AppController implements FormValidation {
 
     private Customer selectedCustomer;
 
@@ -57,10 +58,10 @@ public class CustomerController extends AppController {
         System.out.println("Submit button clicked");
 
         try {
-            ValidationState validationState = getFormInputValidationState();
+            FormValidationState formValidationState = getFormInputValidationState();
 
             if (selectedCustomer == null) { // if selectedCustomer is null, we are adding a new customer
-                if (validationState.isValid()) {
+                if (formValidationState.isValid()) {
                     // collect all data from fields and create a new customer object
                     Customer submittedCustomer = new Customer();
                     submittedCustomer.setCustomerName(customerNameField.getText());
@@ -75,14 +76,9 @@ public class CustomerController extends AppController {
 
                     // add the customer to the database
                     addCustomerToDatabase(submittedCustomer);
-                } else {
-                    // show error message
-                    System.out.println("Validation error: " + validationState.getMessage());
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Validation error: " + validationState.getMessage());
-                    alert.showAndWait();
                 }
             } else { // if selectedCustomer is not null, we are updating an existing customer
-                if (validationState.isValid()) {
+                if (formValidationState.isValid()) {
                     // collect all data from fields and create a new customer object with existing
                     // customer id
                     Customer submittedCustomer = new Customer();
@@ -99,9 +95,6 @@ public class CustomerController extends AppController {
 
                     // update the customer in the database
                     updateCustomerInDatabase(submittedCustomer);
-                } else {
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Validation error: " + validationState.getMessage());
-                    alert.showAndWait();
                 }
             }
 
@@ -109,11 +102,11 @@ public class CustomerController extends AppController {
             AppController appController = this.getApp().setShowScene("main.fxml", "Appointments Manager");
             ((MainController) appController).setApp(this.getApp());
             ((MainController) appController).refreshCustomerContent();
-        } catch (ValidationException e) {
+        } catch (FormValidationException e) {
             // handle the validation exception
             System.out.println("Validation error: " + e.getMessage());
-            Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage());
-            alert.showAndWait();
+            alertWarning(e.getMessage(), "Validation Error");
+
         } catch (IOException e) {
             System.out.println("IOException: " + e.getMessage());
         }
@@ -125,9 +118,10 @@ public class CustomerController extends AppController {
      * 
      * @return validationState
      */
-    public ValidationState getFormInputValidationState() throws ValidationException {
 
-        ValidationState validationState;
+    public FormValidationState getFormInputValidationState() throws FormValidationException {
+
+        FormValidationState formValidationState;
 
         boolean isValid = true;
         String errorMessage = "";
@@ -158,11 +152,11 @@ public class CustomerController extends AppController {
         }
 
         if (!isValid) {
-            throw new ValidationException(errorMessage, "");
+            throw new FormValidationException(errorMessage);
         } else {
-            validationState = new ValidationState(isValid, errorMessage);
+            formValidationState = new FormValidationState(isValid, errorMessage);
 
-            return validationState;
+            return formValidationState;
         }
 
     }

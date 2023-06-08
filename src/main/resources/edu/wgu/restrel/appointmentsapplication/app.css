@@ -4,6 +4,10 @@
     -fx-background-color: rgb(221, 231, 255);
 }
 
+.appointments_view{
+    -fx-background-color: rgb(221, 231, 255);
+}
+
 
 /*Main Section*/
 
@@ -15,6 +19,19 @@
 
 }
 
+.contact_section{
+    -fx-padding: 20px;
+}
+
+.appointment_section{
+    -fx-padding: 20px;
+}
+
+.appointment_content{
+    -fx-padding: 10px;
+    -fx-background-color: rgb(221, 231, 255);
+}
+
 .navbar-selection-button{
     -fx-background-radius: 10 10 0 0;
     -fx-background-color: rgb(221, 231, 255);
@@ -22,6 +39,11 @@
     -fx-padding: 5px;
     -fx-font-size: 12px;
 
+}
+
+.form_selection_buttons{
+    
+    -fx-padding: 10px;
 }
 
 .selected{

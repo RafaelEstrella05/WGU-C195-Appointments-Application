@@ -246,9 +246,7 @@ public class MainController extends AppController {
 
         // if no customer is selected then return
         if (selectedCustomer == null) {
-            // alert the user that they need to select a customer
-            Alert alert = new Alert(Alert.AlertType.WARNING, "Please select a customer to modify");
-            alert.showAndWait();
+            alertWarning("Please select a customer to modify", "Modify Customer");
 
         } else {
             try {
@@ -293,9 +291,9 @@ public class MainController extends AppController {
             Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
 
             // request validation for delete
-            ValidationState validationState = requestCustomerDeletionValidation(selectedCustomer);
+            FormValidationState formValidationState = requestCustomerDeletionValidation(selectedCustomer);
 
-            if (validationState.isValid()) {
+            if (formValidationState.isValid()) {
                 System.out.println("validation passed");
 
                 // delete the customer from the database
@@ -320,9 +318,7 @@ public class MainController extends AppController {
 
             } else {
 
-                // alert the user that they need to select a customer
-                Alert errorAlert = new Alert(Alert.AlertType.ERROR, validationState.getMessage());
-                errorAlert.showAndWait();
+                alertError(formValidationState.getMessage(), "Delete Customer");
 
                 return;
 
@@ -333,7 +329,8 @@ public class MainController extends AppController {
     }
 
     /**
-     *
+     * This method handles the add appointment button click event
+     * It opens up the form where an appointment can be scheduled
      */
     @FXML
     private void onAddAppointmentButtonClick() {
@@ -564,11 +561,11 @@ public class MainController extends AppController {
      * @param customer
      * @return validationState
      */
-    private ValidationState requestCustomerDeletionValidation(Customer customer) {
+    private FormValidationState requestCustomerDeletionValidation(Customer customer) {
 
         if (customer != null) {
 
-            ValidationState validationState;
+            FormValidationState formValidationState;
             AtomicBoolean isValid = new AtomicBoolean(true);
             AtomicReference<String> errorMessage = new AtomicReference<>("");
 
@@ -596,12 +593,12 @@ public class MainController extends AppController {
 
             }, customer.getCustomerId());
 
-            validationState = new ValidationState(isValid.get(), errorMessage.get());
+            formValidationState = new FormValidationState(isValid.get(), errorMessage.get());
 
-            return validationState;
+            return formValidationState;
 
         } else {
-            return new ValidationState(false, "Please select a customer to delete");
+            return new FormValidationState(false, "Please select a customer to delete");
         }
 
     }
