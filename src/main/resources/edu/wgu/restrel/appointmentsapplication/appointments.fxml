@@ -62,9 +62,9 @@
 
             <Label text="Date:" />
 
-            <DatePicker fx:id="datePicker" />
+            <DatePicker fx:id="datePicker" editable="false" />
 
-            <Label text="Start Time:" />
+            <Label text="Start Time (Local):" />
 
             <HBox spacing="10.0">
                 <ChoiceBox fx:id="startHourChoiceBox" />
@@ -74,7 +74,7 @@
             </HBox>
 
 
-            <Label text="End Time:" />
+            <Label text="End Time (Local):" />
 
             <HBox spacing="10.0">
                 <ChoiceBox fx:id="endHourChoiceBox" />

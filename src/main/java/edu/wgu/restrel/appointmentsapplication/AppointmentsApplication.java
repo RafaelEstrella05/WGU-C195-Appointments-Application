@@ -8,6 +8,7 @@ import edu.wgu.restrel.appointmentsapplication.Models.Country;
 import edu.wgu.restrel.appointmentsapplication.Models.Customer;
 import edu.wgu.restrel.appointmentsapplication.Models.Division;
 import edu.wgu.restrel.appointmentsapplication.Models.User;
+import edu.wgu.restrel.appointmentsapplication.Utils.DatabaseManager;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -190,6 +191,57 @@ public class AppointmentsApplication extends Application {
                 .filter(country -> country.getCountry().equals(name))
                 .findFirst()
                 .orElse(null);
+    }
+
+    /*
+     * Find a customer by id
+     * 
+     * @return Customer
+     */
+    public Customer findCustomerById(int id) {
+        return getCustomers().stream()
+                .filter(customer -> customer.getCustomerId() == id)
+                .findFirst()
+                .orElse(null);
+    }
+
+    // getAppointmentsFromDB
+    public void getAppointmentsFromDB() {
+        // clear the appointments array list
+        getAppointments().clear();
+
+        DatabaseManager dbmanager = new DatabaseManager();
+
+        // get appointments from the database
+        String query = "SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, contacts.Contact_ID, Contact_Name FROM appointments appt INNER JOIN contacts contacts ON contacts.Contact_ID = appt.Contact_ID; ";
+
+        // execute the query
+        dbmanager.executeQuery(query, (rs) -> {
+            try {
+                while (rs.next()) {
+                    System.out.println(rs.getString("Title"));
+
+                    // create a new appointment object
+                    Appointment appointment = new Appointment(rs.getInt("Appointment_ID"), rs.getString("Title"),
+                            rs.getString("Description"), rs.getString("Location"), rs.getString("Type"),
+                            rs.getString("Start"), rs.getString("End"), rs.getInt("Customer_ID"),
+                            rs.getInt("User_ID"), rs.getInt("Contact_ID"), rs.getString("Contact_Name"));
+
+                    // add the appointment to the appointments array list
+                    addAppointment(appointment);
+
+                    System.out.println("appointment added: " + appointment.getTitle());
+
+                }
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+
+            // display the appointments on the table view
+
+        });
+
+        dbmanager.disconnect();
     }
 
     /**

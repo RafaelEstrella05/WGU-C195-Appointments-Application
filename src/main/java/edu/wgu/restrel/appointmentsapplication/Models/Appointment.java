@@ -1,6 +1,10 @@
 package edu.wgu.restrel.appointmentsapplication.Models;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -20,8 +24,8 @@ public class Appointment {
     private int userId;
     private int contactId;
     private String contact;
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDateTime;
+    private ZonedDateTime startDateTime;
+    private ZonedDateTime endDateTime;
 
     /**
      * Constructor for Appointment class.
@@ -47,13 +51,36 @@ public class Appointment {
         this.type = type;
         this.start = start;
         this.end = end;
-        this.startDateTime = convertStringToLocalDateTime(start);
-        this.endDateTime = convertStringToLocalDateTime(end);
+        this.startDateTime = convertStringToZonedDateTime(start);
+        this.endDateTime = convertStringToZonedDateTime(end);
         this.customerId = customerId;
         this.userId = userId;
         this.contactId = contactId;
         this.contact = contact;
 
+    }
+
+    public ZonedDateTime getStartDateTime() {
+        return this.startDateTime;
+    }
+
+    public void setStartDateTime(ZonedDateTime startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    public ZonedDateTime getEndDateTime() {
+        return this.endDateTime;
+    }
+
+    public void setEndDateTime(ZonedDateTime endDateTime) {
+        this.endDateTime = endDateTime;
+    }
+
+    // Helper method to convert a string to ZonedDateTime in UTC
+    private ZonedDateTime convertStringToZonedDateTime(String dateTimeString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime localDateTime = LocalDateTime.parse(dateTimeString, formatter);
+        return ZonedDateTime.of(localDateTime, ZoneId.of("UTC"));
     }
 
     /**
@@ -182,20 +209,56 @@ public class Appointment {
         this.end = end;
     }
 
-    public LocalDateTime getStartDateTime() {
-        return this.startDateTime;
+    /**
+     * Getter for startDate in LocalDate format.
+     * 
+     * @return startDate
+     */
+    public LocalDate getStartDate() {
+        // Convert startDateTime to the system's default time zone
+        ZoneId localZoneId = ZoneId.systemDefault();
+        ZonedDateTime localZoneDateTime = this.startDateTime.withZoneSameInstant(localZoneId);
+
+        // Extract the local date component from localZoneDateTime
+        LocalDate localStartDate = localZoneDateTime.toLocalDate();
+
+        // Return the localStartDate
+        return localStartDate;
     }
 
-    public void setStartDateTime(LocalDateTime startDateTime) {
-        this.startDateTime = startDateTime;
+    /**
+     * Getter for startTime in LocalTime format.
+     * converts from db stored UTC to local time
+     * 
+     * @return startTime
+     */
+    public LocalTime getStartTime() {
+        // Convert startDateTime to the system's default time zone
+        ZoneId localZoneId = ZoneId.systemDefault();
+        ZonedDateTime localZoneDateTime = this.startDateTime.withZoneSameInstant(localZoneId);
+
+        // Extract the local time component from localZoneDateTime
+        LocalTime localStartTime = localZoneDateTime.toLocalTime();
+
+        // Return the localStartTime
+        return localStartTime;
     }
 
-    public LocalDateTime getEndDateTime() {
-        return this.endDateTime;
-    }
+    /**
+     * Getter for endTime in LocalTime format.
+     * 
+     * @return endTime
+     */
+    public LocalTime getEndTime() {
+        // Convert endDateTime to the system's default time zone
+        ZoneId localZoneId = ZoneId.systemDefault();
+        ZonedDateTime localZoneDateTime = this.endDateTime.withZoneSameInstant(localZoneId);
 
-    public void getEndDateTime(LocalDateTime endDateTime) {
-        this.endDateTime = endDateTime;
+        // Extract the local time component from localZoneDateTime
+        LocalTime localEndTime = localZoneDateTime.toLocalTime();
+
+        // Return the localEndTime
+        return localEndTime;
     }
 
     // Helper method to convert a string to LocalDateTime

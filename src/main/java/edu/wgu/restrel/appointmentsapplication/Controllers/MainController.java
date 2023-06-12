@@ -330,7 +330,8 @@ public class MainController extends AppController {
 
     /**
      * This method handles the add appointment button click event
-     * It opens up the form where an appointment can be scheduled
+     * It opens up the form where an appointment can be scheduled and sets the
+     * selected customer in the form
      */
     @FXML
     private void onAddAppointmentButtonClick() {
@@ -339,6 +340,17 @@ public class MainController extends AppController {
         try {
             AppController appController = this.getApp().setShowScene("appointments.fxml", "Appointment Form");
             ((AppointmentsController) appController).setApp(this.getApp());
+
+            // get the selected customer from the table
+            Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
+
+            // if not null then set the selected customer in the form
+            if (selectedCustomer != null) {
+                ((AppointmentsController) appController).setSelectedCustomer(selectedCustomer);
+            } else {
+                alertWarning("Please select a customer to schedule an appointment with", "Add Appointment");
+            }
+
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -348,6 +360,36 @@ public class MainController extends AppController {
     @FXML
     private void onModifyAppointmentButtonClick() {
         System.out.println("Modify appointment button clicked");
+
+        try {
+            AppController appController = this.getApp().setShowScene("appointments.fxml", "Appointment Form");
+            ((AppointmentsController) appController).setApp(this.getApp());
+
+            // get the selected appointment from the table
+            Appointment selectedAppointment = appointmentsTable.getSelectionModel().getSelectedItem();
+
+            // if not null then set the selected appointment in the form
+            if (selectedAppointment != null) {
+                ((AppointmentsController) appController).setSelectedAppointment(selectedAppointment);
+
+                // find customer based on customer id of selected appointment
+                Customer selectedCustomer = getApp().getCustomers().stream()
+                        .filter(customer -> customer.getCustomerId() == selectedAppointment.getCustomerId())
+                        .findFirst()
+                        .orElse(null);
+
+                // set the selected customer in the form
+                ((AppointmentsController) appController).setSelectedCustomer(selectedCustomer);
+
+                // populate form
+                ((AppointmentsController) appController).populateForm(selectedAppointment);
+            } else {
+                alertWarning("Please select an appointment to modify", "Modify Appointment");
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -418,7 +460,7 @@ public class MainController extends AppController {
         System.out.println("refreshing appointment content");
 
         this.getCountriesFromDB();
-        this.getAppointmentsFromDB();
+        getApp().getAppointmentsFromDB();
         this.displayAppointmentsTable();
     }
 
@@ -505,45 +547,6 @@ public class MainController extends AppController {
             }
 
             // display the customers on the table view
-
-        });
-
-        dbmanager.disconnect();
-    }
-
-    // getAppointmentsFromDB
-    private void getAppointmentsFromDB() {
-        // clear the appointments array list
-        getApp().getAppointments().clear();
-
-        DatabaseManager dbmanager = new DatabaseManager();
-
-        // get appointments from the database
-        String query = "SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, contacts.Contact_ID, Contact_Name FROM appointments appt INNER JOIN contacts contacts ON contacts.Contact_ID = appt.Contact_ID; ";
-
-        // execute the query
-        dbmanager.executeQuery(query, (rs) -> {
-            try {
-                while (rs.next()) {
-                    System.out.println(rs.getString("Title"));
-
-                    // create a new appointment object
-                    Appointment appointment = new Appointment(rs.getInt("Appointment_ID"), rs.getString("Title"),
-                            rs.getString("Description"), rs.getString("Location"), rs.getString("Type"),
-                            rs.getString("Start"), rs.getString("End"), rs.getInt("Customer_ID"),
-                            rs.getInt("User_ID"), rs.getInt("Contact_ID"), rs.getString("Contact_Name"));
-
-                    // add the appointment to the appointments array list
-                    getApp().addAppointment(appointment);
-
-                    System.out.println("appointment added: " + appointment.getTitle());
-
-                }
-            } catch (Exception e) {
-                System.out.println("Error: " + e.getMessage());
-            }
-
-            // display the appointments on the table view
 
         });
 
