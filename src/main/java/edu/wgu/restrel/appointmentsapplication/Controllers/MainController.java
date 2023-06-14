@@ -4,15 +4,14 @@ import edu.wgu.restrel.appointmentsapplication.AbstractClass.AppController;
 import edu.wgu.restrel.appointmentsapplication.Models.*;
 import edu.wgu.restrel.appointmentsapplication.Utils.DatabaseManager;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -108,6 +107,11 @@ public class MainController extends AppController {
     @FXML
     private Button deleteAppointmentButton;
 
+    @FXML
+    private ChoiceBox monthChoiceBox;
+    @FXML
+    private ChoiceBox weekChoiceBox;
+
     /* exit */
     @FXML
     private Button exitButton;
@@ -126,6 +130,9 @@ public class MainController extends AppController {
 
     ArrayList<VBox> vboxes;
 
+    private int monthScrollIndex = 0; // is used to determine if the user is scrolling forward or backward through the
+                                      // months
+
     /**
      * This method is called by the FXMLLoader when initialization is complete
      * it initializes the navButtons and vboxes array and sets the default selected
@@ -133,6 +140,8 @@ public class MainController extends AppController {
      */
     @FXML
     private void initialize() {
+
+        // Disable automatic hiding of popup
 
         // initialize the button array
         navButtons = new ArrayList<Button>();
@@ -158,6 +167,11 @@ public class MainController extends AppController {
         divisionColumn.setCellValueFactory(new PropertyValueFactory<Customer, Integer>("division"));
         countryColumn.setCellValueFactory(new PropertyValueFactory<Customer, String>("country"));
 
+        // set the width of the columns
+        customerNameColumn.prefWidthProperty().bind(appointmentsTable.widthProperty().multiply(0.1));
+        phoneNumberColumn.prefWidthProperty().bind(appointmentsTable.widthProperty().multiply(0.1));
+        addressColumn.prefWidthProperty().bind(appointmentsTable.widthProperty().multiply(0.15));
+
         // columns for appointments table
         appointmentIdColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("appointmentId"));
         appointmentTitleColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("title"));
@@ -166,10 +180,68 @@ public class MainController extends AppController {
         appointmentLocationColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("location"));
         appointmentContactColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("contact"));
         appointmentTypeColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("type"));
-        appointmentStartColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("start"));
-        appointmentEndColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("end"));
+        appointmentStartColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("startLocal"));
+        appointmentEndColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("endLocal"));
         appointmentCustomerIdColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("customerId"));
         appointmentUserIdColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("userId"));
+
+        appointmentTitleColumn.prefWidthProperty().bind(appointmentsTable.widthProperty().multiply(0.1));
+        appointmentDescriptionColumn.prefWidthProperty().bind(appointmentsTable.widthProperty().multiply(0.15));
+        appointmentStartColumn.prefWidthProperty().bind(appointmentsTable.widthProperty().multiply(0.15));
+        appointmentEndColumn.prefWidthProperty().bind(appointmentsTable.widthProperty().multiply(0.15));
+
+        refreshMonthsInChoiceBox();
+
+    }
+
+    /**
+     * display the months in the choice box for the last 6 months and the
+     * next 6 months including the year, so that the user can select a month filter
+     * for the appointments table
+     */
+    private void refreshMonthsInChoiceBox() {
+
+        // clear the choice box
+        monthChoiceBox.getItems().clear();
+
+        LocalDate scrolledDate = null;
+
+        // find the scrolled date based on the offset of the monthScrollIndex
+        if (monthScrollIndex < 0) {
+
+            scrolledDate = LocalDate.now().minusMonths(Math.abs(monthScrollIndex));
+
+        } else {
+
+            scrolledDate = LocalDate.now().plusMonths(monthScrollIndex);
+
+        }
+
+        // add default value to month choice box
+        monthChoiceBox.getItems().add("By Month");
+
+        // select that value
+        monthChoiceBox.getSelectionModel().selectFirst();
+
+        // add a value that will indicate that the user wants to look at 6 more previous
+        // months
+        monthChoiceBox.getItems().add("<Previous 6 Months>");
+
+        // loop through the last 6 months and add them to the choice box
+        for (int i = 6; i > 0; i--) {
+            LocalDate date = scrolledDate.minusMonths(i);
+            monthChoiceBox.getItems().add(date.getYear() + " " + date.getMonth().toString());
+        }
+
+        // loop through the next 6 months and add them to the choice box
+        for (int i = 0; i < 6; i++) {
+            LocalDate date = scrolledDate.plusMonths(i);
+            monthChoiceBox.getItems().add(date.getYear() + " " + date.getMonth().toString());
+        }
+
+        // add a value that will indicate that the user wants to look at 6 more future
+        // months
+        monthChoiceBox.getItems().add("<Next 6 Months>");
 
     }
 
@@ -199,6 +271,9 @@ public class MainController extends AppController {
 
         // refresh the appointments table
         refreshAppointmentContent();
+
+        // in the monthChoiceBox, select first item
+        monthChoiceBox.getSelectionModel().selectFirst();
     }
 
     /**
@@ -278,24 +353,24 @@ public class MainController extends AppController {
     private void onDeleteCustomerButtonClick() {
         System.out.println("Delete customer button clicked");
 
-        // prompt the user to confirm that they want to delete the customer
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this customer?");
-        alert.showAndWait();
+        System.out.println("attempting to delete customer");
 
-        if (alert.getResult().getText().equals("Cancel")) {
-            return;
-        } else {
-            System.out.println("attempting to delete customer");
+        // get the selected customer from the table
+        Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
 
-            // get the selected customer from the table
-            Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
+        // request validation for delete
+        FormValidationState formValidationState = requestCustomerDeletionValidation(selectedCustomer);
 
-            // request validation for delete
-            FormValidationState formValidationState = requestCustomerDeletionValidation(selectedCustomer);
+        if (formValidationState.isValid()) {
+            System.out.println("validation passed");
 
-            if (formValidationState.isValid()) {
-                System.out.println("validation passed");
+            // prompt the user to confirm that they want to delete the customer
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this customer?");
+            alert.showAndWait();
 
+            if (alert.getResult().getText().equals("Cancel")) {
+                return;
+            } else {
                 // delete the customer from the database
                 DatabaseManager dbmanager = new DatabaseManager();
 
@@ -316,13 +391,13 @@ public class MainController extends AppController {
                 // refresh the customers table
                 this.refreshCustomerContent();
 
-            } else {
-
-                alertError(formValidationState.getMessage(), "Delete Customer");
-
-                return;
-
             }
+
+        } else {
+
+            alertError(formValidationState.getMessage(), "Delete Customer");
+
+            return;
 
         }
 
@@ -338,14 +413,15 @@ public class MainController extends AppController {
         System.out.println("Add appointment button clicked");
 
         try {
-            AppController appController = this.getApp().setShowScene("appointments.fxml", "Appointment Form");
-            ((AppointmentsController) appController).setApp(this.getApp());
 
             // get the selected customer from the table
             Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
 
             // if not null then set the selected customer in the form
             if (selectedCustomer != null) {
+                AppController appController = this.getApp().setShowScene("appointments.fxml", "Appointment Form");
+                ((AppointmentsController) appController).setApp(this.getApp());
+
                 ((AppointmentsController) appController).setSelectedCustomer(selectedCustomer);
             } else {
                 alertWarning("Please select a customer to schedule an appointment with", "Add Appointment");
@@ -357,19 +433,24 @@ public class MainController extends AppController {
 
     }
 
+    /**
+     * This method handles the modify appointment button click event
+     * It opens up the form where an appointment can be modified
+     */
     @FXML
     private void onModifyAppointmentButtonClick() {
         System.out.println("Modify appointment button clicked");
 
         try {
-            AppController appController = this.getApp().setShowScene("appointments.fxml", "Appointment Form");
-            ((AppointmentsController) appController).setApp(this.getApp());
 
             // get the selected appointment from the table
             Appointment selectedAppointment = appointmentsTable.getSelectionModel().getSelectedItem();
 
             // if not null then set the selected appointment in the form
             if (selectedAppointment != null) {
+                AppController appController = this.getApp().setShowScene("appointments.fxml", "Appointment Form");
+                ((AppointmentsController) appController).setApp(this.getApp());
+
                 ((AppointmentsController) appController).setSelectedAppointment(selectedAppointment);
 
                 // find customer based on customer id of selected appointment
@@ -392,9 +473,95 @@ public class MainController extends AppController {
         }
     }
 
+    /**
+     * This method handles the delete appointment button click event
+     * It prompts the user to confirm that they want to delete the selected
+     * appointment and then deletes it from the database
+     */
     @FXML
     private void onDeleteAppointmentButtonClick() {
         System.out.println("Delete appointment button clicked");
+
+        // get the selected appointment from the table
+        Appointment selectedAppointment = appointmentsTable.getSelectionModel().getSelectedItem();
+
+        // ask the user to confirm that they want to delete the appointment
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this customer?");
+        alert.showAndWait();
+
+        if (alert.getResult().getText().equals("Cancel")) {
+            return;
+        } else {
+            // delete the appointment from the database
+            DatabaseManager dbmanager = new DatabaseManager();
+
+            String query = "DELETE FROM appointments WHERE Appointment_ID = ? ;";
+
+            // execute the query
+            dbmanager.executeUpdate(query, (rs) -> {
+                try {
+                    System.out.println("appointment deleted");
+                } catch (Exception e) {
+                    System.out.println("Error: " + e.getMessage());
+                }
+
+            }, selectedAppointment.getAppointmentId());
+
+            dbmanager.disconnect();
+
+            // refresh the appointments table
+            this.refreshAppointmentContent();
+
+        }
+
+    }
+
+    /**
+     * Handles the month choice box change event
+     * This method will populate the week choice box based on the month selected and
+     * also display the appointments for the selected month in the appointments
+     * table
+     */
+    @FXML
+    private void onMonthChoiceBoxChange() {
+        System.out.println("Month choice box changed");
+
+        // get value of the selected item
+        String monthChoiceValue = (String) monthChoiceBox.getSelectionModel().getSelectedItem();
+
+        // if the user selects the default value, then return
+        if (monthChoiceValue.equals("By Month")) {
+            return;
+        }
+
+        // if the user selects the go back 6 months value, then go back 6 months
+        else if (monthChoiceValue.equals("<Previous 6 Months>")) {
+            monthScrollIndex -= 6;
+            refreshMonthsInChoiceBox();
+        }
+
+        // if the user selects the go forward 6 months value, then go forward 6 months
+        else if (monthChoiceValue.equals("<Next 6 Months>")) {
+            monthScrollIndex += 6;
+            refreshMonthsInChoiceBox();
+        } else {
+
+            // refresh appointments from db
+            getApp().getAppointmentsFromDB(monthChoiceValue);
+
+            // displayed new appointments
+            displayAppointmentsTable();
+
+        }
+
+    }
+
+    /**
+     * Handles the week choice box change event
+     * This method will display the appointments for the selected week in the table
+     */
+    private void onWeekChoiceBoxChange() {
+        System.out.println("Week choice box changed");
     }
 
     @FXML
@@ -460,7 +627,7 @@ public class MainController extends AppController {
         System.out.println("refreshing appointment content");
 
         this.getCountriesFromDB();
-        getApp().getAppointmentsFromDB();
+        getApp().getAppointmentsFromDB(null);
         this.displayAppointmentsTable();
     }
 
@@ -647,6 +814,7 @@ public class MainController extends AppController {
 
             // Add the appointments to the table
             appointmentsTable.setItems(getApp().getAppointments());
+
         } else {
             System.out.println("appointments is null");
         }

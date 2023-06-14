@@ -15,6 +15,7 @@
             prefHeight="400.0" prefWidth="600.0"
             stylesheets="@app.css"
             styleClass="appointments_view"
+            alignment="CENTER" spacing="40.0"
 >
 
     <!--Appointments Form -->
@@ -32,70 +33,66 @@
         <VBox alignment="CENTER" spacing="10.0"  styleClass="appointment_section">
             <!--customer id is disable, view only-->
             <Label text="Appointment ID:" />
-            <TextField fx:id="appointmentIdField"  promptText="Auto-generated" editable="false"/>
+            <TextField fx:id="appointmentIdField"  promptText="Auto-generated" editable="false"  styleClass="auto_form_field"/>
 
             <Label text="Title:" />
 
-            <TextField fx:id="titleField"/>
+            <TextField fx:id="titleField" styleClass="form_field"/>
 
             <Label text="Description:" />
 
-            <TextField fx:id="descriptionField" />
+            <TextField fx:id="descriptionField" styleClass="form_field" />
 
             <Label text="Location:" />
 
-            <TextField fx:id="locationField" />
+            <TextField fx:id="locationField" styleClass="form_field"/>
 
             <Label text="Type:" />
 
-            <TextField fx:id="typeField" />
+            <TextField fx:id="typeField" styleClass="form_field"/>
 
-
-            
 
         </VBox>
 
         <VBox alignment="CENTER" spacing="10.0"  styleClass="contact_section">
             <Label text="Contact:" />
 
-            <ChoiceBox fx:id="contactChoiceBox"/>
+            <ChoiceBox fx:id="contactChoiceBox" styleClass="form_field"/>
 
             <Label text="Date:" />
 
-            <DatePicker fx:id="datePicker" editable="false" />
+            <DatePicker fx:id="datePicker" editable="false" styleClass="form_field"/>
 
             <Label text="Start Time (Local):" />
 
             <HBox spacing="10.0">
-                <ChoiceBox fx:id="startHourChoiceBox" />
+                <ChoiceBox fx:id="startHourChoiceBox" styleClass="time_field"/>
                 <Label text=" : " />
-                <ChoiceBox fx:id="startMinuteChoiceBox" />
-                <ChoiceBox fx:id="startAmPmChoiceBox" />
+                <ChoiceBox fx:id="startMinuteChoiceBox" styleClass="time_field"/>
+                <ChoiceBox fx:id="startAmPmChoiceBox" styleClass="time_field"/>
             </HBox>
 
 
             <Label text="End Time (Local):" />
 
             <HBox spacing="10.0">
-                <ChoiceBox fx:id="endHourChoiceBox" />
+                <ChoiceBox fx:id="endHourChoiceBox" styleClass="time_field"/>
                 <Label text=" : " />
-                <ChoiceBox fx:id="endMinuteChoiceBox" />
-                <ChoiceBox fx:id="endAmPmChoiceBox" />
+                <ChoiceBox fx:id="endMinuteChoiceBox" styleClass="time_field"/>
+                <ChoiceBox fx:id="endAmPmChoiceBox" styleClass="time_field"/>
             </HBox>
 
         </VBox>
 
         <VBox alignment="CENTER" spacing="30.0"  styleClass="time_section">
-            <Label fx:id="businessHoursLabel" text="Bussiness Hours: " />
-            
-
+            <Label fx:id="businessHoursLabel" text="Bussiness Hours: " styleClass="business_hours_label" />
         </VBox>
 
     </HBox>
 
-    <HBox styleClass="form_selection_buttons" spacing="10.0" alignment="TOP_CENTER">
-        <Button text="Submit" onAction="#onSubmitButtonClick"/>
-        <Button text="Cancel" onAction="#onCancelButtonClick"/>
+    <HBox styleClass="form_selection_buttons" spacing="40.0" alignment="TOP_CENTER">
+        <Button text="Submit" onAction="#onSubmitButtonClick" styleClass="form_button"/>
+        <Button text="Cancel" onAction="#onCancelButtonClick" styleClass="form_button"/>
     </HBox>
 
 

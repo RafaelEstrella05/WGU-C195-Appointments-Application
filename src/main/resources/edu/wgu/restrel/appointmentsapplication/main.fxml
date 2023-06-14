@@ -9,7 +9,7 @@
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="edu.wgu.restrel.appointmentsapplication.Controllers.MainController"
-            prefHeight="400.0" prefWidth="600.0"
+            prefHeight="400.0" prefWidth="700.0"
             stylesheets="@app.css"
             styleClass="main"
             >
@@ -30,7 +30,7 @@
             <Label styleClass="section-labels" text="Customers" />
 
             <!--add a tableview to display the data-->
-            <TableView fx:id="customersTable" prefHeight="200.0" prefWidth="200.0">
+            <TableView fx:id="customersTable" prefHeight="400.0" prefWidth="200.0">
                 <columns>
                     <!--customer name, address, postal code, phone number, division, country-->
                     <TableColumn fx:id="customerIdColumn" text="Customer ID"/>
@@ -45,9 +45,9 @@
 
             <HBox alignment="TOP_RIGHT" spacing="10.0">
                 <Button styleClass="option-button" text="Schedule Appointment" onAction="#onAddAppointmentButtonClick"/>
-                <Button styleClass="option-button" text="Add" onAction="#onAddCustomerButtonClick"/>
-                <Button styleClass="option-button" text="Modify" onAction="#onModifyCustomerButtonClick"/>
-                <Button styleClass="option-button" text="Delete" onAction="#onDeleteCustomerButtonClick"/>
+                <Button styleClass="option-button" text="Add Customer" onAction="#onAddCustomerButtonClick"/>
+                <Button styleClass="option-button" text="Modify Customer" onAction="#onModifyCustomerButtonClick"/>
+                <Button styleClass="option-button" text="Delete Customer" onAction="#onDeleteCustomerButtonClick"/>
             </HBox>
         </VBox>
 
@@ -56,8 +56,13 @@
 
             <Label styleClass="section-labels" text="Appointments" />
 
-            <!--add a tableview to display the data-->
-            <TableView fx:id="appointmentsTable" prefHeight="200.0" prefWidth="200.0">
+            <HBox alignment="TOP_RIGHT" spacing="10.0">
+                <ChoiceBox fx:id="monthChoiceBox" onAction="#onMonthChoiceBoxChange" styleClass="choicebox"/>
+                <ChoiceBox fx:id="weekChoiceBox" onAction="#onMonthChoiceBoxChange" styleClass="choicebox"/>
+            </HBox>
+
+            <!--appointments tableview-->
+            <TableView fx:id="appointmentsTable" prefHeight="400.0" prefWidth="200.0">
                 <columns>
                     <TableColumn fx:id="appointmentIdColumn" text="Appointment ID"/>
                     <TableColumn fx:id="appointmentTitleColumn" text="Title"/>
@@ -65,8 +70,8 @@
                     <TableColumn fx:id="appointmentLocationColumn" text="Location"/>
                     <TableColumn fx:id="appointmentContactColumn" text="Contact"/>
                     <TableColumn fx:id="appointmentTypeColumn" text="Type"/>
-                    <TableColumn fx:id="appointmentStartColumn" text="Start"/>
-                    <TableColumn fx:id="appointmentEndColumn" text="End"/>
+                    <TableColumn fx:id="appointmentStartColumn" text="Start (Local)"/>
+                    <TableColumn fx:id="appointmentEndColumn" text="End (Local)"/>
                     <TableColumn fx:id="appointmentCustomerIdColumn" text="Customer ID"/>
                     <TableColumn fx:id="appointmentUserIdColumn" text="User ID"/>
                 </columns>
@@ -74,8 +79,8 @@
 
 
             <HBox alignment="TOP_RIGHT" spacing="10.0">
-                <Button styleClass="option-button" text="Modify" onAction="#onModifyAppointmentButtonClick"/>
-                <Button styleClass="option-button" text="Delete" onAction="#onDeleteAppointmentButtonClick"/>
+                <Button styleClass="option-button" text="Modify Appointment" onAction="#onModifyAppointmentButtonClick"/>
+                <Button styleClass="option-button" text="Cancel Appointment" onAction="#onDeleteAppointmentButtonClick"/>
             </HBox>
         </VBox>
 

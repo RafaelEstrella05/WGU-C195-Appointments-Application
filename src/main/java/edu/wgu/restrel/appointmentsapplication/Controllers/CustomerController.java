@@ -14,6 +14,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 
 /**
  * This controller handles the customer view and actions for the application
@@ -49,6 +50,26 @@ public class CustomerController extends AppController implements FormValidation 
     // initialize method
     public void initialize() {
         System.out.println("CustomerController initialized");
+
+        // phoneNumberField only accept numbers
+        TextFormatter<String> numberFormatter = new TextFormatter<>(change -> {
+            if (change.getControlNewText().matches("\\d*")) {
+                return change;
+            }
+            return null;
+        });
+
+        phoneNumberField.setTextFormatter(numberFormatter);
+
+        // postal code only accept numbers
+        TextFormatter<String> postalCodeFormatter = new TextFormatter<>(change -> {
+            if (change.getControlNewText().matches("\\d*")) {
+                return change;
+            }
+            return null;
+        });
+
+        postalCodeField.setTextFormatter(postalCodeFormatter);
     }
 
     /**

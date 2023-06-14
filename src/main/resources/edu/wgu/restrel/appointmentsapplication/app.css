@@ -1,15 +1,55 @@
 
 /*Login Section*/
 .login {
-    -fx-background-color: rgb(221, 231, 255);
+    -fx-background-color: rgb(169, 186, 228);
 }
 
 .appointments_view{
-    -fx-background-color: rgb(221, 231, 255);
+    -fx-background-color: rgb(169, 186, 228);
 }
 
 
-/*Main Section*/
+.form_field{
+    -fx-background-color: white;
+    -fx-background-radius: 0 0 0 0;
+    -fx-text-fill: black;
+    -fx-padding: 5px;
+    -fx-border-color: rgb(255, 255, 255);
+    -fx-min-width: 100px;
+}
+
+.auto_form_field{
+    -fx-background-color: rgba(255, 255, 255, 0.726);
+    -fx-background-radius: 0 0 0 0;
+    -fx-text-fill: black;
+    -fx-padding: 5px;
+    -fx-border-color: rgb(255, 255, 255);
+    -fx-min-width: 100px;
+}
+
+.time_field{
+    -fx-background-color: white;
+    -fx-background-radius: 0 0 0 0;
+    -fx-text-fill: black;
+    -fx-padding: 5px;
+    -fx-border-color: rgb(255, 255, 255);
+    -fx-min-width: 50px;
+}
+
+.form_button{
+    -fx-background-color: rgb(82, 107, 169);
+    -fx-background-radius: 5 5 5 5;
+    -fx-text-fill: white;
+    -fx-padding: 6px;
+    -fx-min-width: 100px;
+}
+
+.business_hours_label{
+    -fx-font-size: 15px;
+    -fx-text-fill: rgb(0, 0, 0);
+    
+}
+
 
 /*Navbar*/
 .navbar{
@@ -29,12 +69,12 @@
 
 .appointment_content{
     -fx-padding: 10px;
-    -fx-background-color: rgb(221, 231, 255);
+    -fx-background-color: rgb(169, 186, 228);
 }
 
 .navbar-selection-button{
     -fx-background-radius: 10 10 0 0;
-    -fx-background-color: rgb(221, 231, 255);
+    -fx-background-color: rgb(169, 186, 228);
     -fx-text-fill: black;
     -fx-padding: 5px;
     -fx-font-size: 12px;
@@ -75,11 +115,27 @@
     -fx-text-fill: rgb(255, 255, 255);
 }
 
+.customer_view{
+    -fx-background-color: rgb(169, 186, 228);
+}
+
 .option-button{
-    -fx-background-color: rgb(221, 231, 255);
+    -fx-background-color: rgb(169, 186, 228);
     -fx-background-radius: 0 0 10 10;
     -fx-text-fill: black;
     -fx-padding: 10px;
+
+    -fx-border-color: rgb(255, 255, 255);
+    -fx-border-width: 5 0 0 0;
 }
 
+.choicebox{
+    -fx-background-color: rgb(169, 186, 228);
+    -fx-background-radius: 10 10 0 0;
+    -fx-text-fill: black;
+    -fx-padding: 5px;
+
+    -fx-border-color: rgb(255, 255, 255);
+    -fx-border-width: 0 0 5 0;
+}
 

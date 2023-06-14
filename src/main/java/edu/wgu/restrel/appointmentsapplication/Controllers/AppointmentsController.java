@@ -89,7 +89,7 @@ public class AppointmentsController extends AppController implements FormValidat
         // and EST
         populateDateTimeLabels();
 
-        prefillWithTestData(); // FIX ME: remove when done testing
+        // prefillWithTestData(); // FIX ME: remove when done testing
 
     }
 
@@ -185,20 +185,22 @@ public class AppointmentsController extends AppController implements FormValidat
                     // run mysql query to search users table for user name and password
                     dbmanager.executeUpdate(insertQuery, (ps) -> {
                         System.out.println("Executed query: " + insertQuery);
-                        // switch form to main view
-                        try {
-                            AppController appController = this.getApp().setShowScene("main.fxml",
-                                    "Appointments Manager");
-                            ((MainController) appController).setApp(this.getApp());
-                            ((MainController) appController).refreshCustomerContent();
-
-                        } catch (IOException e) {
-                            System.out.println("IOException: " + e.getMessage());
-                        }
 
                     }, title, description, location, type,
                             formattedStartDateTime,
                             formattedEndDateTime, customerId, userId, contactId);
+
+                }
+
+                // switch form to main view
+                try {
+                    AppController appController = this.getApp().setShowScene("main.fxml",
+                            "Appointments Manager");
+                    ((MainController) appController).setApp(this.getApp());
+                    ((MainController) appController).refreshCustomerContent();
+
+                } catch (IOException e) {
+                    System.out.println("IOException: " + e.getMessage());
                 }
 
             } else {
@@ -238,8 +240,20 @@ public class AppointmentsController extends AppController implements FormValidat
      */
     public void setSelectedCustomer(Customer customer) {
 
+        // if selected appointment is null
+        if (selectedAppointment == null) {
+            // set the selected appointment to a new appointment
+            formStateLabel.setText("Scheduling appointment for " + customer.getCustomerName());
+        } else {
+
+            if (getSelectedCustomer() != null) {
+                // change the text for formStateLabel to indicate that the form is being updated
+                formStateLabel.setText("Modifying appointment for " + getSelectedCustomer().getCustomerName());
+            }
+
+        }
+
         // change the text for formStateLabel
-        formStateLabel.setText("Scheduling appointment for " + customer.getCustomerName());
 
         this.selectedCustomer = customer;
     }
@@ -278,9 +292,6 @@ public class AppointmentsController extends AppController implements FormValidat
      * @param appointment
      */
     public void populateForm(Appointment appointment) {
-
-        // change the text for formStateLabel to indicate that the form is being updated
-        formStateLabel.setText("Modifying appointment for " + getSelectedCustomer().getCustomerName());
 
         // set the selected appointment
         setSelectedAppointment(appointment);
@@ -416,7 +427,7 @@ public class AppointmentsController extends AppController implements FormValidat
                 + formatTime(businessEndLocal.toLocalTime()) + " "
                 + defaultTimeZone.getDisplayName(TextStyle.SHORT, Locale.getDefault()) + " (local time)");
 
-        businessHoursLabel.setText(estStr + "   /   " + localStr);
+        businessHoursLabel.setText(estStr + "\n" + localStr);
 
     }
 
@@ -440,30 +451,6 @@ public class AppointmentsController extends AppController implements FormValidat
             isValid = false;
             errorMessage += "Appointment ID cannot be empty.\n";
         }
-
-        // based on the database schema, title, description, location, and type are not
-        // required
-        /*
-         * if (titleField.getText().isEmpty()) {
-         * isValid = false;
-         * errorMessage += "Title cannot be empty.\n";
-         * }
-         * 
-         * if (descriptionField.getText().isEmpty()) {
-         * isValid = false;
-         * errorMessage += "Description cannot be empty \n";
-         * }
-         * 
-         * if (locationField.getText().isEmpty()) {
-         * isValid = false;
-         * errorMessage += "Location cannot be empty \n";
-         * }
-         * 
-         * if (typeField.getText().isEmpty()) {
-         * isValid = false;
-         * errorMessage += "Type cannot be empty \n";
-         * }
-         */
 
         if (contactChoiceBox.getValue() == null) {
             isValid = false;
@@ -597,7 +584,7 @@ public class AppointmentsController extends AppController implements FormValidat
      */
     private boolean isAppointmentOverlapping() {
         boolean isOverlapping = false;
-        getApp().getAppointmentsFromDB(); // refresh the appointments from the database
+        getApp().getAppointmentsFromDB(null); // refresh the appointments from the database
 
         // get the start and end times for the appointment
         LocalTime selectedStartTimeLocal = appointmentDateTimes.getSelectedStartTimeLocal();

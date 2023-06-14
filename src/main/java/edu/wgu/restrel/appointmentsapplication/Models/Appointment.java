@@ -18,14 +18,15 @@ public class Appointment {
     private String description;
     private String location;
     private String type;
-    private String start;
-    private String end;
+    private String start; // in UTC
+    private String end; // in UTC
     private int customerId;
     private int userId;
     private int contactId;
     private String contact;
-    private ZonedDateTime startDateTime;
-    private ZonedDateTime endDateTime;
+    private String startLocal;
+    private String endLocal;
+    private LocalDate startDate;
 
     /**
      * Constructor for Appointment class.
@@ -51,36 +52,14 @@ public class Appointment {
         this.type = type;
         this.start = start;
         this.end = end;
-        this.startDateTime = convertStringToZonedDateTime(start);
-        this.endDateTime = convertStringToZonedDateTime(end);
+        this.startLocal = convertUTCStringToLocalString(start);
+        this.endLocal = convertUTCStringToLocalString(end);
+        setStartDate(start);
         this.customerId = customerId;
         this.userId = userId;
         this.contactId = contactId;
         this.contact = contact;
 
-    }
-
-    public ZonedDateTime getStartDateTime() {
-        return this.startDateTime;
-    }
-
-    public void setStartDateTime(ZonedDateTime startDateTime) {
-        this.startDateTime = startDateTime;
-    }
-
-    public ZonedDateTime getEndDateTime() {
-        return this.endDateTime;
-    }
-
-    public void setEndDateTime(ZonedDateTime endDateTime) {
-        this.endDateTime = endDateTime;
-    }
-
-    // Helper method to convert a string to ZonedDateTime in UTC
-    private ZonedDateTime convertStringToZonedDateTime(String dateTimeString) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime localDateTime = LocalDateTime.parse(dateTimeString, formatter);
-        return ZonedDateTime.of(localDateTime, ZoneId.of("UTC"));
     }
 
     /**
@@ -210,20 +189,72 @@ public class Appointment {
     }
 
     /**
+     * Getter for startLocal.
+     * 
+     * @return startLocal
+     */
+    public String getStartLocal() {
+        return this.startLocal;
+    }
+
+    /**
+     * Setter for startLocal.
+     * 
+     * @param startLocal
+     */
+    public void setStartLocal(String startLocal) {
+        this.startLocal = startLocal;
+    }
+
+    /**
+     * Getter for endLocal.
+     * 
+     * @return endLocal
+     */
+    public String getEndLocal() {
+        return this.endLocal;
+    }
+
+    /**
+     * Setter for endLocal.
+     * 
+     * @param endLocal
+     */
+    public void setEndLocal(String endLocal) {
+        this.endLocal = endLocal;
+    }
+
+    /**
      * Getter for startDate in LocalDate format.
      * 
      * @return startDate
      */
     public LocalDate getStartDate() {
-        // Convert startDateTime to the system's default time zone
-        ZoneId localZoneId = ZoneId.systemDefault();
-        ZonedDateTime localZoneDateTime = this.startDateTime.withZoneSameInstant(localZoneId);
+        return this.startDate;
+    }
 
-        // Extract the local date component from localZoneDateTime
+    /**
+     * Setter for startDate in LocalDate format.
+     * 
+     * @param start
+     */
+    public void setStartDate(String start) {
+
+        // convert start to LocalDate
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                .withZone(ZoneId.of("UTC"));
+        ZonedDateTime utcDateTime = ZonedDateTime.parse(start, formatter);
+
+        // Convert the UTC ZonedDateTime to the system's default time zone
+        ZoneId localZoneId = ZoneId.systemDefault();
+        ZonedDateTime localZoneDateTime = utcDateTime.withZoneSameInstant(localZoneId);
+
+        // Extract the LocalDate component from the localZoneDateTime
         LocalDate localStartDate = localZoneDateTime.toLocalDate();
 
-        // Return the localStartDate
-        return localStartDate;
+        // set the localStartDate
+        this.startDate = localStartDate;
+
     }
 
     /**
@@ -233,9 +264,15 @@ public class Appointment {
      * @return startTime
      */
     public LocalTime getStartTime() {
-        // Convert startDateTime to the system's default time zone
+
+        // parse the UTC date time string into a ZonedDateTime
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                .withZone(ZoneId.of("UTC"));
+        ZonedDateTime utcDateTime = ZonedDateTime.parse(start, formatter);
+
+        // Convert utcDateTime to the system's default time zone
         ZoneId localZoneId = ZoneId.systemDefault();
-        ZonedDateTime localZoneDateTime = this.startDateTime.withZoneSameInstant(localZoneId);
+        ZonedDateTime localZoneDateTime = utcDateTime.withZoneSameInstant(localZoneId);
 
         // Extract the local time component from localZoneDateTime
         LocalTime localStartTime = localZoneDateTime.toLocalTime();
@@ -250,9 +287,15 @@ public class Appointment {
      * @return endTime
      */
     public LocalTime getEndTime() {
+
+        // parse the UTC date time string into a ZonedDateTime
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                .withZone(ZoneId.of("UTC"));
+        ZonedDateTime utcDateTime = ZonedDateTime.parse(end, formatter);
+
         // Convert endDateTime to the system's default time zone
         ZoneId localZoneId = ZoneId.systemDefault();
-        ZonedDateTime localZoneDateTime = this.endDateTime.withZoneSameInstant(localZoneId);
+        ZonedDateTime localZoneDateTime = utcDateTime.withZoneSameInstant(localZoneId);
 
         // Extract the local time component from localZoneDateTime
         LocalTime localEndTime = localZoneDateTime.toLocalTime();
@@ -261,10 +304,34 @@ public class Appointment {
         return localEndTime;
     }
 
-    // Helper method to convert a string to LocalDateTime
-    private LocalDateTime convertStringToLocalDateTime(String dateTimeString) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return LocalDateTime.parse(dateTimeString, formatter);
+
+    /**
+     * Converts a UTC date time string to a local date time string from this format
+     * ("yyyy-MM-dd HH:mm:ss")
+     * to this format ("yyyy-MM-dd HH:mm a")
+     * 
+     * @param utcDateTimeString
+     * @return localDateTimeString
+     */
+    public String convertUTCStringToLocalString(String utcDateTimeString) {
+
+        // parse the UTC date time string into a ZonedDateTime
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                .withZone(ZoneId.of("UTC"));
+        ZonedDateTime utcDateTime = ZonedDateTime.parse(utcDateTimeString, formatter);
+
+        // Convert utcDateTime to the system's default time zone
+        ZoneId localZoneId = ZoneId.systemDefault();
+        ZonedDateTime localZoneDateTime = utcDateTime.withZoneSameInstant(localZoneId);
+
+        // Extract the local time component from localZoneDateTime
+        LocalDateTime localDateTime = localZoneDateTime.toLocalDateTime();
+
+        // Convert the localDateTime to a string
+        String localDateTimeString = localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm a"));
+
+        // Return the localDateTimeString
+        return localDateTimeString;
     }
 
     /**

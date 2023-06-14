@@ -17,16 +17,16 @@
 
     <HBox alignment="CENTER" spacing="10.0">
         <Label fx:id="userNameLabel" />
-        <TextField fx:id="usernameField" />
+        <TextField fx:id="usernameField" styleClass="form_field"/>
     </HBox>
 
     <HBox alignment="CENTER" spacing="10.0">
         <Label fx:id="passwordLabel"  />
-        <PasswordField fx:id="passwordField" />
+        <PasswordField fx:id="passwordField" styleClass="form_field"/>
     </HBox>
 
     <Label fx:id="locationLabel" />
 
-    <Button fx:id="submitButton" onAction="#onSubmitButtonClick"/>
+    <Button fx:id="submitButton" onAction="#onSubmitButtonClick" styleClass="form_button"/>
 
 </VBox>
