@@ -304,7 +304,6 @@ public class Appointment {
         return localEndTime;
     }
 
-
     /**
      * Converts a UTC date time string to a local date time string from this format
      * ("yyyy-MM-dd HH:mm:ss")
@@ -315,7 +314,7 @@ public class Appointment {
      */
     public String convertUTCStringToLocalString(String utcDateTimeString) {
 
-        // parse the UTC date time string into a ZonedDateTime
+        // Parse the UTC date time string into a ZonedDateTime
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
                 .withZone(ZoneId.of("UTC"));
         ZonedDateTime utcDateTime = ZonedDateTime.parse(utcDateTimeString, formatter);
@@ -327,8 +326,8 @@ public class Appointment {
         // Extract the local time component from localZoneDateTime
         LocalDateTime localDateTime = localZoneDateTime.toLocalDateTime();
 
-        // Convert the localDateTime to a string
-        String localDateTimeString = localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm a"));
+        // Convert the localDateTime to a string in 12-hour format with AM/PM
+        String localDateTimeString = localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a"));
 
         // Return the localDateTimeString
         return localDateTimeString;

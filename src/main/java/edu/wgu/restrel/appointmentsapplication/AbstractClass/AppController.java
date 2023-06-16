@@ -70,4 +70,24 @@ public abstract class AppController {
         alert.showAndWait();
     }
 
+    /**
+     * Alert Dialog for success messages
+     */
+    public void alertSuccess(String message, String type) {
+        System.out.println(message);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Success");
+        alert.setHeaderText(type);
+
+        // Create a TextArea to display the error message
+        TextArea textArea = new TextArea(message);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+
+        // Set the content of the Alert to the TextArea
+        alert.getDialogPane().setContent(textArea);
+
+        alert.showAndWait();
+    }
+
 }

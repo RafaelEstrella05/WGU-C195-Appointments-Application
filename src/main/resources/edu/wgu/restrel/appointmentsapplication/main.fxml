@@ -33,7 +33,7 @@
             <TableView fx:id="customersTable" prefHeight="400.0" prefWidth="200.0">
                 <columns>
                     <!--customer name, address, postal code, phone number, division, country-->
-                    <TableColumn fx:id="customerIdColumn" text="Customer ID"/>
+                    <TableColumn fx:id="customerIdColumn" text="ID"/>
                     <TableColumn fx:id="customerNameColumn" text="Customer Name"/>
                     <TableColumn fx:id="addressColumn" text="Address"/>
                     <TableColumn fx:id="postalCodeColumn" text="Postal Code"/>
@@ -58,13 +58,13 @@
 
             <HBox alignment="TOP_RIGHT" spacing="10.0">
                 <ChoiceBox fx:id="monthChoiceBox" onAction="#onMonthChoiceBoxChange" styleClass="choicebox"/>
-                <ChoiceBox fx:id="weekChoiceBox" onAction="#onMonthChoiceBoxChange" styleClass="choicebox"/>
+                <ChoiceBox fx:id="weekChoiceBox" onAction="#onWeekChoiceBoxChange" styleClass="choicebox"/>
             </HBox>
 
             <!--appointments tableview-->
             <TableView fx:id="appointmentsTable" prefHeight="400.0" prefWidth="200.0">
                 <columns>
-                    <TableColumn fx:id="appointmentIdColumn" text="Appointment ID"/>
+                    <TableColumn fx:id="appointmentIdColumn" text="ID"/>
                     <TableColumn fx:id="appointmentTitleColumn" text="Title"/>
                     <TableColumn fx:id="appointmentDescriptionColumn" text="Description"/>
                     <TableColumn fx:id="appointmentLocationColumn" text="Location"/>

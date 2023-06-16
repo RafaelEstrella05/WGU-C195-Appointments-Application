@@ -9,9 +9,17 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -133,6 +141,9 @@ public class MainController extends AppController {
     private int monthScrollIndex = 0; // is used to determine if the user is scrolling forward or backward through the
                                       // months
 
+    // Map month names to numbers
+    Map<String, String> monthMap = new HashMap<>();
+
     /**
      * This method is called by the FXMLLoader when initialization is complete
      * it initializes the navButtons and vboxes array and sets the default selected
@@ -140,6 +151,20 @@ public class MainController extends AppController {
      */
     @FXML
     private void initialize() {
+
+        // Map month names to numbers
+        monthMap.put("JANUARY", "01");
+        monthMap.put("FEBRUARY", "02");
+        monthMap.put("MARCH", "03");
+        monthMap.put("APRIL", "04");
+        monthMap.put("MAY", "05");
+        monthMap.put("JUNE", "06");
+        monthMap.put("JULY", "07");
+        monthMap.put("AUGUST", "08");
+        monthMap.put("SEPTEMBER", "09");
+        monthMap.put("OCTOBER", "10");
+        monthMap.put("NOVEMBER", "11");
+        monthMap.put("DECEMBER", "12");
 
         // Disable automatic hiding of popup
 
@@ -509,6 +534,11 @@ public class MainController extends AppController {
 
             dbmanager.disconnect();
 
+            // alert the user that the appointment was deleted, include the appointment id,
+            // and appointment type that was deleted
+            alertSuccess("Appointment ID: " + selectedAppointment.getAppointmentId() + "\n Type: "
+                    + selectedAppointment.getType(), "Appointment Successfully Cancelled");
+
             // refresh the appointments table
             this.refreshAppointmentContent();
 
@@ -525,6 +555,9 @@ public class MainController extends AppController {
     @FXML
     private void onMonthChoiceBoxChange() {
         System.out.println("Month choice box changed");
+
+        // set the week choice box to the default value
+        weekChoiceBox.getSelectionModel().selectFirst();
 
         // get value of the selected item
         String monthChoiceValue = (String) monthChoiceBox.getSelectionModel().getSelectedItem();
@@ -547,21 +580,100 @@ public class MainController extends AppController {
         } else {
 
             // refresh appointments from db
-            getApp().getAppointmentsFromDB(monthChoiceValue);
+            getApp().getAppointmentsFromDB(monthChoiceValue, null);
 
             // displayed new appointments
             displayAppointmentsTable();
+
+            // populate the week choice box with a list of all of the weeks in the selected
+            // month.
+            populateWeeksChoicBox(monthChoiceValue);
 
         }
 
     }
 
     /**
+     * This method will populate the week choice box with a list of all of the weeks
+     * that are within the month
+     * The format of the text is set as "2023-06-19 - 2023-06-25", "2023-06-26 -
+     * 2023-07-02", "2023-07-03 - 2023-07-09" so that the user can easily see the
+     * date range. Not all weeks will have 7 days in them.
+     * 
+     * @param monthChoiceValue
+     */
+    private void populateWeeksChoicBox(String monthChoiceValue) {
+
+        // add default value to week choice box
+        weekChoiceBox.getItems().clear();
+        weekChoiceBox.getItems().add("By Week");
+        // select the default value
+        weekChoiceBox.getSelectionModel().selectFirst();
+
+        // Split the monthChoiceValue into year and month
+        String[] parts = monthChoiceValue.split(" ");
+        String year = parts[0];
+        String month = parts[1]; // convert string month to number month
+
+        // Get the numeric month value
+        String numericMonth = monthMap.get(month);
+
+        // Get the first day of the month as a local date based on the selected month
+        LocalDate firstDayOfMonth = LocalDate.parse(year + "-" + numericMonth + "-01");
+
+        System.out.println("First day of month: " + firstDayOfMonth);
+
+        // Find out the day of the week for the first day
+        DayOfWeek dayOfWeek = firstDayOfMonth.getDayOfWeek();
+        int dayOfWeekValue = dayOfWeek.getValue(); // 1 (Monday) to 7 (Sunday)
+
+        System.out.println("Day of the week: " + dayOfWeek);
+
+        // Calculate the start and end dates for each week
+        LocalDate startDate = firstDayOfMonth;
+        while (startDate.getMonthValue() == Integer.parseInt(numericMonth)) {
+            LocalDate endDate = startDate.plusDays(6 - dayOfWeekValue);
+
+            int startDay = startDate.getDayOfMonth();
+            int endDay = endDate.getDayOfMonth();
+
+            String weekRange = startDay + " - " + endDay;
+            System.out.println("Week range: " + weekRange);
+
+            // Add week range to choice box
+            weekChoiceBox.getItems().add(weekRange);
+
+            startDate = endDate.plusDays(1);
+            dayOfWeekValue = 0; // Reset day of the week value for the next week
+        }
+
+        System.out.println("");
+    }
+
+    /**
      * Handles the week choice box change event
      * This method will display the appointments for the selected week in the table
      */
+    @FXML
     private void onWeekChoiceBoxChange() {
         System.out.println("Week choice box changed");
+        // get value of the selected item of the week
+        String weekChoiceValue = (String) weekChoiceBox.getSelectionModel().getSelectedItem();
+
+        // if the user selects the default value, then return
+        if (weekChoiceValue != null && weekChoiceValue.equals("By Week")) {
+            return;
+        } else {
+
+            // get value of the selected item of the month
+            String monthChoiceValue = (String) monthChoiceBox.getSelectionModel().getSelectedItem();
+
+            getApp().getAppointmentsFromDB(monthChoiceValue, weekChoiceValue);
+
+            // displayed new appointments
+            displayAppointmentsTable();
+        }
+
     }
 
     @FXML
@@ -577,7 +689,7 @@ public class MainController extends AppController {
     /**
      * This method styles the navbar buttons to show which one is selected
      * according to
-     * the button passed in.
+     * the button passed in and displays or hides the appropriate vbox
      */
     private void selectNavButton(Button button) {
 
@@ -627,7 +739,7 @@ public class MainController extends AppController {
         System.out.println("refreshing appointment content");
 
         this.getCountriesFromDB();
-        getApp().getAppointmentsFromDB(null);
+        getApp().getAppointmentsFromDB(null, null);
         this.displayAppointmentsTable();
     }
 
@@ -783,9 +895,6 @@ public class MainController extends AppController {
 
         if (getApp().getCustomers() != null) {
 
-            // Clear existing data from the table
-            // customersTable.getItems().clear();
-
             // Add the customers to the table
             // customersTable.setItems(getApp().getCustomers());
             customersTable.setItems(getApp().getCustomers());
@@ -808,9 +917,6 @@ public class MainController extends AppController {
             for (Appointment appointment : getApp().getAppointments()) {
                 System.out.println(appointment.getTitle());
             }
-
-            // Clear existing data from the table
-            // appointmentsTable.getItems().clear();
 
             // Add the appointments to the table
             appointmentsTable.setItems(getApp().getAppointments());

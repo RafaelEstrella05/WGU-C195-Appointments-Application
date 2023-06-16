@@ -41,7 +41,7 @@ public class AppointmentsApplication extends Application {
         loginController = (LoginController) setShowScene("login.fxml", "Appointment Manager");
         loginController.setApp(this);
 
-        // loginController.tempLoginPass(); // FIX ME: remove when done testing
+        loginController.tempLoginPass(); // FIX ME: remove when done testing
     }
 
     /**
@@ -206,12 +206,12 @@ public class AppointmentsApplication extends Application {
     }
 
     // getAppointmentsFromDB
-    public void getAppointmentsFromDB(String dateString) {
+    public void getAppointmentsFromDB(String dateString, String dayString) {
         // clear the appointments array list
         getAppointments().clear();
 
         // if date string is not specified, get all appointments
-        if (dateString == null) {
+        if (dateString == null && dayString == null) {
 
             DatabaseManager dbmanager = new DatabaseManager();
 
@@ -245,7 +245,8 @@ public class AppointmentsApplication extends Application {
             });
 
             dbmanager.disconnect();
-        } else { // if date string is specified, get appointments for that date
+        } else if (dateString != null && dayString == null) { // if date string is specified, get appointments for that
+                                                              // date
 
             DatabaseManager dbmanager = new DatabaseManager();
 
@@ -280,6 +281,44 @@ public class AppointmentsApplication extends Application {
 
             dbmanager.disconnect();
 
+        } else {
+            DatabaseManager dbmanager = new DatabaseManager();
+
+            // get appointments from the database
+            String query = "SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, contacts.Contact_ID, Contact_Name "
+                    +
+                    "FROM appointments appt " +
+                    "INNER JOIN contacts contacts ON contacts.Contact_ID = appt.Contact_ID " +
+                    "WHERE YEAR(Start) = ? AND MONTHNAME(Start) = ? AND DAYOFMONTH(Start) >= ? AND DAYOFMONTH(End) <= ?;";
+
+            // execute the query
+            dbmanager.executeQuery(query, (rs) -> {
+                try {
+                    while (rs.next()) {
+                        System.out.println(rs.getString("Title"));
+
+                        // create a new appointment object
+                        Appointment appointment = new Appointment(rs.getInt("Appointment_ID"), rs.getString("Title"),
+                                rs.getString("Description"), rs.getString("Location"), rs.getString("Type"),
+                                rs.getString("Start"), rs.getString("End"), rs.getInt("Customer_ID"),
+                                rs.getInt("User_ID"), rs.getInt("Contact_ID"), rs.getString("Contact_Name"));
+
+                        // add the appointment to the appointments array list
+                        addAppointment(appointment);
+
+                        System.out.println("appointment added: " + appointment.getTitle());
+
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error: " + e.getMessage());
+                }
+
+                // display the appointments on the table view
+
+            }, dateString.split(" ")[0], dateString.split(" ")[1], dayString.split("-")[0],
+                    dayString.split("-")[1]);
+
+            dbmanager.disconnect();
         }
 
     }

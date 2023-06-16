@@ -54,10 +54,7 @@
 
         </VBox>
 
-        <VBox alignment="CENTER" spacing="10.0"  styleClass="contact_section">
-            <Label text="Contact:" />
-
-            <ChoiceBox fx:id="contactChoiceBox" styleClass="form_field"/>
+        <VBox alignment="TOP_RIGHT" spacing="10.0"  styleClass="contact_section">
 
             <Label text="Date:" />
 
@@ -81,6 +78,10 @@
                 <ChoiceBox fx:id="endMinuteChoiceBox" styleClass="time_field"/>
                 <ChoiceBox fx:id="endAmPmChoiceBox" styleClass="time_field"/>
             </HBox>
+
+            <Label text="Contact:" />
+
+            <ChoiceBox fx:id="contactChoiceBox" styleClass="form_field"/>
 
         </VBox>
 

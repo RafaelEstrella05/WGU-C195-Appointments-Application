@@ -558,6 +558,28 @@ public class AppointmentsController extends AppController implements FormValidat
                 errorMessage += "Appointment time cannot be in the past \n";
             }
 
+            if (selectedAppointment != null) {
+
+                /*
+                // if the appointment date and time are different the selected appointment date
+                // and time
+                if (!appointmentDateTimes.getSelectedStartDateTimeLocal()
+                        .equals(selectedAppointment.getStartDateLocalTime())
+                        || !appointmentDateTimes.getSelectedEndDateTimeLocal()
+                                .equals(selectedAppointment.getEndDateLocalTime())) {
+                    // if current date is the same as appointment date and the appointment start or
+                    // end time is before the current time
+                    if (appointmentDateTimes.getSelectedDateLocal().equals(LocalDate.now())
+                            && (appointmentDateTimes.getSelectedStartTimeLocal().isBefore(LocalTime.now())
+                                    || appointmentDateTimes.getSelectedEndTimeLocal().isBefore(LocalTime.now()))) {
+                        isValid = false;
+                        errorMessage += "Appointment time cannot be in the past \n";
+                    }
+                }
+                
+                 */
+            }
+
             // check if start and end are not equal
             if (appointmentDateTimes.getSelectedStartTimeLocal()
                     .equals(appointmentDateTimes.getSelectedEndTimeLocal())) {
@@ -584,7 +606,7 @@ public class AppointmentsController extends AppController implements FormValidat
      */
     private boolean isAppointmentOverlapping() {
         boolean isOverlapping = false;
-        getApp().getAppointmentsFromDB(null); // refresh the appointments from the database
+        getApp().getAppointmentsFromDB(null, null); // refresh the appointments from the database
 
         // get the start and end times for the appointment
         LocalTime selectedStartTimeLocal = appointmentDateTimes.getSelectedStartTimeLocal();

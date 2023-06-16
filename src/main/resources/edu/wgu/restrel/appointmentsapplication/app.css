@@ -37,8 +37,8 @@
 }
 
 .form_button{
-    -fx-background-color: rgb(82, 107, 169);
-    -fx-background-radius: 5 5 5 5;
+    -fx-background-color: rgb(89, 105, 146);
+    -fx-background-radius: 2 2 2 2;
     -fx-text-fill: white;
     -fx-padding: 6px;
     -fx-min-width: 100px;
@@ -87,7 +87,7 @@
 }
 
 .selected{
-    -fx-background-color: rgb(82, 107, 169);
+    -fx-background-color: rgb(89, 105, 146);
     -fx-text-fill: rgb(255, 255, 255);
     /*make top border yellow*/
     -fx-border-color: rgb(255, 255, 0);
@@ -105,7 +105,7 @@
 
 /*main*/
 .main {
-    -fx-background-color: rgb(82, 107, 169);
+    -fx-background-color: rgb(89, 105, 146);
 }
 
 /*sections*/
