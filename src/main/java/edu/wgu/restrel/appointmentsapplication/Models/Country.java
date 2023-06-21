@@ -2,6 +2,12 @@ package edu.wgu.restrel.appointmentsapplication.Models;
 
 import java.util.ArrayList;
 
+/**
+ * Country class for storing country information
+ * 
+ * @author Rafael Estrella Paz
+ * @version 1.0
+ */
 public class Country {
 
     private int countryId;
@@ -30,7 +36,7 @@ public class Country {
     /**
      * Getter for CountryId
      * 
-     * @return
+     * @return countryId
      */
     public int getCountryId() {
         return countryId;
@@ -48,7 +54,7 @@ public class Country {
     /**
      * Getter for Country
      * 
-     * @return
+     * @return country
      */
     public String getCountry() {
         return country;
@@ -66,7 +72,7 @@ public class Country {
     /**
      * Getter for divisions
      * 
-     * @return
+     * @return associatedDivisions
      */
     public ArrayList<Division> getAssociatedDivisions() {
         return associatedDivisions;

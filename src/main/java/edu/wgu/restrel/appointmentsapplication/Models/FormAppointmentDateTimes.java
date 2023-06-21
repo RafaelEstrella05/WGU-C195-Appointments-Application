@@ -3,9 +3,13 @@ package edu.wgu.restrel.appointmentsapplication.Models;
 import java.time.*;
 
 /**
- * DateTimeAppointmentManager class for managing date and time
+ * FormAppointmentDateTimes class for managing date and times on the
+ * appointments form
+ * 
+ * @author Rafael Estrella Paz
+ * @version 1.0
  */
-public class AppointmentDateTimes {
+public class FormAppointmentDateTimes {
 
     // static value for business hours start and end times 8am - 10pm EST
     public static final LocalTime BUSINESS_START_LOCAL;
@@ -33,13 +37,13 @@ public class AppointmentDateTimes {
     /**
      * Constructor for DateTimeAppointmentManager
      */
-    public AppointmentDateTimes() {
+    public FormAppointmentDateTimes() {
     }
 
     /**
      * Getter for selectedDateLocal
      * 
-     * @param
+     * @return selectedDateLocal
      */
     public LocalDate getSelectedDateLocal() {
         return selectedDateLocal;
@@ -48,10 +52,30 @@ public class AppointmentDateTimes {
     /**
      * Getter for selectedStartTimeLocal
      * 
-     * @param
+     * @return selectedStartTimeLocal
      */
     public LocalTime getSelectedStartTimeLocal() {
         return selectedStartTimeLocal;
+    }
+
+    /**
+     * Gets the selected start date and time in local format based on
+     * selectedDateLocal and selectedStartTimeLocal.
+     * 
+     * @return LocalDateTime
+     */
+    public LocalDateTime getSelectedStartDateTimeLocal() {
+        return LocalDateTime.of(selectedDateLocal, selectedStartTimeLocal);
+    }
+
+    /**
+     * Gets the selected end date and time in local format based on
+     * selectedDateLocal and selectedEndTimeLocal.
+     * 
+     * @return LocalDateTime
+     */
+    public LocalDateTime getSelectedEndDateTimeLocal() {
+        return LocalDateTime.of(selectedDateLocal, selectedEndTimeLocal);
     }
 
     /**
@@ -82,7 +106,7 @@ public class AppointmentDateTimes {
     /**
      * Getter for selectedEndTimeLocal
      * 
-     * @param
+     * @return selectedEndTimeLocal
      */
     public LocalTime getSelectedEndTimeLocal() {
         return selectedEndTimeLocal;
@@ -90,6 +114,8 @@ public class AppointmentDateTimes {
 
     /**
      * Setter for dateLocal
+     * 
+     * @param dateLocal
      */
     public void setSelectedDateLocal(LocalDate dateLocal) {
         this.selectedDateLocal = dateLocal;

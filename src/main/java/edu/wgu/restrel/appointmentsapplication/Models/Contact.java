@@ -1,5 +1,11 @@
 package edu.wgu.restrel.appointmentsapplication.Models;
 
+/**
+ * Contact class for storing contact information
+ * 
+ * @author Rafael Estrella Paz
+ * @version 1.0
+ */
 public class Contact {
 
     private int contactId;

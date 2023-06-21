@@ -10,6 +10,9 @@ import java.time.format.DateTimeFormatter;
 /**
  * This is the Appointment class. It is used to keep track of appointment
  * information related to a customer.
+ * 
+ * @author Rafael Estrella Paz
+ * @version 1.0
  */
 public class Appointment {
 
@@ -302,6 +305,52 @@ public class Appointment {
 
         // Return the localEndTime
         return localEndTime;
+    }
+
+    /**
+     * Getter for startDateTime and LocalDate in LocalDateTime format.
+     * 
+     * @return startDateTime
+     */
+    public LocalDateTime getStartDateLocalTime() {
+
+        // parse the UTC date time string into a ZonedDateTime
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                .withZone(ZoneId.of("UTC"));
+        ZonedDateTime utcDateTime = ZonedDateTime.parse(start, formatter);
+
+        // Convert utcDateTime to the system's default time zone
+        ZoneId localZoneId = ZoneId.systemDefault();
+        ZonedDateTime localZoneDateTime = utcDateTime.withZoneSameInstant(localZoneId);
+
+        // Extract the local time component from localZoneDateTime
+        LocalDateTime localStartDateTime = localZoneDateTime.toLocalDateTime();
+
+        // Return the localStartDateTime
+        return localStartDateTime;
+    }
+
+    /**
+     * Getter for endDateTime and LocalDate in LocalDateTime format.
+     * 
+     * @return endDateTime
+     */
+    public LocalDateTime getEndDateLocalTime() {
+
+        // parse the UTC date time string into a ZonedDateTime
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                .withZone(ZoneId.of("UTC"));
+        ZonedDateTime utcDateTime = ZonedDateTime.parse(end, formatter);
+
+        // Convert utcDateTime to the system's default time zone
+        ZoneId localZoneId = ZoneId.systemDefault();
+        ZonedDateTime localZoneDateTime = utcDateTime.withZoneSameInstant(localZoneId);
+
+        // Extract the local time component from localZoneDateTime
+        LocalDateTime localEndDateTime = localZoneDateTime.toLocalDateTime();
+
+        // Return the localEndDateTime
+        return localEndDateTime;
     }
 
     /**

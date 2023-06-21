@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
+<?import javafx.collections.FXCollections?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="edu.wgu.restrel.appointmentsapplication.Controllers.MainController"
@@ -96,7 +97,19 @@
 
             <!--button to get report-->
             <HBox alignment="TOP_RIGHT" spacing="10.0">
-                <Button styleClass="option-button" text="Get Report" onAction="#onGetReportButtonClick"/>
+                
+                <!--ChoiceBox (Total appointments by Month and Type, Contact Schedules, Total Customers per Division)-->
+                <ChoiceBox fx:id="reportChoiceBox" styleClass="choicebox_upsidedown" onAction="#onReportChoiceBoxChanged">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Select a Report" />
+                            <String fx:value="Total appointments by Month and Type" />
+                            <String fx:value="Contact Schedules" />
+                            <String fx:value="Total Customers per Division" />
+                        </FXCollections>
+                    </items>
+                </ChoiceBox>
+
             </HBox>
         
         </VBox>

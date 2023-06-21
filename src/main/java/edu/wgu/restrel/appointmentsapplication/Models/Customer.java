@@ -1,5 +1,11 @@
 package edu.wgu.restrel.appointmentsapplication.Models;
 
+/**
+ * Customer class for storing customer information
+ * 
+ * @author Rafael Estrella Paz
+ * @version 1.0
+ */
 public class Customer {
 
     private int customerId;
@@ -9,7 +15,7 @@ public class Customer {
     private String phone;
     private int divisionId;
     private String division;
-    private int countyId;
+    private int countryId;
     private String country;
 
     // default constructor
@@ -35,7 +41,7 @@ public class Customer {
         this.phone = phone;
         this.divisionId = divisionId;
         this.division = division;
-        this.countyId = countryId;
+        this.countryId = countryId;
         this.country = country;
     }
 
@@ -174,7 +180,7 @@ public class Customer {
      * @return countryId
      */
     public void getCountryId(int countryId) {
-        this.countyId = countryId;
+        this.countryId = countryId;
     }
 
     /**
@@ -183,7 +189,7 @@ public class Customer {
      * @param countryId
      */
     public void setCountryId(int countryId) {
-        this.countyId = countryId;
+        this.countryId = countryId;
     }
 
     /**

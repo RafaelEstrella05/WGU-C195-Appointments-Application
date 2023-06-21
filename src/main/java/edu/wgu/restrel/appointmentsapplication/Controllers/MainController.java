@@ -3,14 +3,22 @@ package edu.wgu.restrel.appointmentsapplication.Controllers;
 import edu.wgu.restrel.appointmentsapplication.AbstractClass.AppController;
 import edu.wgu.restrel.appointmentsapplication.Models.*;
 import edu.wgu.restrel.appointmentsapplication.Utils.DatabaseManager;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 
 import java.io.IOException;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -23,6 +31,15 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * MainController class for the main.fxml view
+ * This is the main view of the application, it contains the customers,
+ * appointments, and reports sections of the application where the user can view
+ * and manage the data
+ * 
+ * @author Rafael Estrella Paz
+ * @version 1.0
+ */
 public class MainController extends AppController {
 
     /* Customers TableView Components */
@@ -120,10 +137,6 @@ public class MainController extends AppController {
     @FXML
     private ChoiceBox weekChoiceBox;
 
-    /* exit */
-    @FXML
-    private Button exitButton;
-
     ArrayList<Button> navButtons;
 
     /* vbox elements */
@@ -136,10 +149,16 @@ public class MainController extends AppController {
     @FXML
     private VBox reportsVBox;
 
+    @FXML
+    private TableView reportTableView;
+
+    @FXML
+    private ChoiceBox reportChoiceBox;
+
     ArrayList<VBox> vboxes;
 
     private int monthScrollIndex = 0; // is used to determine if the user is scrolling forward or backward through the
-                                      // months
+                                      // months in the month choice box
 
     // Map month names to numbers
     Map<String, String> monthMap = new HashMap<>();
@@ -217,6 +236,71 @@ public class MainController extends AppController {
 
         refreshMonthsInChoiceBox();
 
+        // select the first item in the report choice box
+        reportChoiceBox.getSelectionModel().selectFirst();
+
+    }
+
+    /**
+     * This method will check for any upcoming appointments within the next 15
+     * minutes and alert the user if there are any or not
+     */
+    public void checkForUpcomingAppointments() {
+
+        if (getApp().getAppointments().size() == 0) {
+
+            // alert the user that there are no upcoming appointments
+            alertWarning("There are no upcoming appointments", "Upcoming Appointments");
+
+            return;
+        } else {
+
+            String apptString = "";
+            Boolean upcomingAppointments = false;
+            int numApt = 0;
+
+            // get users local date time based on their zone id
+            ZonedDateTime localDateTime = ZonedDateTime.now(ZoneId.systemDefault());
+
+            // iterate through appointments and check if any are within 15 minutes (multiple
+            // appointments can be within 15 minutes)
+            for (Appointment appointment : getApp().getAppointments()) {
+
+                LocalDateTime appointmentStartLocal = appointment.getStartDateLocalTime();
+
+                // calculate the difference in minutes between the current time and the
+                // appointment start time
+                long minutes = java.time.Duration.between(localDateTime.toLocalDateTime(), appointmentStartLocal)
+                        .toMinutes();
+
+                // if the appointment is within 15 minutes then set a marker that there is an
+                // upcoming appointment
+                if (minutes >= 0 && minutes <= 15) {
+                    upcomingAppointments = true;
+                    numApt++;
+
+                    // add the appointment to the string that will be displayed in the alert
+                    // (appointment id, date and time, minutes int)
+                    apptString += "Appointment ID: " + appointment.getAppointmentId() + "\nDate: "
+                            + appointment.getStartDateLocalTime().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"))
+                            + "\nTime: "
+                            + appointment.getStartDateLocalTime().format(DateTimeFormatter.ofPattern("hh:mm a"))
+                            + "\n\n";
+
+                }
+
+            }
+
+            // if there are no upcoming appointments then alert the user
+            if (!upcomingAppointments) {
+                alertWarning("There are no upcoming appointments within the next 15 minutes", "Upcoming Appointments");
+            } else {
+                // if there are upcoming appointments then alert the user
+                alertInfo(apptString, (numApt > 1) ? "Upcoming Appointments" : "Upcoming Appointment");
+            }
+
+        }
+
     }
 
     /**
@@ -243,7 +327,7 @@ public class MainController extends AppController {
         }
 
         // add default value to month choice box
-        monthChoiceBox.getItems().add("By Month");
+        monthChoiceBox.getItems().add("Filter By Month");
 
         // select that value
         monthChoiceBox.getSelectionModel().selectFirst();
@@ -267,6 +351,9 @@ public class MainController extends AppController {
         // add a value that will indicate that the user wants to look at 6 more future
         // months
         monthChoiceBox.getItems().add("<Next 6 Months>");
+
+        // hide the weekChoiceBox
+        weekChoiceBox.setVisible(false);
 
     }
 
@@ -511,7 +598,8 @@ public class MainController extends AppController {
         Appointment selectedAppointment = appointmentsTable.getSelectionModel().getSelectedItem();
 
         // ask the user to confirm that they want to delete the appointment
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this customer?");
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                "Are you sure you want to cancel/delete this appointment?");
         alert.showAndWait();
 
         if (alert.getResult().getText().equals("Cancel")) {
@@ -536,7 +624,7 @@ public class MainController extends AppController {
 
             // alert the user that the appointment was deleted, include the appointment id,
             // and appointment type that was deleted
-            alertSuccess("Appointment ID: " + selectedAppointment.getAppointmentId() + "\n Type: "
+            alertInfo("Appointment ID: " + selectedAppointment.getAppointmentId() + "\n Type: "
                     + selectedAppointment.getType(), "Appointment Successfully Cancelled");
 
             // refresh the appointments table
@@ -563,7 +651,7 @@ public class MainController extends AppController {
         String monthChoiceValue = (String) monthChoiceBox.getSelectionModel().getSelectedItem();
 
         // if the user selects the default value, then return
-        if (monthChoiceValue.equals("By Month")) {
+        if (monthChoiceValue.equals("Filter By Month")) {
             return;
         }
 
@@ -604,9 +692,16 @@ public class MainController extends AppController {
      */
     private void populateWeeksChoicBox(String monthChoiceValue) {
 
+        // show the week choice box
+        weekChoiceBox.setVisible(true);
+
         // add default value to week choice box
         weekChoiceBox.getItems().clear();
         weekChoiceBox.getItems().add("By Week");
+
+        // add "all weeks" option
+        weekChoiceBox.getItems().add("All Weeks");
+
         // select the default value
         weekChoiceBox.getSelectionModel().selectFirst();
 
@@ -660,30 +755,150 @@ public class MainController extends AppController {
         // get value of the selected item of the week
         String weekChoiceValue = (String) weekChoiceBox.getSelectionModel().getSelectedItem();
 
-        // if the user selects the default value, then return
-        if (weekChoiceValue != null && weekChoiceValue.equals("By Week")) {
-            return;
+        if (weekChoiceValue != null) {
+            // if the user selects the default value, then return
+            if (weekChoiceValue.equals("By Week")) {
+                return;
+            } else if (weekChoiceValue.equals("All Weeks")) {
+
+                // get value of the selected item of the month
+                String monthChoiceValue = (String) monthChoiceBox.getSelectionModel().getSelectedItem();
+
+                getApp().getAppointmentsFromDB(monthChoiceValue, null);
+
+                // displayed new appointments
+                displayAppointmentsTable();
+
+            } else {
+
+                // get value of the selected item of the month
+                String monthChoiceValue = (String) monthChoiceBox.getSelectionModel().getSelectedItem();
+
+                getApp().getAppointmentsFromDB(monthChoiceValue, weekChoiceValue);
+
+                // displayed new appointments
+                displayAppointmentsTable();
+            }
+
         } else {
-
-            // get value of the selected item of the month
-            String monthChoiceValue = (String) monthChoiceBox.getSelectionModel().getSelectedItem();
-
-            getApp().getAppointmentsFromDB(monthChoiceValue, weekChoiceValue);
-
-            // displayed new appointments
-            displayAppointmentsTable();
+            return;
         }
 
     }
 
+    /**
+     * This method will handles the event when the user clicks the get a report
+     * The method will get the selected report from the report choice box and then
+     * execute the appropriate query
+     */
     @FXML
-    private void onGetReportButtonClick() {
+    private void onReportChoiceBoxChanged() {
         System.out.println("Get report button clicked");
-    }
 
-    @FXML
-    private void onExitButtonClick() {
-        System.out.println("Exit button clicked");
+        // get the index of the selected report
+        int reportIndex = reportChoiceBox.getSelectionModel().getSelectedIndex();
+
+        String query = "";
+
+        String reportTitle = "";
+
+        ArrayList<String> queryParameters = new ArrayList<String>();
+
+        // swtich case based on the report index
+        switch (reportIndex) {
+            case 1:
+
+                // get the total number of appointments by type and month
+                query = "SELECT MONTHNAME(Start) AS Month, Type, COUNT(*) AS `Total Appointments` FROM appointments GROUP BY MONTHNAME(Start), Type ORDER BY MONTHNAME(Start);";
+                reportTitle = "Total Appointments by Type and Month";
+                break;
+            case 2:
+
+                // get the schedule for each contact
+                query = "SELECT a.appointment_id, a.title, a.type, a.description, DATE_FORMAT(CONVERT_TZ(a.start, '+00:00', CONCAT((CASE WHEN ? >= 0 THEN '+' ELSE '-' END), LPAD(ABS(?), 2, '0'), ':00')), '%Y-%m-%d %h:%i %p') AS `Start (Local)`, DATE_FORMAT(CONVERT_TZ(a.end, '+00:00', CONCAT((CASE WHEN ? >= 0 THEN '+' ELSE '-' END), LPAD(ABS(?), 2, '0'), ':00')), '%Y-%m-%d %h:%i %p') AS `End (Local)`, a.customer_id FROM appointments a JOIN contacts c ON c.contact_id = a.contact_id ORDER BY c.contact_id, a.start;";
+                reportTitle = "Schedule for Each Contact";
+
+                // get localdatetime based on system default zone id
+                ZonedDateTime localDateTime = ZonedDateTime.now(ZoneId.systemDefault());
+
+                // get the datetime offset from utc
+                ZoneOffset zoneOffset = localDateTime.getOffset();
+
+                // get the hour offset from utc
+                int hourOffset = zoneOffset.getTotalSeconds() / 3600;
+
+                // add the hour offset to the query parameters
+                queryParameters.add(String.valueOf(hourOffset));
+                queryParameters.add(String.valueOf(hourOffset));
+                queryParameters.add(String.valueOf(hourOffset));
+                queryParameters.add(String.valueOf(hourOffset));
+
+                break;
+            case 3:
+                // get the total number of customers by country and division
+                query = "SELECT d.Division, co.Country, COUNT(c.Customer_ID) AS `Total Customers` FROM customers c JOIN first_level_divisions d ON d.Division_ID = c.Division_ID JOIN countries co ON co.Country_ID = d.Country_ID GROUP BY d.Division, co.Country ORDER BY d.Division, co.Country;";
+                reportTitle = "Total Customers by Country and Division";
+                break;
+            default:
+                break;
+        }
+
+        // if the query is not null then execute it
+        if (!query.equals("")) {
+            DatabaseManager dbmanager = new DatabaseManager();
+
+            final ArrayList<String> finalQueryParameters = new ArrayList<>(queryParameters);
+
+            // execute the query
+            dbmanager.executeQuery(query, (rs) -> {
+                try {
+                    // Clear existing columns and data from the table view
+                    reportTableView.getColumns().clear();
+                    reportTableView.getItems().clear();
+
+                    // Get the metadata of the result set
+                    ResultSetMetaData metaData = rs.getMetaData();
+                    int columnCount = metaData.getColumnCount();
+
+                    // Create table columns dynamically based on the metadata
+                    for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+                        final int index = columnIndex;
+                        TableColumn<ObservableList<String>, String> column = new TableColumn<>(
+                                metaData.getColumnName(index));
+
+                        // Use a Callback to create an ObservableValue for the cell value factory
+                        column.setCellValueFactory(
+                                new Callback<TableColumn.CellDataFeatures<ObservableList<String>, String>, ObservableValue<String>>() {
+                                    @Override
+                                    public ObservableValue<String> call(
+                                            TableColumn.CellDataFeatures<ObservableList<String>, String> param) {
+                                        return new SimpleStringProperty(param.getValue().get(index - 1));
+                                    }
+                                });
+
+                        reportTableView.getColumns().add(column);
+                    }
+
+                    // Add data to the table view
+                    ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
+                    while (rs.next()) {
+                        ObservableList<String> row = FXCollections.observableArrayList();
+                        for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+                            row.add(rs.getString(columnIndex));
+                        }
+                        data.add(row);
+                    }
+                    reportTableView.setItems(data);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }, finalQueryParameters.toArray());
+
+            dbmanager.disconnect();
+        } else {
+            return;
+        }
+
     }
 
     /**
@@ -752,6 +967,8 @@ public class MainController extends AppController {
 
         // get all divisions from countries from the database
         String query = "SELECT c.Country_ID, c.Country, Division_ID, Division FROM first_level_divisions dv INNER JOIN countries c on c.Country_ID = dv.Country_ID order by Country_ID, Division_ID;";
+
+        // execute the query
         dbmanager.executeQuery(query, (rs) -> {
             try {
 
@@ -866,7 +1083,7 @@ public class MainController extends AppController {
                         // if there are appointments associated with the customer, set isValid to false
                         isValid.set(false);
                         errorMessage.set(
-                                "Please delete all customer associated appointments ");
+                                "Please delete all customer associated appointments before deleting the customer");
 
                     }
                 } catch (Exception e) {

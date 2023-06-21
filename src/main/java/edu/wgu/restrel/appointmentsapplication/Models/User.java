@@ -1,5 +1,11 @@
 package edu.wgu.restrel.appointmentsapplication.Models;
 
+/**
+ * User class for storing user information
+ * 
+ * @author Rafael Estrella Paz
+ * @version 1.0
+ */
 public class User {
     private int id;
     private String userName;
@@ -32,7 +38,7 @@ public class User {
     /**
      * Returns the password
      * 
-     * @return
+     * @return password
      */
     public String getPassword() {
         return password;

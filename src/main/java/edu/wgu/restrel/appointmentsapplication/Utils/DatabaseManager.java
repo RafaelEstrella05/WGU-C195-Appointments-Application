@@ -11,6 +11,9 @@ import java.util.Properties;
 /**
  * DatabaseManager singleton class for connecting to the database and running
  * queries.
+ * 
+ * @author Rafael Estrella Paz
+ * @version 1.0
  */
 public class DatabaseManager {
     Connection conn = null; // connection to database
@@ -51,6 +54,9 @@ public class DatabaseManager {
         }
     }
 
+    /*
+     * Sets the URL for the database connection.
+     */
     public void setUrl(String url) {
         URL = url;
     }

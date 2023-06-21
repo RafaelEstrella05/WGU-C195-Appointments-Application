@@ -1,5 +1,12 @@
 package edu.wgu.restrel.appointmentsapplication.Models;
 
+/**
+ * Class for storing the state of form validation for any form
+ * helps keep track of whether or not the form is valid and if not, why
+ * 
+ * @author Rafael Estrella Paz
+ * @version 1.0
+ */
 public class FormValidationState {
 
     private boolean isValid;
@@ -19,7 +26,7 @@ public class FormValidationState {
     /**
      * Getter for isValid
      * 
-     * @return
+     * @return isValid
      */
 
     public boolean isValid() {

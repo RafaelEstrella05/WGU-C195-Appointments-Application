@@ -15,6 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * AppointmentsController class for the appointments.fxml view
+ * Handles the appointment form and validation
+ * 
+ * @author Rafael Estrella Paz
+ * @version 1.0
+ */
 public class AppointmentsController extends AppController implements FormValidation {
     private ZoneId defaultTimeZone = ZoneId.systemDefault();
 
@@ -68,13 +75,13 @@ public class AppointmentsController extends AppController implements FormValidat
     @FXML
     private Label businessHoursLabel;
 
-    AppointmentDateTimes appointmentDateTimes;
+    FormAppointmentDateTimes formAppointmentDateTimes;
 
     @FXML
     public void initialize() {
         contacts = new ArrayList<Contact>();
 
-        appointmentDateTimes = new AppointmentDateTimes();
+        formAppointmentDateTimes = new FormAppointmentDateTimes();
 
         // get contacts fron the database and populate the contacts list
         getContactsFromDB();
@@ -88,8 +95,6 @@ public class AppointmentsController extends AppController implements FormValidat
         // populate the labels that indicate the business hours in the local time zone
         // and EST
         populateDateTimeLabels();
-
-        // prefillWithTestData(); // FIX ME: remove when done testing
 
     }
 
@@ -133,18 +138,18 @@ public class AppointmentsController extends AppController implements FormValidat
                 System.out.println("User ID: " + userId);
                 System.out.println("Customer ID: " + customerId);
 
-                appointmentDateTimes.setSelectedLocalTimes(startHourChoiceBox.getValue().toString(),
+                formAppointmentDateTimes.setSelectedLocalTimes(startHourChoiceBox.getValue().toString(),
                         startMinuteChoiceBox.getValue().toString(), startAmPmChoiceBox.getValue().toString(),
                         endHourChoiceBox.getValue().toString(), endMinuteChoiceBox.getValue().toString(),
                         endAmPmChoiceBox.getValue().toString());
 
-                appointmentDateTimes.printTimes();
+                formAppointmentDateTimes.printTimes();
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-                String formattedStartDateTime = appointmentDateTimes.getSelectedStartDateTimeUTC()
+                String formattedStartDateTime = formAppointmentDateTimes.getSelectedStartDateTimeUTC()
                         .format(formatter);
-                String formattedEndDateTime = appointmentDateTimes.getSelectedEndDateTimeUTC().format(formatter);
+                String formattedEndDateTime = formAppointmentDateTimes.getSelectedEndDateTimeUTC().format(formatter);
 
                 // if there is a selected appointment, update the appointment
                 if (selectedAppointment != null) {
@@ -261,7 +266,7 @@ public class AppointmentsController extends AppController implements FormValidat
     /**
      * Get the selected customer
      * 
-     * @return
+     * @return Customer selectedCustomer
      */
     public Customer getSelectedCustomer() {
         return this.selectedCustomer;
@@ -279,7 +284,7 @@ public class AppointmentsController extends AppController implements FormValidat
     /**
      * Get the selected appointment
      * 
-     * @return
+     * @return Appointment selectedAppointment
      */
     public Appointment getSelectedAppointment() {
         return this.selectedAppointment;
@@ -312,12 +317,19 @@ public class AppointmentsController extends AppController implements FormValidat
         // set the date picker to the appointment date
         datePicker.setValue(appointment.getStartDate());
 
+        int startHourAmPm = (appointment.getStartTime().getHour() + 11) % 12 + 1;
+        int endHourAmPm = (appointment.getEndTime().getHour() + 11) % 12 + 1;
+
+        // convert to string
+        String startHour = String.format("%02d", startHourAmPm);
+        String endHour = String.format("%02d", endHourAmPm);
+
         // set the start and end times in the choice boxes
-        startHourChoiceBox.getSelectionModel().select(appointment.getStartTime().getHour() % 12 - 1);
+        startHourChoiceBox.getSelectionModel().select(startHour);
         startMinuteChoiceBox.getSelectionModel().select(appointment.getStartTime().getMinute());
         startAmPmChoiceBox.getSelectionModel().select(appointment.getStartTime().getHour() < 12 ? 0 : 1);
 
-        endHourChoiceBox.getSelectionModel().select(appointment.getEndTime().getHour() % 12 - 1);
+        endHourChoiceBox.getSelectionModel().select(endHour);
         endMinuteChoiceBox.getSelectionModel().select(appointment.getEndTime().getMinute());
         endAmPmChoiceBox.getSelectionModel().select(appointment.getEndTime().getHour() < 12 ? 0 : 1);
 
@@ -436,7 +448,9 @@ public class AppointmentsController extends AppController implements FormValidat
     }
 
     /**
-     * Validates the form input for appointment data
+     * get validation state and error message for the form
+     * 
+     * @throws FormValidationException
      */
     @Override
     public FormValidationState getFormInputValidationState() throws FormValidationException {
@@ -500,45 +514,49 @@ public class AppointmentsController extends AppController implements FormValidat
             String endAmPm = endAmPmChoiceBox.getValue().toString();
 
             // create a LocalDateTime object for the start and end times to help with
-            appointmentDateTimes = new AppointmentDateTimes();
-            appointmentDateTimes.setSelectedLocalTimes(startHour, startMinute, startAmPm, endHour, endMinute,
+            formAppointmentDateTimes = new FormAppointmentDateTimes();
+            formAppointmentDateTimes.setSelectedLocalTimes(startHour, startMinute, startAmPm, endHour, endMinute,
                     endAmPm);
 
             // get date from date picker and set the selected date on the
-            // appointmentDateTimes object
+            // formAppointmentDateTimes object
             LocalDate selectedDate = datePicker.getValue();
-            appointmentDateTimes.setSelectedDateLocal(selectedDate);
+            formAppointmentDateTimes.setSelectedDateLocal(selectedDate);
 
-            appointmentDateTimes.printBusinessHours();
-            appointmentDateTimes.printTimes();
+            formAppointmentDateTimes.printBusinessHours();
+            formAppointmentDateTimes.printTimes();
 
             // Check if the start time is before the end time
-            if (appointmentDateTimes.getSelectedStartTimeLocal()
-                    .isAfter(appointmentDateTimes.getSelectedEndTimeLocal())) {
+            if (formAppointmentDateTimes.getSelectedStartTimeLocal()
+                    .isAfter(formAppointmentDateTimes.getSelectedEndTimeLocal())) {
                 isValid = false;
                 errorMessage += "Start time cannot be after end time \n";
             }
 
             // start time cannot be before business start time
-            if (appointmentDateTimes.getSelectedStartTimeLocal().isBefore(AppointmentDateTimes.BUSINESS_START_LOCAL)) {
+            if (formAppointmentDateTimes.getSelectedStartTimeLocal()
+                    .isBefore(FormAppointmentDateTimes.BUSINESS_START_LOCAL)) {
                 isValid = false;
                 errorMessage += "Start time cannot be before business hours\n";
             }
 
             // start time cannot be after business end time
-            if (appointmentDateTimes.getSelectedStartTimeLocal().isAfter(AppointmentDateTimes.BUSINESS_END_LOCAL)) {
+            if (formAppointmentDateTimes.getSelectedStartTimeLocal()
+                    .isAfter(FormAppointmentDateTimes.BUSINESS_END_LOCAL)) {
                 isValid = false;
                 errorMessage += "Start time cannot be after business hours \n";
             }
 
             // end time cannot be before business start time
-            if (appointmentDateTimes.getSelectedEndTimeLocal().isBefore(AppointmentDateTimes.BUSINESS_START_LOCAL)) {
+            if (formAppointmentDateTimes.getSelectedEndTimeLocal()
+                    .isBefore(FormAppointmentDateTimes.BUSINESS_START_LOCAL)) {
                 isValid = false;
                 errorMessage += "End time cannot be before business hours \n";
             }
 
             // end time cannot be after business end time
-            if (appointmentDateTimes.getSelectedEndTimeLocal().isAfter(AppointmentDateTimes.BUSINESS_END_LOCAL)) {
+            if (formAppointmentDateTimes.getSelectedEndTimeLocal()
+                    .isAfter(FormAppointmentDateTimes.BUSINESS_END_LOCAL)) {
                 isValid = false;
                 errorMessage += "End time cannot be after business hours \n";
             }
@@ -549,47 +567,46 @@ public class AppointmentsController extends AppController implements FormValidat
                 errorMessage += "Appointment time is taken, please select another time \n";
             }
 
-            // if current date is the same as appointment date and the appointment start or
-            // end time is before the current time
-            if (appointmentDateTimes.getSelectedDateLocal().equals(LocalDate.now())
-                    && (appointmentDateTimes.getSelectedStartTimeLocal().isBefore(LocalTime.now())
-                            || appointmentDateTimes.getSelectedEndTimeLocal().isBefore(LocalTime.now()))) {
-                isValid = false;
-                errorMessage += "Appointment time cannot be in the past \n";
-            }
-
+            // apppointments that are being modified can only modify the appointment times
+            // if they are in the future
+            // apppointments that are being modified can only modify the appointment times
+            // if they are in the future
             if (selectedAppointment != null) {
+                LocalDateTime nowDateTime = LocalDateTime.now();
+                LocalDateTime selectedStartDateTimeLocal = selectedAppointment.getStartDateLocalTime();
+                LocalDateTime selectedEndDateTimeLocal = selectedAppointment.getEndDateLocalTime();
 
-                /*
-                // if the appointment date and time are different the selected appointment date
-                // and time
-                if (!appointmentDateTimes.getSelectedStartDateTimeLocal()
-                        .equals(selectedAppointment.getStartDateLocalTime())
-                        || !appointmentDateTimes.getSelectedEndDateTimeLocal()
-                                .equals(selectedAppointment.getEndDateLocalTime())) {
-                    // if current date is the same as appointment date and the appointment start or
-                    // end time is before the current time
-                    if (appointmentDateTimes.getSelectedDateLocal().equals(LocalDate.now())
-                            && (appointmentDateTimes.getSelectedStartTimeLocal().isBefore(LocalTime.now())
-                                    || appointmentDateTimes.getSelectedEndTimeLocal().isBefore(LocalTime.now()))) {
+                LocalDateTime formStartDateTimeLocal = formAppointmentDateTimes.getSelectedStartDateTimeLocal();
+                LocalDateTime formEndDateTimeLocal = formAppointmentDateTimes.getSelectedEndDateTimeLocal();
+
+                // if the form's appointment date and time are different from the selected
+                // appointment date and time
+                if (!formStartDateTimeLocal.equals(selectedStartDateTimeLocal)
+                        || !formEndDateTimeLocal.equals(selectedEndDateTimeLocal)) {
+                    // if current datetimes are the same as appointment datetimes and the
+                    // appointment start or end time is before the current time
+
+                    // if the form's datetime is before the nowDateTime
+                    if (formStartDateTimeLocal.isBefore(nowDateTime) || formEndDateTimeLocal.isBefore(nowDateTime)) {
                         isValid = false;
-                        errorMessage += "Appointment time cannot be in the past \n";
+                        errorMessage += "Appointment times cannot be rescheduled to a time in the past.  \n";
                     }
+
                 }
-                
-                 */
             }
 
             // check if start and end are not equal
-            if (appointmentDateTimes.getSelectedStartTimeLocal()
-                    .equals(appointmentDateTimes.getSelectedEndTimeLocal())) {
+            if (formAppointmentDateTimes.getSelectedStartTimeLocal()
+                    .equals(formAppointmentDateTimes.getSelectedEndTimeLocal())) {
                 isValid = false;
                 errorMessage += "Start time and end time cannot be the same \n";
             }
 
         }
 
-        if (!isValid) {
+        if (!isValid)
+
+        {
             throw new FormValidationException(errorMessage);
         }
 
@@ -609,11 +626,11 @@ public class AppointmentsController extends AppController implements FormValidat
         getApp().getAppointmentsFromDB(null, null); // refresh the appointments from the database
 
         // get the start and end times for the appointment
-        LocalTime selectedStartTimeLocal = appointmentDateTimes.getSelectedStartTimeLocal();
-        LocalTime selectedEndTimeLocal = appointmentDateTimes.getSelectedEndTimeLocal();
+        LocalTime selectedStartTimeLocal = formAppointmentDateTimes.getSelectedStartTimeLocal();
+        LocalTime selectedEndTimeLocal = formAppointmentDateTimes.getSelectedEndTimeLocal();
 
-        // get date from appointmentDateTimes object
-        LocalDate selectedDateLocal = appointmentDateTimes.getSelectedDateLocal();
+        // get date from formAppointmentDateTimes object
+        LocalDate selectedDateLocal = formAppointmentDateTimes.getSelectedDateLocal();
 
         // convert the selected date and time to a LocalDateTime object
         LocalDateTime selectedStartDateTimeLocal = LocalDateTime.of(selectedDateLocal, selectedStartTimeLocal);
@@ -690,13 +707,4 @@ public class AppointmentsController extends AppController implements FormValidat
         return isOverlapping;
     }
 
-    private void prefillWithTestData() {
-        // pre fill with test appointment data FIX ME: remove when done testing
-        titleField.setText("Test Appointment");
-        descriptionField.setText("Test Appointment Description");
-        locationField.setText("Test Appointment Location");
-        typeField.setText("Test Appointment Type");
-        contactChoiceBox.getSelectionModel().selectFirst();
-
-    }
 }

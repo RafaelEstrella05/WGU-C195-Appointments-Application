@@ -18,6 +18,9 @@ import java.util.ResourceBundle;
 /**
  * LoginController class for the login.fxml view
  * User login and authentication is handled here
+ * 
+ * @author Rafael Estrella Paz
+ * @version 1.0
  */
 public class LoginController extends AppController {
 
@@ -45,7 +48,25 @@ public class LoginController extends AppController {
     ResourceBundle resources;
 
     /**
-     * login submission button click event handler
+     * login submission button click event handler.
+     * Executes the login process by retrieving the username and password,
+     * querying the database for matching records, and handling the results.
+     *
+     * USES LAMBDA EXPRESSION:
+     * This lambda expression is used to provide a clear and concise way to process
+     * the result set returned from the database query. It promotes code reuse when
+     * querying for database records by allowing the developer to pass in a query
+     * string, executor function, and MySQL query parameters (if any) without having
+     * to declare database connections, prepared statements, and result sets for
+     * each query.
+     *
+     * In this case, the lambda expression is used to query the database for the
+     * user's
+     * username and password, and checks if they are valid by verifying if the
+     * result set
+     * is empty or not.
+     *
+     * @see DatabaseManager#executeQuery(String, ResultSetHandler, Object...)
      */
     public void onSubmitButtonClick() {
         String username = usernameField.getText();
@@ -73,8 +94,15 @@ public class LoginController extends AppController {
                     AppController appController = this.getApp().setShowScene("main.fxml", "Appointment Manager");
                     ((MainController) appController).setApp(this.getApp());
                     app.setMainController((MainController) appController);
+
                     // display data in the table
                     ((MainController) appController).refreshCustomerContent();
+
+                    // get appointments from db
+                    getApp().getAppointmentsFromDB(null, null);
+
+                    // check for upcoming appointments
+                    ((MainController) appController).checkForUpcomingAppointments();
 
                 } catch (IOException e) {
                     System.out.println("Error: " + e.getMessage());
@@ -94,16 +122,6 @@ public class LoginController extends AppController {
         }, username, password);
 
         dbmanager.disconnect();
-    }
-
-    /**
-     * FIX ME: temporary login credentials for testing, remove when done
-     */
-    public void tempLoginPass() {
-        usernameField.setText("Admin");
-        passwordField.setText("Admin");
-
-        onSubmitButtonClick();
     }
 
     public void initialize() {

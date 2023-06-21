@@ -19,6 +19,12 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * JavaFX Application for managing appointments
+ * 
+ * @author Rafael Estrella Paz
+ * @version 1.0
+ */
 public class AppointmentsApplication extends Application {
 
     private Stage stage;
@@ -30,6 +36,11 @@ public class AppointmentsApplication extends Application {
     private ObservableList<Customer> customers;
     private ObservableList<Appointment> appointments;
 
+    /**
+     * Start the application
+     * 
+     * @throws IOException
+     */
     @Override
     public void start(Stage stage) throws IOException {
         this.stage = stage;
@@ -41,7 +52,6 @@ public class AppointmentsApplication extends Application {
         loginController = (LoginController) setShowScene("login.fxml", "Appointment Manager");
         loginController.setApp(this);
 
-        loginController.tempLoginPass(); // FIX ME: remove when done testing
     }
 
     /**
@@ -89,7 +99,11 @@ public class AppointmentsApplication extends Application {
         this.user = user;
     }
 
-    // get user
+    /**
+     * Get the user
+     * 
+     * @return user User
+     */
     public User getUser() {
         return user;
     }
@@ -97,7 +111,7 @@ public class AppointmentsApplication extends Application {
     /**
      * Set the countries
      * 
-     * @param countries
+     * @param countries ArrayList<Country>
      */
     public void setCountries(ArrayList<Country> countries) {
         this.countries = countries;
@@ -124,7 +138,7 @@ public class AppointmentsApplication extends Application {
     /**
      * Get the customers
      * 
-     * @return ArrayList<Customer>
+     * @return ArrayList<Customer> customers
      */
     public ObservableList<Customer> getCustomers() {
         return this.customers;
@@ -205,7 +219,12 @@ public class AppointmentsApplication extends Application {
                 .orElse(null);
     }
 
-    // getAppointmentsFromDB
+    /**
+     * Get the appointments from the database based on the date string and or day
+     * 
+     * @param dateString
+     * @param dayString
+     */
     public void getAppointmentsFromDB(String dateString, String dayString) {
         // clear the appointments array list
         getAppointments().clear();
@@ -216,9 +235,12 @@ public class AppointmentsApplication extends Application {
             DatabaseManager dbmanager = new DatabaseManager();
 
             // get appointments from the database
-            String query = "SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, contacts.Contact_ID, Contact_Name FROM appointments appt INNER JOIN contacts contacts ON contacts.Contact_ID = appt.Contact_ID order by Appointment_ID desc LIMIT 50; ";
+            String query = "SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, contacts.Contact_ID, Contact_Name FROM appointments appt INNER JOIN contacts contacts ON contacts.Contact_ID = appt.Contact_ID order by start desc LIMIT 50; ";
 
             // execute the query
+            /*
+            
+             */
             dbmanager.executeQuery(query, (rs) -> {
                 try {
                     while (rs.next()) {
@@ -239,8 +261,6 @@ public class AppointmentsApplication extends Application {
                 } catch (Exception e) {
                     System.out.println("Error: " + e.getMessage());
                 }
-
-                // display the appointments on the table view
 
             });
 
@@ -251,7 +271,7 @@ public class AppointmentsApplication extends Application {
             DatabaseManager dbmanager = new DatabaseManager();
 
             // get appointments from the database
-            String query = "SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, contacts.Contact_ID, Contact_Name FROM appointments appt INNER JOIN contacts contacts ON contacts.Contact_ID = appt.Contact_ID WHERE DATE_FORMAT(start, '%Y %M') = ?;";
+            String query = "SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, contacts.Contact_ID, Contact_Name FROM appointments appt INNER JOIN contacts contacts ON contacts.Contact_ID = appt.Contact_ID WHERE DATE_FORMAT(start, '%Y %M') = ? order by start desc;";
 
             // execute the query
             dbmanager.executeQuery(query, (rs) -> {
@@ -274,8 +294,6 @@ public class AppointmentsApplication extends Application {
                 } catch (Exception e) {
                     System.out.println("Error: " + e.getMessage());
                 }
-
-                // display the appointments on the table view
 
             }, dateString);
 
@@ -289,7 +307,7 @@ public class AppointmentsApplication extends Application {
                     +
                     "FROM appointments appt " +
                     "INNER JOIN contacts contacts ON contacts.Contact_ID = appt.Contact_ID " +
-                    "WHERE YEAR(Start) = ? AND MONTHNAME(Start) = ? AND DAYOFMONTH(Start) >= ? AND DAYOFMONTH(End) <= ?;";
+                    "WHERE YEAR(Start) = ? AND MONTHNAME(Start) = ? AND DAYOFMONTH(Start) >= ? AND DAYOFMONTH(End) <= ? order by start desc;";
 
             // execute the query
             dbmanager.executeQuery(query, (rs) -> {
@@ -312,8 +330,6 @@ public class AppointmentsApplication extends Application {
                 } catch (Exception e) {
                     System.out.println("Error: " + e.getMessage());
                 }
-
-                // display the appointments on the table view
 
             }, dateString.split(" ")[0], dateString.split(" ")[1], dayString.split("-")[0],
                     dayString.split("-")[1]);

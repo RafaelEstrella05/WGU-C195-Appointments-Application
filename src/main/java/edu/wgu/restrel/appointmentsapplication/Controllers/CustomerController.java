@@ -18,6 +18,9 @@ import javafx.scene.control.TextFormatter;
 
 /**
  * This controller handles the customer view and actions for the application
+ * 
+ * @author Rafael Estrella Paz
+ * @version 1.0
  */
 public class CustomerController extends AppController implements FormValidation {
 
@@ -51,25 +54,6 @@ public class CustomerController extends AppController implements FormValidation 
     public void initialize() {
         System.out.println("CustomerController initialized");
 
-        // phoneNumberField only accept numbers
-        TextFormatter<String> numberFormatter = new TextFormatter<>(change -> {
-            if (change.getControlNewText().matches("\\d*")) {
-                return change;
-            }
-            return null;
-        });
-
-        phoneNumberField.setTextFormatter(numberFormatter);
-
-        // postal code only accept numbers
-        TextFormatter<String> postalCodeFormatter = new TextFormatter<>(change -> {
-            if (change.getControlNewText().matches("\\d*")) {
-                return change;
-            }
-            return null;
-        });
-
-        postalCodeField.setTextFormatter(postalCodeFormatter);
     }
 
     /**
@@ -171,6 +155,8 @@ public class CustomerController extends AppController implements FormValidation 
             isValid = false;
             errorMessage += "Division and Country are required.\n";
         }
+
+        // if phone number
 
         if (!isValid) {
             throw new FormValidationException(errorMessage);
@@ -328,9 +314,29 @@ public class CustomerController extends AppController implements FormValidation 
     }
 
     /**
-     * Adds a customer to the database using a lambda expression
-     * 
-     * @param customer
+     * Adds a customer to the database.
+     *
+     * @param customer The customer object to be added.
+     *
+     *                 USES LAMBDA EXPRESSION:
+     *                 This lambda expression is used to provide a clear and concise
+     *                 way to process
+     *                 an UPDATE or INSERT using a MySQL statement. It promotes code
+     *                 reuse when
+     *                 updating or inserting database records by allowing the
+     *                 developer to pass in
+     *                 a query statement string, executor function, and MySQL query
+     *                 parameters (if any)
+     *                 without having to declare database connections, prepared
+     *                 statements, and result
+     *                 sets for each query.
+     *
+     *                 In this case, the lambda expression is used to insert a new
+     *                 customer into the database
+     *                 and handle when the query is complete and returns a result
+     *                 set.
+     *
+     * @see DatabaseManager#executeUpdate(String, ResultSetHandler, Object...)
      */
     private void addCustomerToDatabase(Customer customer) {
         System.out.println("addCustomerToDatabase() called");
@@ -339,6 +345,20 @@ public class CustomerController extends AppController implements FormValidation 
         DatabaseManager dbmanager = new DatabaseManager();
 
         // run the insert query
+        /*
+         * USES LAMBDA EXPRESSION:
+         * This lambda expression is used to provide a clear and concise way to process
+         * an UPDATE or INSERT using a mysql statement.
+         * It promotes code reuse when
+         * updateing or inserting database records by allowing the developer to pass in
+         * a query statement
+         * string, executor function, and mysql query parameters (if any)
+         * without having to declare db connections, prepared statements, and result
+         * sets for each query.
+         * 
+         * In this case, it is used to insert a new customer into the database and
+         * handle when the query is complete and returns a result set.
+         */
         dbmanager.executeUpdate(
                 "INSERT INTO customers (Customer_Name, Address, Postal_Code, Phone, Create_Date, Created_By, Last_Update, Last_Updated_By, Division_ID) VALUES (?, ?, ?, ?, NOW(), ?, NOW(), ?, ?)",
                 (rs) -> {
@@ -362,7 +382,7 @@ public class CustomerController extends AppController implements FormValidation 
     }
 
     /**
-     * Updates a customer in the database using a lambda expression
+     * Updates a customer in the database
      * 
      * @param customer
      */

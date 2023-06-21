@@ -71,9 +71,9 @@ public abstract class AppController {
     }
 
     /**
-     * Alert Dialog for success messages
+     * Alert Dialog for informational messages
      */
-    public void alertSuccess(String message, String type) {
+    public void alertInfo(String message, String type) {
         System.out.println(message);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Success");

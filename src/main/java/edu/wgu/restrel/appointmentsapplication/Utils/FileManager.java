@@ -5,6 +5,9 @@ import java.io.IOException;
 
 /**
  * This class contains methods that help with reading and writing to text files.
+ * 
+ * @author Rafael Estrella Paz
+ * @version 1.0
  */
 public class FileManager {
 

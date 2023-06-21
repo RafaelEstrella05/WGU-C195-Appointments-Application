@@ -1,10 +1,16 @@
 package edu.wgu.restrel.appointmentsapplication.Models;
 
+/**
+ * Division class for storing division information
+ * 
+ * @author Rafael Estrella Paz
+ * @version 1.0
+ */
 public class Division {
 
-    private int DivisionId;
-    private String Division;
-    private int CountryId;
+    private int divisionId;
+    private String division;
+    private int countryId;
 
     /**
      * Constructor
@@ -14,9 +20,9 @@ public class Division {
      * @param countryId
      */
     public Division(int divisionId, String division, int countryId) {
-        DivisionId = divisionId;
-        Division = division;
-        CountryId = countryId;
+        this.divisionId = divisionId;
+        this.division = division;
+        this.countryId = countryId;
     }
 
     /**
@@ -25,7 +31,7 @@ public class Division {
      * @return
      */
     public int getDivisionId() {
-        return DivisionId;
+        return divisionId;
     }
 
     /**
@@ -34,16 +40,16 @@ public class Division {
      * @param divisionId
      */
     public void setDivisionId(int divisionId) {
-        DivisionId = divisionId;
+        this.divisionId = divisionId;
     }
 
     /**
      * Getter for Division
      * 
-     * @return
+     * @return Division
      */
     public String getDivision() {
-        return Division;
+        return division;
     }
 
     /**
@@ -52,7 +58,7 @@ public class Division {
      * @param division
      */
     public void setDivision(String division) {
-        Division = division;
+        this.division = division;
     }
 
     /**
@@ -61,7 +67,7 @@ public class Division {
      * @return
      */
     public int getCountryId() {
-        return CountryId;
+        return countryId;
     }
 
     /**
@@ -70,7 +76,7 @@ public class Division {
      * @param countryId
      */
     public void setCountryId(int countryId) {
-        CountryId = countryId;
+        this.countryId = countryId;
     }
 
 }
