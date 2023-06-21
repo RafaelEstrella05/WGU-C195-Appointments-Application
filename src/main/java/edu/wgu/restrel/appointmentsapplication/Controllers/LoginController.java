@@ -66,7 +66,7 @@ public class LoginController extends AppController {
      * result set
      * is empty or not.
      *
-     * @see DatabaseManager#executeQuery(String, ResultSetHandler, Object...)
+     * @see DatabaseManager #executeQuery(String, ResultSetHandler, Object...)
      */
     public void onSubmitButtonClick() {
         String username = usernameField.getText();
