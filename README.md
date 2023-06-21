@@ -34,7 +34,13 @@ How to Run: (Assuming the client_schedule database is already created and popula
 		4) If you are using a different port than the default 3306, change the port number to match your MYSQL server port number.
 		5) Change the username and password to match your MYSQL server credentials that have access to the client_schedule database.
 
-	Application Setup:
+	Dependency Setup (Intellij):
+		1) Open the project in IntelliJ IDEA.
+		2) navigate to File -> Project Structure -> Modules -> Dependencies
+		3) make sure that the mysql-connector-java-8.0.33.jar file is listed as a dependency so that the application can connect to the database.
+		
+
+	Application Setup (Intellij):
 		1) Open the project in IntelliJ IDEA.
 		2) Navigate to the src\main\java\restrel\appointmentsapplication\AppointmentsApplication file and run the application.
 		3) The application will open and the login screen will be displayed.
