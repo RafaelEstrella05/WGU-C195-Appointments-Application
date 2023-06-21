@@ -20,7 +20,7 @@ public class User {
     /**
      * Returns the ID of the user that is logged in
      * 
-     * @return id
+     * @return id Unique identifier for user
      */
     public int getId() {
         return id;
@@ -29,7 +29,7 @@ public class User {
     /**
      * Returns the user name
      * 
-     * @return userName
+     * @return userName login Name of user
      */
     public String getUserName() {
         return userName;
@@ -38,7 +38,7 @@ public class User {
     /**
      * Returns the password
      * 
-     * @return password
+     * @return password Password of user
      */
     public String getPassword() {
         return password;

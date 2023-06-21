@@ -241,7 +241,7 @@ public class AppointmentsController extends AppController implements FormValidat
     /**
      * Set the selected customer
      * 
-     * @param customer
+     * @param customer Customer
      */
     public void setSelectedCustomer(Customer customer) {
 
@@ -266,7 +266,7 @@ public class AppointmentsController extends AppController implements FormValidat
     /**
      * Get the selected customer
      * 
-     * @return Customer selectedCustomer
+     * @return selectedCustomer the selected customer in the main view
      */
     public Customer getSelectedCustomer() {
         return this.selectedCustomer;
@@ -275,7 +275,7 @@ public class AppointmentsController extends AppController implements FormValidat
     /**
      * Set the selected appointment
      * 
-     * @param appointment
+     * @param appointment Appointment that is selected in the main view
      */
     public void setSelectedAppointment(Appointment appointment) {
         this.selectedAppointment = appointment;
@@ -284,7 +284,7 @@ public class AppointmentsController extends AppController implements FormValidat
     /**
      * Get the selected appointment
      * 
-     * @return Appointment selectedAppointment
+     * @return Appointment selectedAppointment in the main view
      */
     public Appointment getSelectedAppointment() {
         return this.selectedAppointment;
@@ -294,7 +294,7 @@ public class AppointmentsController extends AppController implements FormValidat
      * Populate the form based on the selected customer
      * This is so that the customer id is automatically populated
      * 
-     * @param appointment
+     * @param appointment Appointment
      */
     public void populateForm(Appointment appointment) {
 
@@ -619,7 +619,7 @@ public class AppointmentsController extends AppController implements FormValidat
      * This method checks the database to check if the appointment times are
      * overlapping any other appointment times.
      * 
-     * @return isOverlapping
+     * @return isOverlapping if the appointment times are overlapping with another
      */
     private boolean isAppointmentOverlapping() {
         boolean isOverlapping = false;

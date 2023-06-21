@@ -11,7 +11,7 @@ public abstract class AppController {
      * Sets a reference to the app from any Form Controller so that other Form
      * Controllers can be referenced if necessary
      * 
-     * @param app
+     * @param app AppointmentsApplication
      */
     public void setApp(AppointmentsApplication app) {
         this.app = app;
@@ -27,8 +27,8 @@ public abstract class AppController {
     /**
      * Alert dialog for warning messages
      * 
-     * @param message
-     * @param type
+     * @param message Message to display
+     * @param type    Type of warning
      */
     public void alertWarning(String message, String type) {
         System.out.println(message);
@@ -50,8 +50,8 @@ public abstract class AppController {
     /**
      * Alert dialog for error messages
      * 
-     * @param message
-     * @param type
+     * @param message Message to display
+     * @param type    Type of error
      */
     public void alertError(String message, String type) {
         System.out.println(message);

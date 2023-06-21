@@ -688,7 +688,7 @@ public class MainController extends AppController {
      * 2023-07-02", "2023-07-03 - 2023-07-09" so that the user can easily see the
      * date range. Not all weeks will have 7 days in them.
      * 
-     * @param monthChoiceValue
+     * @param monthChoiceValue The month that was selected in the month choice box
      */
     private void populateWeeksChoicBox(String monthChoiceValue) {
 
@@ -1057,8 +1057,8 @@ public class MainController extends AppController {
      * If there are no appointments associated with the customer, the customer will
      * be deleted from the database
      * 
-     * @param customer
-     * @return validationState
+     * @param customer The customer to be deleted
+     * @return validationState The validation state of the form
      */
     private FormValidationState requestCustomerDeletionValidation(Customer customer) {
 

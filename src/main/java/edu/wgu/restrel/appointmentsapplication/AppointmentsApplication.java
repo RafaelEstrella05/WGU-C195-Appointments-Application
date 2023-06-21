@@ -57,9 +57,9 @@ public class AppointmentsApplication extends Application {
     /**
      * Set the scene to the fxml file and title
      * 
-     * @param fxml
-     * @param title
-     * @return
+     * @param fxml  the fxml file to load
+     * @param title the title of the scene
+     * @return AppController
      * @throws IOException
      */
     public AppController setShowScene(String fxml, String title) throws IOException {
@@ -75,7 +75,7 @@ public class AppointmentsApplication extends Application {
     /**
      * Set the main controller
      * 
-     * @param mainController
+     * @param mainController the main controller for the application
      */
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
@@ -93,7 +93,7 @@ public class AppointmentsApplication extends Application {
     /**
      * Set the user
      * 
-     * @param user
+     * @param user the user to set
      */
     public void setUser(User user) {
         this.user = user;
@@ -111,7 +111,7 @@ public class AppointmentsApplication extends Application {
     /**
      * Set the countries
      * 
-     * @param countries ArrayList<Country>
+     * @param countries the countries to set
      */
     public void setCountries(ArrayList<Country> countries) {
         this.countries = countries;
@@ -120,7 +120,7 @@ public class AppointmentsApplication extends Application {
     /**
      * Get the countries
      * 
-     * @return ArrayList<Country>
+     * @return countries ArrayList<Country>
      */
     public ArrayList<Country> getCountries() {
         return this.countries;
@@ -129,7 +129,7 @@ public class AppointmentsApplication extends Application {
     /**
      * Set the customers
      * 
-     * @param customers
+     * @param customers the customers to set
      */
     public void setCustomers(ObservableList<Customer> customers) {
         this.customers = customers;
@@ -138,7 +138,7 @@ public class AppointmentsApplication extends Application {
     /**
      * Get the customers
      * 
-     * @return ArrayList<Customer> customers
+     * @return customers ArrayList<Customer>
      */
     public ObservableList<Customer> getCustomers() {
         return this.customers;
@@ -147,7 +147,7 @@ public class AppointmentsApplication extends Application {
     /**
      * add customer to customers
      * 
-     * @param customer
+     * @param customer the customer to add
      */
     public void addCustomer(Customer customer) {
         this.customers.add(customer);
@@ -156,7 +156,7 @@ public class AppointmentsApplication extends Application {
     /**
      * Set the appointments
      * 
-     * @param appointments
+     * @param appointments the appointments to set as an ObservableList
      */
     public void setAppointments(ObservableList<Appointment> appointments) {
         this.appointments = appointments;
@@ -165,7 +165,7 @@ public class AppointmentsApplication extends Application {
     /**
      * Get the appointments
      * 
-     * @return ArrayList<Appointment>
+     * @return appointments ArrayList<Appointment>
      */
     public ObservableList<Appointment> getAppointments() {
         return this.appointments;
@@ -174,7 +174,7 @@ public class AppointmentsApplication extends Application {
     /**
      * Add appointment to appointments
      * 
-     * @param appointment
+     * @param appointment the appointment to add
      */
     public void addAppointment(Appointment appointment) {
         this.appointments.add(appointment);
@@ -183,8 +183,8 @@ public class AppointmentsApplication extends Application {
     /**
      * Find a division by name
      * 
-     * @param name
-     * @return Division
+     * @param name the name of the division
+     * @return Division the division found or null
      */
     public Division findDivisionByName(String name) {
         return countries.stream()
@@ -197,8 +197,8 @@ public class AppointmentsApplication extends Application {
     /**
      * Find a country by Name
      * 
-     * @param name
-     * @return Country
+     * @param name the name of the country
+     * @return Country the country found or null
      */
     public Country findCountryByName(String name) {
         return getCountries().stream()
@@ -210,7 +210,7 @@ public class AppointmentsApplication extends Application {
     /*
      * Find a customer by id
      * 
-     * @return Customer
+     * @return Customer the customer found or null
      */
     public Customer findCustomerById(int id) {
         return getCustomers().stream()
@@ -222,8 +222,8 @@ public class AppointmentsApplication extends Application {
     /**
      * Get the appointments from the database based on the date string and or day
      * 
-     * @param dateString
-     * @param dayString
+     * @param dateString the date string in format yyyy MMMM
+     * @param dayString  the day string in format dd-dd
      */
     public void getAppointmentsFromDB(String dateString, String dayString) {
         // clear the appointments array list

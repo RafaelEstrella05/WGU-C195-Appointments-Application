@@ -12,7 +12,7 @@ public class FormValidationException extends Exception {
     /**
      * Constructor
      * 
-     * @param message
+     * @param message Error message
      */
     public FormValidationException(String message) {
         super(message);
@@ -22,7 +22,7 @@ public class FormValidationException extends Exception {
     /**
      * Getter for fieldName
      * 
-     * @return fieldName
+     * @return fieldName Name of field that caused error
      */
     public String getFieldName() {
         return fieldName;

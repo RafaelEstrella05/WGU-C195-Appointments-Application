@@ -64,7 +64,7 @@ public class DatabaseManager {
     /**
      * Gets a connection to the database.
      *
-     * @return the connection
+     * @return the connection object to the database
      * @throws SQLException if there is an error connecting to the database
      */
     public static Connection getConnection() throws SQLException {
@@ -104,8 +104,8 @@ public class DatabaseManager {
      * accepts a string of the query and a QueryExecutor object as well as any
      * number of parameters that the query needs
      * 
-     * @param sql
-     * @param executor
+     * @param sql      SQL query string
+     * @param executor QueryExecutor object
      * @param args     1,2,3,...,n
      */
     public void executeQuery(String sql, QueryExecutor executor, Object... args) {
@@ -134,9 +134,9 @@ public class DatabaseManager {
      * this method is used to execute an update, delete or insert statement
      * accepts multiple parameters
      * 
-     * @param sql
-     * @param executor
-     * @param args
+     * @param sql      SQL query string
+     * @param executor QueryExecutor object
+     * @param args     1,2,3,...,n
      */
     public void executeUpdate(String sql, QueryExecutor executor, Object... args) {
         try (Connection conn = getConnection();

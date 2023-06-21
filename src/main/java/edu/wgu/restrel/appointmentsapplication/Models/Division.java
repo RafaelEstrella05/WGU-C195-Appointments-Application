@@ -15,9 +15,9 @@ public class Division {
     /**
      * Constructor
      * 
-     * @param divisionId
-     * @param division
-     * @param countryId
+     * @param divisionId Unique identifier for division
+     * @param division   Name of division
+     * @param countryId  Unique identifier for country
      */
     public Division(int divisionId, String division, int countryId) {
         this.divisionId = divisionId;
@@ -28,7 +28,7 @@ public class Division {
     /**
      * Getter for DivisionId
      * 
-     * @return
+     * @return DivisionId Unique identifier for division
      */
     public int getDivisionId() {
         return divisionId;
@@ -37,7 +37,7 @@ public class Division {
     /**
      * Setter for DivisionId
      * 
-     * @param divisionId
+     * @param divisionId Unique identifier for division
      */
     public void setDivisionId(int divisionId) {
         this.divisionId = divisionId;
@@ -46,7 +46,7 @@ public class Division {
     /**
      * Getter for Division
      * 
-     * @return Division
+     * @return Division Name of division
      */
     public String getDivision() {
         return division;
@@ -55,7 +55,7 @@ public class Division {
     /**
      * Setter for Division
      * 
-     * @param division
+     * @param division Name of division
      */
     public void setDivision(String division) {
         this.division = division;
@@ -64,7 +64,7 @@ public class Division {
     /**
      * Getter for CountryId
      * 
-     * @return
+     * @return countryId Unique identifier for country
      */
     public int getCountryId() {
         return countryId;
@@ -73,7 +73,7 @@ public class Division {
     /**
      * Setter for CountryId
      * 
-     * @param countryId
+     * @param countryId Unique identifier for country
      */
     public void setCountryId(int countryId) {
         this.countryId = countryId;

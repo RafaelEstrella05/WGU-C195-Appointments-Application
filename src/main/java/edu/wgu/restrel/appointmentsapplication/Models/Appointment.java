@@ -34,16 +34,16 @@ public class Appointment {
     /**
      * Constructor for Appointment class.
      * 
-     * @param appointmentId
-     * @param title
-     * @param description
-     * @param location
-     * @param type
-     * @param start
-     * @param end
-     * @param customerId
-     * @param userId
-     * @param contactId
+     * @param appointmentId Unique identifier for the appointment
+     * @param title         Title of the appointment
+     * @param description   Description of the appointment
+     * @param location      Location of the appointment
+     * @param type          Type of the appointment
+     * @param start         Start date and time of the appointment in UTC
+     * @param end           End date and time of the appointment in UTC
+     * @param customerId    Unique identifier for the customer
+     * @param userId        Unique identifier for the user
+     * @param contactId     Unique identifier for the contact
      */
     public Appointment(int appointmentId, String title, String description, String location, String type, String start,
             String end, int customerId, int userId, int contactId, String contact) {
@@ -68,7 +68,7 @@ public class Appointment {
     /**
      * Getter for appointmentId.
      * 
-     * @return appointmentId
+     * @return appointmentId Unique identifier for the appointment
      */
     public int getAppointmentId() {
         return this.appointmentId;
@@ -77,7 +77,7 @@ public class Appointment {
     /**
      * Setter for appointmentId.
      * 
-     * @param appointmentId
+     * @param appointmentId Unique identifier for the appointment
      */
     public void setAppointmentId(int appointmentId) {
         this.appointmentId = appointmentId;
@@ -86,7 +86,7 @@ public class Appointment {
     /**
      * Getter for title.
      * 
-     * @return title
+     * @return title Title of the appointment
      */
     public String getTitle() {
         return this.title;
@@ -95,7 +95,7 @@ public class Appointment {
     /**
      * Setter for title.
      * 
-     * @param title
+     * @param title Title of the appointment
      */
     public void setTitle(String title) {
         this.title = title;
@@ -104,7 +104,7 @@ public class Appointment {
     /**
      * Getter for description.
      * 
-     * @return description
+     * @return description Description of the appointment
      */
     public String getDescription() {
         return this.description;
@@ -113,7 +113,7 @@ public class Appointment {
     /**
      * Setter for description.
      * 
-     * @param description
+     * @param description Description of the appointment
      */
     public void setDescription(String description) {
         this.description = description;
@@ -122,7 +122,7 @@ public class Appointment {
     /**
      * Getter for location.
      * 
-     * @return location
+     * @return location Location of the appointment
      */
     public String getLocation() {
         return this.location;
@@ -131,7 +131,7 @@ public class Appointment {
     /**
      * Setter for location.
      * 
-     * @param location
+     * @param location Location of the appointment
      */
     public void setLocation(String location) {
         this.location = location;
@@ -140,7 +140,7 @@ public class Appointment {
     /**
      * Getter for type.
      * 
-     * @return type
+     * @return type Type of the appointment
      */
     public String getType() {
         return this.type;
@@ -149,7 +149,7 @@ public class Appointment {
     /**
      * Setter for type.
      * 
-     * @param type
+     * @param type Type of the appointment
      */
     public void setType(String type) {
         this.type = type;
@@ -158,7 +158,7 @@ public class Appointment {
     /**
      * Getter for start.
      * 
-     * @return start
+     * @return start Start date and time of the appointment in UTC
      */
     public String getStart() {
         return this.start;
@@ -167,7 +167,7 @@ public class Appointment {
     /**
      * Setter for start.
      * 
-     * @param start
+     * @param start Start date and time of the appointment in UTC
      */
     public void setStart(String start) {
         this.start = start;
@@ -176,7 +176,7 @@ public class Appointment {
     /**
      * Getter for end.
      * 
-     * @return end
+     * @return end End date and time of the appointment in UTC
      */
     public String getEnd() {
         return this.end;
@@ -185,7 +185,7 @@ public class Appointment {
     /**
      * Setter for end.
      * 
-     * @param end
+     * @param end End date and time of the appointment in UTC
      */
     public void setEnd(String end) {
         this.end = end;
@@ -194,7 +194,8 @@ public class Appointment {
     /**
      * Getter for startLocal.
      * 
-     * @return startLocal
+     * @return startLocal Start date and time of the appointment in local time as a
+     *         string
      */
     public String getStartLocal() {
         return this.startLocal;
@@ -203,7 +204,7 @@ public class Appointment {
     /**
      * Setter for startLocal.
      * 
-     * @param startLocal
+     * @param startLocal Start date and time of the appointment in local time
      */
     public void setStartLocal(String startLocal) {
         this.startLocal = startLocal;
@@ -212,7 +213,8 @@ public class Appointment {
     /**
      * Getter for endLocal.
      * 
-     * @return endLocal
+     * @return endLocal End date and time of the appointment in local time as a
+     *         string
      */
     public String getEndLocal() {
         return this.endLocal;
@@ -221,7 +223,8 @@ public class Appointment {
     /**
      * Setter for endLocal.
      * 
-     * @param endLocal
+     * @param endLocal End date and time of the appointment in local time as a
+     *                 string
      */
     public void setEndLocal(String endLocal) {
         this.endLocal = endLocal;
@@ -230,7 +233,7 @@ public class Appointment {
     /**
      * Getter for startDate in LocalDate format.
      * 
-     * @return startDate
+     * @return startDate Start date and time of the appointment in LocalDate format
      */
     public LocalDate getStartDate() {
         return this.startDate;
@@ -239,7 +242,8 @@ public class Appointment {
     /**
      * Setter for startDate in LocalDate format.
      * 
-     * @param start
+     * @param start Start date and time of the appointment in LocalDate format as a
+     *              string
      */
     public void setStartDate(String start) {
 
@@ -264,7 +268,7 @@ public class Appointment {
      * Getter for startTime in LocalTime format.
      * converts from db stored UTC to local time
      * 
-     * @return startTime
+     * @return startTime Start time of the appointment in LocalTime format
      */
     public LocalTime getStartTime() {
 
@@ -287,7 +291,7 @@ public class Appointment {
     /**
      * Getter for endTime in LocalTime format.
      * 
-     * @return endTime
+     * @return endTime End time of the appointment in LocalTime format
      */
     public LocalTime getEndTime() {
 
@@ -310,7 +314,7 @@ public class Appointment {
     /**
      * Getter for startDateTime and LocalDate in LocalDateTime format.
      * 
-     * @return startDateTime
+     * @return startDateTime Start date and time of the appointment in LocalDateTime
      */
     public LocalDateTime getStartDateLocalTime() {
 
@@ -333,7 +337,7 @@ public class Appointment {
     /**
      * Getter for endDateTime and LocalDate in LocalDateTime format.
      * 
-     * @return endDateTime
+     * @return endDateTime End date and time of the appointment in LocalDateTime
      */
     public LocalDateTime getEndDateLocalTime() {
 
@@ -358,8 +362,8 @@ public class Appointment {
      * ("yyyy-MM-dd HH:mm:ss")
      * to this format ("yyyy-MM-dd HH:mm a")
      * 
-     * @param utcDateTimeString
-     * @return localDateTimeString
+     * @param utcDateTimeString UTC date time string
+     * @return localDateTimeString Local date time string
      */
     public String convertUTCStringToLocalString(String utcDateTimeString) {
 
@@ -385,7 +389,7 @@ public class Appointment {
     /**
      * Getter for customerId.
      * 
-     * @return customerId
+     * @return customerId Unique identifier for the customer
      */
     public int getCustomerId() {
         return this.customerId;
@@ -394,7 +398,7 @@ public class Appointment {
     /**
      * Setter for customerId.
      * 
-     * @param customerId
+     * @param customerId Unique identifier for the customer
      */
     public void setCustomerId(int customerId) {
         this.customerId = customerId;
@@ -403,7 +407,7 @@ public class Appointment {
     /**
      * Getter for userId.
      * 
-     * @return userId
+     * @return userId Unique identifier for the user
      */
     public int getUserId() {
         return this.userId;
@@ -412,7 +416,7 @@ public class Appointment {
     /**
      * Setter for userId.
      * 
-     * @param userId
+     * @param userId Unique identifier for the user
      */
     public void setUserId(int userId) {
         this.userId = userId;
@@ -421,7 +425,7 @@ public class Appointment {
     /**
      * Getter for contactId.
      * 
-     * @return contactId
+     * @return contactId Unique identifier for the contact
      */
     public int getContactId() {
         return this.contactId;
@@ -430,7 +434,7 @@ public class Appointment {
     /**
      * Setter for contactId.
      * 
-     * @param contactId
+     * @param contactId Unique identifier for the contact
      */
     public void setContactId(int contactId) {
         this.contactId = contactId;
@@ -439,7 +443,7 @@ public class Appointment {
     /**
      * Getter for contact.
      * 
-     * @return contact
+     * @return contact Contact name who works for the company
      */
     public String getContact() {
         return this.contact;
@@ -448,7 +452,7 @@ public class Appointment {
     /**
      * Setter for contact.
      * 
-     * @param contact
+     * @param contact Contact name who works for the company
      */
     public void setContact(String contact) {
         this.contact = contact;

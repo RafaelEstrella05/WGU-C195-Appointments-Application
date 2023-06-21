@@ -15,8 +15,8 @@ public class FormValidationState {
     /**
      * Constructor
      * 
-     * @param isValid
-     * @param message
+     * @param isValid is form valid
+     * @param message error message (if any)
      */
     public FormValidationState(boolean isValid, String message) {
         this.isValid = isValid;
@@ -26,7 +26,7 @@ public class FormValidationState {
     /**
      * Getter for isValid
      * 
-     * @return isValid
+     * @return isValid is form valid
      */
 
     public boolean isValid() {
@@ -36,7 +36,7 @@ public class FormValidationState {
     /**
      * Setter for isValid
      * 
-     * @param isValid
+     * @param isValid is form valid
      */
     public void setisValid(boolean isValid) {
         this.isValid = isValid;
@@ -45,7 +45,7 @@ public class FormValidationState {
     /**
      * Getter for message
      * 
-     * @return message
+     * @return message error message (if any)
      */
     public String getMessage() {
         return message;

@@ -24,8 +24,8 @@ public class Country {
     /**
      * Constructor
      * 
-     * @param countryId
-     * @param country
+     * @param countryId Unique identifier for country
+     * @param country   Name of country
      */
     public Country(int countryId, String country) {
         this.countryId = countryId;
@@ -36,7 +36,7 @@ public class Country {
     /**
      * Getter for CountryId
      * 
-     * @return countryId
+     * @return countryId Unique identifier for country
      */
     public int getCountryId() {
         return countryId;
@@ -45,7 +45,7 @@ public class Country {
     /**
      * Setter for CountryId
      * 
-     * @param countryId
+     * @param countryId Unique identifier for country
      */
     public void setCountryId(int countryId) {
         this.countryId = countryId;
@@ -54,7 +54,7 @@ public class Country {
     /**
      * Getter for Country
      * 
-     * @return country
+     * @return country Name of country
      */
     public String getCountry() {
         return country;
@@ -63,7 +63,7 @@ public class Country {
     /**
      * Setter for Country
      * 
-     * @param country
+     * @param country Name of country
      */
     public void setCountry(String country) {
         this.country = country;
@@ -72,7 +72,7 @@ public class Country {
     /**
      * Getter for divisions
      * 
-     * @return associatedDivisions
+     * @return associatedDivisions List of divisions associated with country
      */
     public ArrayList<Division> getAssociatedDivisions() {
         return associatedDivisions;
@@ -81,7 +81,7 @@ public class Country {
     /**
      * Setter for divisions
      * 
-     * @param associatedDivisions
+     * @param associatedDivisions List of divisions associated with country
      */
     public void setAssociatedDivisions(ArrayList<Division> associatedDivisions) {
         this.associatedDivisions = associatedDivisions;
@@ -90,7 +90,7 @@ public class Country {
     /**
      * Adds a division to the divisions list
      * 
-     * @param division
+     * @param division Division to add
      */
     public void addAssociatedDivision(Division division) {
         associatedDivisions.add(division);
@@ -99,7 +99,7 @@ public class Country {
     /**
      * finds a division by id
      * 
-     * @param id
+     * @param id Unique identifier for division
      * @return division; null if not found
      */
     public Division findDivisionById(int id) {

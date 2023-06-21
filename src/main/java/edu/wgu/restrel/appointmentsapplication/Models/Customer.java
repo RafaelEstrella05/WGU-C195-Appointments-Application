@@ -25,12 +25,12 @@ public class Customer {
     /**
      * Constructor
      * 
-     * @param customerId
-     * @param customer_Name
-     * @param address
-     * @param postalCode
-     * @param phone
-     * @param divisionId
+     * @param customerId    Unique identifier for customer
+     * @param customer_Name Name of customer
+     * @param address       Address of customer
+     * @param postalCode    Postal code of customer
+     * @param phone         Phone number of customer
+     * @param divisionId    Unique identifier for division
      */
     public Customer(int customerId, String customer_Name, String address, String postalCode, String phone,
             int divisionId, String division, int countryId, String country) {
@@ -48,7 +48,7 @@ public class Customer {
     /**
      * Getter for CustomerId
      * 
-     * @return customerId
+     * @return customerId Unique identifier for customer
      */
     public int getCustomerId() {
         return customerId;
@@ -58,7 +58,7 @@ public class Customer {
     /**
      * Setter for CustomerId
      * 
-     * @param customerId
+     * @param customerId Unique identifier for customer
      */
     public void setCustomerId(int customerId) {
         this.customerId = customerId;
@@ -68,7 +68,7 @@ public class Customer {
     /**
      * Getter for Customer_Name
      * 
-     * @return customerName
+     * @return customerName Name of customer
      */
     public String getCustomerName() {
         return customerName;
@@ -77,7 +77,7 @@ public class Customer {
     /**
      * Setter for Customer_Name
      * 
-     * @param customerName
+     * @param customerName Name of customer
      */
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
@@ -86,7 +86,7 @@ public class Customer {
     /**
      * Getter for Address
      * 
-     * @return address
+     * @return address Address of customer
      */
     public String getAddress() {
         return address;
@@ -95,7 +95,7 @@ public class Customer {
     /**
      * Setter for Address
      * 
-     * @param address
+     * @param address Address of customer
      */
     public void setAddress(String address) {
         this.address = address;
@@ -104,7 +104,7 @@ public class Customer {
     /**
      * Getter for Postal_Code
      * 
-     * @return postalCode
+     * @return postalCode Postal code of customer
      */
     public String getPostalCode() {
         return postalCode;
@@ -113,7 +113,7 @@ public class Customer {
     /**
      * Setter for Postal_Code
      * 
-     * @param postalCode
+     * @param postalCode Postal code of customer
      */
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
@@ -122,7 +122,7 @@ public class Customer {
     /**
      * Getter for Phone
      * 
-     * @return phone
+     * @return phone Phone number of customer
      */
     public String getPhone() {
         return phone;
@@ -131,7 +131,7 @@ public class Customer {
     /**
      * Setter for Phone
      * 
-     * @param phone
+     * @param phone Phone number of customer
      */
     public void setPhone(String phone) {
         this.phone = phone;
@@ -140,7 +140,7 @@ public class Customer {
     /**
      * Getter for DivisionId
      * 
-     * @return divisionId
+     * @return divisionId Unique identifier for division
      */
     public int getDivisionId() {
         return divisionId;
@@ -150,7 +150,7 @@ public class Customer {
     /**
      * Setter for DivisionId
      * 
-     * @param divisionId
+     * @param divisionId Unique identifier for division
      */
     public void setDivisionId(int divisionId) {
         this.divisionId = divisionId;
@@ -159,7 +159,7 @@ public class Customer {
     /**
      * Getter for Division
      * 
-     * @return division
+     * @return division Name of division
      */
     public String getDivision() {
         return division;
@@ -168,7 +168,7 @@ public class Customer {
     /**
      * Setter for Division
      * 
-     * @param division
+     * @param division Division of customer
      */
     public void setDivision(String division) {
         this.division = division;
@@ -177,7 +177,7 @@ public class Customer {
     /**
      * Getter for CountryId
      * 
-     * @return countryId
+     * @return countryId Unique identifier for country
      */
     public void getCountryId(int countryId) {
         this.countryId = countryId;
@@ -186,7 +186,7 @@ public class Customer {
     /**
      * Setter for CountryId
      * 
-     * @param countryId
+     * @param countryId Unique identifier for country
      */
     public void setCountryId(int countryId) {
         this.countryId = countryId;
@@ -195,7 +195,7 @@ public class Customer {
     /**
      * Getter for Country
      * 
-     * @return country
+     * @return country Name of country
      */
     public String getCountry() {
         return country;
@@ -204,7 +204,7 @@ public class Customer {
     /**
      * Setter for Country
      * 
-     * @param country
+     * @param country Name of country
      */
     public void setCountry(String country) {
         this.country = country;

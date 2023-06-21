@@ -121,7 +121,7 @@ public class CustomerController extends AppController implements FormValidation 
      * This method is in charge of checking the form input for errors or missing
      * data and returning a ValidationState object with the results
      * 
-     * @return validationState
+     * @return validationState object
      */
 
     public FormValidationState getFormInputValidationState() throws FormValidationException {
@@ -226,7 +226,7 @@ public class CustomerController extends AppController implements FormValidation 
     /**
      * Setter for selected customer
      * 
-     * @param customer
+     * @param customer the customer that was selected in the main view
      */
     public void setSelectedCustomer(Customer customer) {
 
@@ -236,7 +236,7 @@ public class CustomerController extends AppController implements FormValidation 
     /**
      * Getter for selected customer
      * 
-     * @return selectedCustomer
+     * @return selectedCustomer the customer that was selected in the main view
      */
     public Customer getSelectedCustomer() {
         return this.selectedCustomer;
@@ -278,7 +278,7 @@ public class CustomerController extends AppController implements FormValidation 
      * This method populates the country choice box to its default
      * state.
      * 
-     * @param countries
+     * @param countries ArrayList of Country objects
      */
     public void populateCountryComboBox(ArrayList<Country> countries) {
         List<String> countryNames = countries.stream()
@@ -294,7 +294,7 @@ public class CustomerController extends AppController implements FormValidation 
      * This method populates the division choice box with the divisions associated
      * with the selected country
      * 
-     * @param divisions
+     * @param divisions ArrayList of Division objects
      */
     private void populateDivisionChoiceBox(ArrayList<Division> divisions) {
 
@@ -384,7 +384,7 @@ public class CustomerController extends AppController implements FormValidation 
     /**
      * Updates a customer in the database
      * 
-     * @param customer
+     * @param customer The customer object to be updated in the database
      */
     // updateCustomerInDatabase
     private void updateCustomerInDatabase(Customer customer) {

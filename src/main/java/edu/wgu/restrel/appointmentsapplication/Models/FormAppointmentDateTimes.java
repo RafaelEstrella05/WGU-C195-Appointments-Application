@@ -43,7 +43,7 @@ public class FormAppointmentDateTimes {
     /**
      * Getter for selectedDateLocal
      * 
-     * @return selectedDateLocal
+     * @return selectedDateLocal LocalDate object for selected date
      */
     public LocalDate getSelectedDateLocal() {
         return selectedDateLocal;
@@ -52,7 +52,7 @@ public class FormAppointmentDateTimes {
     /**
      * Getter for selectedStartTimeLocal
      * 
-     * @return selectedStartTimeLocal
+     * @return selectedStartTimeLocal LocalTime object for selected start time
      */
     public LocalTime getSelectedStartTimeLocal() {
         return selectedStartTimeLocal;
@@ -62,7 +62,7 @@ public class FormAppointmentDateTimes {
      * Gets the selected start date and time in local format based on
      * selectedDateLocal and selectedStartTimeLocal.
      * 
-     * @return LocalDateTime
+     * @return LocalDateTime object for selected start date and time
      */
     public LocalDateTime getSelectedStartDateTimeLocal() {
         return LocalDateTime.of(selectedDateLocal, selectedStartTimeLocal);
@@ -72,7 +72,7 @@ public class FormAppointmentDateTimes {
      * Gets the selected end date and time in local format based on
      * selectedDateLocal and selectedEndTimeLocal.
      * 
-     * @return LocalDateTime
+     * @return LocalDateTime object for selected end date and time
      */
     public LocalDateTime getSelectedEndDateTimeLocal() {
         return LocalDateTime.of(selectedDateLocal, selectedEndTimeLocal);
@@ -81,7 +81,7 @@ public class FormAppointmentDateTimes {
     /**
      * Gets the selected start date and time in UTC format.
      * 
-     * @return ZonedDateTime
+     * @return ZonedDateTime object for selected start date and time
      */
     public ZonedDateTime getSelectedStartDateTimeUTC() {
         LocalDateTime localDateTime = LocalDateTime.of(selectedDateLocal, selectedStartTimeLocal);
@@ -94,7 +94,7 @@ public class FormAppointmentDateTimes {
     /**
      * Gets the selected end date and time in UTC format.
      * 
-     * @return ZonedDateTime
+     * @return ZonedDateTime object for selected end date and time
      */
     public ZonedDateTime getSelectedEndDateTimeUTC() {
         LocalDateTime localDateTime = LocalDateTime.of(selectedDateLocal, selectedEndTimeLocal);
@@ -106,7 +106,7 @@ public class FormAppointmentDateTimes {
     /**
      * Getter for selectedEndTimeLocal
      * 
-     * @return selectedEndTimeLocal
+     * @return selectedEndTimeLocal LocalTime object for selected end time
      */
     public LocalTime getSelectedEndTimeLocal() {
         return selectedEndTimeLocal;
@@ -115,7 +115,7 @@ public class FormAppointmentDateTimes {
     /**
      * Setter for dateLocal
      * 
-     * @param dateLocal
+     * @param dateLocal LocalDate
      */
     public void setSelectedDateLocal(LocalDate dateLocal) {
         this.selectedDateLocal = dateLocal;
@@ -133,12 +133,12 @@ public class FormAppointmentDateTimes {
      * sets the selected Start and End times based on the string values for hour,
      * minute, and am/pm
      * 
-     * @param startHour
-     * @param startMinute
-     * @param startAmPm
-     * @param endHour
-     * @param endMinute
-     * @param endAmPm
+     * @param startHour   String value for start hour
+     * @param startMinute String value for start minute
+     * @param startAmPm   String value for start am/pm
+     * @param endHour     String value for end hour
+     * @param endMinute   String value for end minute
+     * @param endAmPm     String value for end am/pm
      */
     public void setSelectedLocalTimes(String startHour, String startMinute, String startAmPm, String endHour,
             String endMinute, String endAmPm) {

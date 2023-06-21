@@ -15,9 +15,9 @@ public class Contact {
     /**
      * Constructor for Contact
      * 
-     * @param contactId
-     * @param contactName
-     * @param email
+     * @param contactId   Unique identifier for contact
+     * @param contactName Name of contact
+     * @param email       Email address of contact
      */
     public Contact(int contactId, String contactName, String email) {
         this.contactId = contactId;
@@ -28,7 +28,7 @@ public class Contact {
     /**
      * Getter for contactId
      * 
-     * @return contactId
+     * @return contactId Unique identifier for contact
      */
     public int getContactId() {
         return contactId;
@@ -37,7 +37,7 @@ public class Contact {
     /**
      * Getter for contactName
      * 
-     * @return contactName
+     * @return contactName Name of contact
      */
     public String getContactName() {
         return contactName;
@@ -46,7 +46,7 @@ public class Contact {
     /**
      * Getter for email
      * 
-     * @return email
+     * @return email Email address of contact
      */
     public String getEmail() {
         return email;
@@ -55,7 +55,7 @@ public class Contact {
     /**
      * Setter for contactId
      * 
-     * @param contactId
+     * @param contactId Unique identifier for contact
      */
     public void setContactId(int contactId) {
         this.contactId = contactId;
@@ -64,7 +64,7 @@ public class Contact {
     /**
      * Setter for contactName
      * 
-     * @param contactName
+     * @param contactName Name of contact
      */
     public void setContactName(String contactName) {
         this.contactName = contactName;
@@ -73,7 +73,7 @@ public class Contact {
     /**
      * Setter for email
      * 
-     * @param email
+     * @param email Email address of contact
      */
     public void setEmail(String email) {
         this.email = email;
