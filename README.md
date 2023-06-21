@@ -27,18 +27,18 @@ JAVAFX Version: org.openjfx:javafx-base:17.0.2 (Maven)
 
 How to Run: (Assuming the client_schedule database is already created and populated with data)
 
-Database Setup:
-	1) Navigate to the src\main\resources folder and open the database.properties file so that the database connection information can be updated.
-	2) Change the server ip address to match your MYSQL server ip address. 
-	3) If it is running on the same machine as the application, leave it as localhost.
-	4) If you are using a different port than the default 3306, change the port number to match your MYSQL server port number.
-	5) Change the username and password to match your MYSQL server credentials that have access to the client_schedule database.
+	Database Setup:
+		1) Navigate to the src\main\resources folder and open the database.properties file so that the database connection information can be updated.
+		2) Change the server ip address to match your MYSQL server ip address. 
+		3) If it is running on the same machine as the application, leave it as localhost.
+		4) If you are using a different port than the default 3306, change the port number to match your MYSQL server port number.
+		5) Change the username and password to match your MYSQL server credentials that have access to the client_schedule database.
 
-Application Setup:
-	1) Open the project in IntelliJ IDEA.
-	2) Navigate to the src\main\java\restrel\appointmentsapplication\AppointmentsApplication file and run the application.
-	3) The application will open and the login screen will be displayed.
-	4) Enter the username and password and click the login button so that the main screen can be displayed.
+	Application Setup:
+		1) Open the project in IntelliJ IDEA.
+		2) Navigate to the src\main\java\restrel\appointmentsapplication\AppointmentsApplication file and run the application.
+		3) The application will open and the login screen will be displayed.
+		4) Enter the username and password and click the login button so that the main screen can be displayed.
 
 
 Additional Report (part A3f):
