@@ -177,7 +177,7 @@ public class Customer {
     /**
      * Getter for CountryId
      * 
-     * @return countryId Unique identifier for country
+     * @param countryId Unique identifier for country
      */
     public void getCountryId(int countryId) {
         this.countryId = countryId;
