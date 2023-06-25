@@ -5,7 +5,6 @@ import edu.wgu.restrel.appointmentsapplication.Utils.DatabaseManager;
 import edu.wgu.restrel.appointmentsapplication.Utils.FileManager;
 import edu.wgu.restrel.appointmentsapplication.Models.User;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -48,25 +47,26 @@ public class LoginController extends AppController {
     ResourceBundle resources;
 
     /**
-     * login submission button click event handler.
+     * (LAMBDA EXPRESSION #1)
+     * Login submission button click event handler
      * Executes the login process by retrieving the username and password,
      * querying the database for matching records, and handling the results.
      *
-     * USES LAMBDA EXPRESSION:
-     * This lambda expression is used to provide a clear and concise way to process
+     * lambda expression is used to provide a clear and concise way to process
      * the result set returned from the database query. It promotes code reuse when
      * querying for database records by allowing the developer to pass in a query
      * string, executor function, and MySQL query parameters (if any) without having
      * to declare database connections, prepared statements, and result sets for
      * each query.
      *
-     * In this case, the lambda expression is used to query the database for the
+     * In this case, the expression is used to query the database for the
      * user's
      * username and password, and checks if they are valid by verifying if the
      * result set
      * is empty or not.
      *
      * @see DatabaseManager #executeQuery(String, ResultSetHandler, Object...)
+     * 
      */
     public void onSubmitButtonClick() {
         String username = usernameField.getText();
@@ -74,54 +74,64 @@ public class LoginController extends AppController {
 
         DatabaseManager dbmanager = new DatabaseManager();
 
-        // run mysql query to search users table for user name and password
-        dbmanager.executeQuery("SELECT * FROM client_schedule.users where User_Name = ? and Password = ?", (rs) -> {
-            String activity;
-            String date = java.time.LocalDate.now().toString();
-            String time = java.time.LocalTime.now().toString();
+        if (dbmanager != null) {
+            // run mysql query to search users table for user name and password
 
-            if (rs.next()) {
-                // process each row of the result set
-                System.out.println(rs.getString("User_Name"));
+            dbmanager.executeQuery("SELECT * FROM client_schedule.users where User_Name = ? and Password = ?", (rs) -> {
+                String activity;
+                String date = java.time.LocalDate.now().toString();
+                String time = java.time.LocalTime.now().toString();
 
-                activity = "Login Successful: by " + username + " date: " + date + " " + time;
+                if (rs.next()) {
+                    // process each row of the result set
+                    System.out.println(rs.getString("User_Name"));
 
-                // set the user
-                User user = new User(rs.getInt("User_ID"), rs.getString("User_Name"), rs.getString("Password"));
-                app.setUser(user);
+                    activity = "Login Successful: by " + username + " date: " + date + " " + time;
 
-                try {
-                    AppController appController = this.getApp().setShowScene("main.fxml", "Appointment Manager");
-                    ((MainController) appController).setApp(this.getApp());
-                    app.setMainController((MainController) appController);
+                    // set the user
+                    User user = new User(rs.getInt("User_ID"), rs.getString("User_Name"), rs.getString("Password"));
+                    app.setUser(user);
 
-                    // display data in the table
-                    ((MainController) appController).refreshCustomerContent();
+                    try {
+                        AppController appController = this.getApp().setShowScene("main.fxml", "Appointment Manager");
+                        ((MainController) appController).setApp(this.getApp());
+                        app.setMainController((MainController) appController);
 
-                    // get appointments from db
-                    getApp().getAppointmentsFromDB(null, null);
+                        // display data in the table
+                        ((MainController) appController).refreshCustomerContent();
 
-                    // check for upcoming appointments
-                    ((MainController) appController).checkForUpcomingAppointments();
+                        // get appointments from db
+                        getApp().getAppointmentsFromDB(null, null);
 
-                } catch (IOException e) {
-                    System.out.println("Error: " + e.getMessage());
+                        // check for upcoming appointments
+                        ((MainController) appController).checkForUpcomingAppointments();
+
+                    } catch (IOException e) {
+                        System.out.println("Error: " + e.getMessage());
+                    }
+
+                } else {
+
+                    activity = "Login Failed: by " + username + " date: " + date + " " + time;
+
+                    String loginError = resources.getString("login_error_message");
+                    String loginErrorTitle = resources.getString("login_error_title");
+
+                    // show an error message if the username and password combination is not found
+                    alertError(loginError, loginErrorTitle);
                 }
 
-            } else {
+                // log the activity in a text file
+                FileManager.writeToTextFile("login_activity.txt", activity);
 
-                activity = "Login Failed: by " + username + " date: " + date + " " + time;
+            }, username, password);
 
-                // show an error message if the username and password combination is not found
-                alertError(resources.getString("login_error_message"), resources.getString("login_error_title"));
-            }
+            dbmanager.disconnect();
 
-            // log the activity in a text file
-            FileManager.writeToTextFile("login_activity.txt", activity);
+        } else {
+            System.out.println("dbmanager is null");
+        }
 
-        }, username, password);
-
-        dbmanager.disconnect();
     }
 
     public void initialize() {

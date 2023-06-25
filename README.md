@@ -17,34 +17,32 @@ Date: 2023-06-20
 
 Resources Used:
 
-IDE: IntelliJ IDEA 2022.3.1 (Community Edition)
-Dev Kit: Java SE Development Kit 17.0.6
-Database Server: MYSQL Server 8.0.25
-Database Driver Connector: JDBC Driver Connector/J 8.0.33 - X86
-MYSQL Connector: mysql-connector-j-8.0.33.jar
+IDE: IntelliJ IDEA 2022.3.1 (Community Edition),
+Dev Kit: Java SE Development Kit 17.0.6, 
+Database Server: MYSQL Server 8.0.25,
+Database Driver Connector: JDBC Driver Connector/J 8.0.33 - X86,
+MYSQL Connector: mysql-connector-j-8.0.33.jar,
 JAVAFX Version: org.openjfx:javafx-base:17.0.2 (Maven)
 
 
-How to Run: (Assuming the client_schedule database is already created and populated with data)
+How to Run in Intellij: (Assuming the client_schedule database is already created and populated with data)
 
-	Database Setup:
-		1) Navigate to the src\main\resources folder and open the database.properties file so that the database connection information can be updated.
-		2) Change the server ip address to match your MYSQL server ip address. 
-		3) If it is running on the same machine as the application, leave it as localhost.
-		4) If you are using a different port than the default 3306, change the port number to match your MYSQL server port number.
-		5) Change the username and password to match your MYSQL server credentials that have access to the client_schedule database.
-
-	Dependency Setup (Intellij):
+	Dependency Setup :
 		1) Open the project in IntelliJ IDEA.
 		2) navigate to File -> Project Structure -> Modules -> Dependencies
 		3) make sure that the mysql-connector-java-8.0.33.jar file is listed as a dependency so that the application can connect to the database.
+
+	Database Setup :
+		1) Navigate to the src\main\resources folder and open the database.properties file so that the database connection information can be updated.
+		2) Change the server ip address to match your MYSQL server ip address or keep it as "localhost" if it is running on the same machine as the application.
+		3) If you are using a different port than the default 3306, change the port number to match your MYSQL server port number.
+		4) Change the username and password to match the MYSQL server credentials that have access to the client_schedule database.
 		
 
-	Application Setup (Intellij):
-		1) Open the project in IntelliJ IDEA.
-		2) Navigate to the src\main\java\restrel\appointmentsapplication\AppointmentsApplication file and run the application.
-		3) The application will open and the login screen will be displayed.
-		4) Enter the username and password and click the login button so that the main screen can be displayed.
+	Application Start :
+		1) Navigate to the src\main\java\restrel\appointmentsapplication\AppointmentsApplication file and run the application.
+		2) The application will open and the login screen will be displayed.
+		3) Enter the username and password for the user that you would like to login as and click the submit button.
 
 
 Additional Report (part A3f):
@@ -59,4 +57,11 @@ JOIN first_level_divisions d ON d.Division_ID = c.Division_ID
 JOIN countries co ON co.Country_ID = d.Country_ID
 GROUP BY d.Division, co.Country
 ORDER BY d.Division, co.Country;
+
+
+Lambda expressions required for the assesment can be found in the following files with their respective javadoc comments:
+- Controllers/CustomerController.java
+	- addCustomerToDatabase() method
+- Controller/LoginController.java
+	- onSubmitButtonClick() method
 

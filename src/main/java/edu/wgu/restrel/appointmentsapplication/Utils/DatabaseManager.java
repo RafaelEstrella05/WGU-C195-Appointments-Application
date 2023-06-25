@@ -1,5 +1,8 @@
 package edu.wgu.restrel.appointmentsapplication.Utils;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextArea;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +48,6 @@ public class DatabaseManager {
                 USERNAME = properties.getProperty("username");
                 PASSWORD = properties.getProperty("password");
 
-                connect();
             } else {
                 throw new FileNotFoundException("database.properties file not found.");
             }
@@ -69,8 +71,27 @@ public class DatabaseManager {
      */
     public static Connection getConnection() throws SQLException {
 
-        Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        Connection conn = null;
+
+        try {
+
+            conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+
+        } catch (SQLException e) {
+            System.out.println("Error connecting to database.");
+            e.printStackTrace();
+
+            // alert to the user that there was an error connecting to the database, to
+            // please check the database.properties file
+            // and to restart the application
+            alertError(
+                    "Error connecting to database. \n Please make sure the mysql driver dependency is included in the project structure and that the database.properties file with the proper MYSQL credentials and restart the application.",
+                    "Database Connection Error");
+
+        }
+
         return conn;
+
     }
 
     /**
@@ -83,6 +104,7 @@ public class DatabaseManager {
         } catch (SQLException e) {
             System.out.println("Error connecting to database.");
             e.printStackTrace();
+
         }
     }
 
@@ -109,12 +131,7 @@ public class DatabaseManager {
      * @param args     1,2,3,...,n
      */
     public void executeQuery(String sql, QueryExecutor executor, Object... args) {
-        try (Connection conn = getConnection();
-                Statement stmt = conn.createStatement()) {
-
-            // create a PreparedStatement with the given SQL and parameters
-            java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);
-
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             // set the parameters using a List
             List<Object> argList = Arrays.asList(args);
             for (int i = 0; i < argList.size(); i++) {
@@ -139,9 +156,7 @@ public class DatabaseManager {
      * @param args     1,2,3,...,n
      */
     public void executeUpdate(String sql, QueryExecutor executor, Object... args) {
-        try (Connection conn = getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             // set the parameters using a List
             List<Object> argList = Arrays.asList(args);
             for (int i = 0; i < argList.size(); i++) {
@@ -160,6 +175,29 @@ public class DatabaseManager {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Alert dialog for error messages
+     * 
+     * @param message Message to display
+     * @param type    Type of error
+     */
+    public static void alertError(String message, String type) {
+        System.out.println(message);
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(type);
+
+        // Create a TextArea to display the error message
+        TextArea textArea = new TextArea(message);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+
+        // Set the content of the Alert to the TextArea
+        alert.getDialogPane().setContent(textArea);
+
+        alert.showAndWait();
     }
 
     @FunctionalInterface

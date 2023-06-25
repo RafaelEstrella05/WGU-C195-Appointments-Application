@@ -10,11 +10,9 @@ import edu.wgu.restrel.appointmentsapplication.AbstractClass.AppController;
 import edu.wgu.restrel.appointmentsapplication.Utils.DatabaseManager;
 import edu.wgu.restrel.appointmentsapplication.interfaces.FormValidation;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 
 /**
  * This controller handles the customer view and actions for the application
@@ -314,51 +312,38 @@ public class CustomerController extends AppController implements FormValidation 
     }
 
     /**
+     * (LAMBDA EXPRESSION #2)
      * Adds a customer to the database.
      *
+     * 
+     * This lambda expression is used to provide a clear and concise
+     * way to process
+     * an UPDATE or INSERT using a MySQL statement. It promotes code
+     * reuse when
+     * updating or inserting database records by allowing the
+     * developer to pass in
+     * a query statement string, executor function, and MySQL query
+     * parameters (if any)
+     * without having to declare database connections, prepared
+     * statements, and result
+     * sets for each query.
+     * 
+     * In this case, the expression is used to insert a new
+     * customer into the database
+     * and handle when the query is complete and returns a result
+     * set.
+     * 
      * @param customer The customer object to be added.
-     *
-     *                 USES LAMBDA EXPRESSION:
-     *                 This lambda expression is used to provide a clear and concise
-     *                 way to process
-     *                 an UPDATE or INSERT using a MySQL statement. It promotes code
-     *                 reuse when
-     *                 updating or inserting database records by allowing the
-     *                 developer to pass in
-     *                 a query statement string, executor function, and MySQL query
-     *                 parameters (if any)
-     *                 without having to declare database connections, prepared
-     *                 statements, and result
-     *                 sets for each query.
-     *
-     *                 In this case, the lambda expression is used to insert a new
-     *                 customer into the database
-     *                 and handle when the query is complete and returns a result
-     *                 set.
-     *
-     * @see DatabaseManager#executeUpdate(String, ResultSetHandler, Object...)
+     * 
+     * @see DatabaseManager #executeUpdate(String, ResultSetHandler, Object...)
      */
-    private void addCustomerToDatabase(Customer customer) {
+    public void addCustomerToDatabase(Customer customer) {
         System.out.println("addCustomerToDatabase() called");
 
         // create a database manager
         DatabaseManager dbmanager = new DatabaseManager();
 
-        // run the insert query
-        /*
-         * USES LAMBDA EXPRESSION:
-         * This lambda expression is used to provide a clear and concise way to process
-         * an UPDATE or INSERT using a mysql statement.
-         * It promotes code reuse when
-         * updateing or inserting database records by allowing the developer to pass in
-         * a query statement
-         * string, executor function, and mysql query parameters (if any)
-         * without having to declare db connections, prepared statements, and result
-         * sets for each query.
-         * 
-         * In this case, it is used to insert a new customer into the database and
-         * handle when the query is complete and returns a result set.
-         */
+        // run the insert query (lambda)
         dbmanager.executeUpdate(
                 "INSERT INTO customers (Customer_Name, Address, Postal_Code, Phone, Create_Date, Created_By, Last_Update, Last_Updated_By, Division_ID) VALUES (?, ?, ?, ?, NOW(), ?, NOW(), ?, ?)",
                 (rs) -> {

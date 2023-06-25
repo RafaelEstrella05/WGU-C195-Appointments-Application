@@ -27,6 +27,10 @@ public class AppointmentsController extends AppController implements FormValidat
 
     List<Contact> contacts;
 
+    // List<User> users;
+
+    // List<Customer> customers;
+
     private Customer selectedCustomer;
     private Appointment selectedAppointment;
 

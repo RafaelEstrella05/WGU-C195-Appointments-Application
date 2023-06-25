@@ -120,7 +120,7 @@ public class AppointmentsApplication extends Application {
     /**
      * Get the countries
      * 
-     * @return countries ArrayList<Country>
+     * @return countries
      */
     public ArrayList<Country> getCountries() {
         return this.countries;
@@ -138,7 +138,7 @@ public class AppointmentsApplication extends Application {
     /**
      * Get the customers
      * 
-     * @return customers ArrayList<Customer>
+     * @return customers
      */
     public ObservableList<Customer> getCustomers() {
         return this.customers;
@@ -165,7 +165,7 @@ public class AppointmentsApplication extends Application {
     /**
      * Get the appointments
      * 
-     * @return appointments ArrayList<Appointment>
+     * @return appointments
      */
     public ObservableList<Appointment> getAppointments() {
         return this.appointments;
