@@ -124,60 +124,151 @@ public class AppointmentsController extends AppController implements FormValidat
             // if the form is valid, save the customer
             if (formValidationState.isValid()) {
 
-                System.out.println("Form is valid.");
+                // overlapp validation
+                // create formAppointmentDateTimes
+                FormAppointmentDateTimes formAppointmentDateTimes = new FormAppointmentDateTimes();
 
-                // save the customer
-                DatabaseManager dbmanager = new DatabaseManager();
-
-                // get the appointment data
-                String appointmentId = appointmentIdField.getText();
-                String title = titleField.getText();
-                String description = descriptionField.getText();
-                String location = locationField.getText();
-                String type = typeField.getText();
-                String contactId = Integer
-                        .toString(contacts.get(contactChoiceBox.getSelectionModel().getSelectedIndex()).getContactId());
-                // String userId = Integer.toString(getApp().getUser().getId());
-                // String customerId = Integer.toString(getSelectedCustomer().getCustomerId());
-
-                // parse out userId from the user choice box
-                String userId = userChoiceBox.getValue().toString().split(":")[0].trim();
-
-                // parse out customerId from the customer choice box
-                String customerId = customerChoiceBox.getValue().toString().split(":")[0].trim();
-
-                // print form data
-                System.out.println("Appointment ID: " + appointmentId);
-                System.out.println("Title: " + title);
-                System.out.println("Description: " + description);
-                System.out.println("Location: " + location);
-                System.out.println("Type: " + type);
-                System.out.println("Contact ID: " + contactId);
-                System.out.println("User ID: " + userId);
-                System.out.println("Customer ID: " + customerId);
-
+                // set the selected local times based on the form input
                 formAppointmentDateTimes.setSelectedLocalTimes(startHourChoiceBox.getValue().toString(),
                         startMinuteChoiceBox.getValue().toString(), startAmPmChoiceBox.getValue().toString(),
                         endHourChoiceBox.getValue().toString(), endMinuteChoiceBox.getValue().toString(),
                         endAmPmChoiceBox.getValue().toString());
 
+                // set the date on the formAppointmentDateTimes object
+                formAppointmentDateTimes.setSelectedDateLocal(datePicker.getValue());
+
+                // print value
                 formAppointmentDateTimes.printTimes();
 
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                // get the selected start and end times plus date and convert to UTC as a string
+                // convert to this format. "2023-07-01 16:00:00"
+                DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-                String formattedStartDateTime = formAppointmentDateTimes.getSelectedStartDateTimeUTC()
-                        .format(formatter);
-                String formattedEndDateTime = formAppointmentDateTimes.getSelectedEndDateTimeUTC().format(formatter);
+                String selectedStartDateTimeUTC = formAppointmentDateTimes.getSelectedStartDateTimeUTC()
+                        .format(formatter1);
+                String selectedEndDateTimeUTC = formAppointmentDateTimes.getSelectedEndDateTimeUTC().format(formatter1);
 
-                // if there is a selected appointment, update the appointment
-                if (selectedAppointment != null) {
-                    System.out.println("Updating appointment...");
+                // create database manager instance
+                DatabaseManager dbmanager = new DatabaseManager();
 
-                    String updateQuery = "UPDATE appointments SET Title = ?, Description = ?, Location = ?, Type = ?, Start = ?, End = ?, Create_Date = CURRENT_DATE, Created_By = 'appointmentapp', Last_Update = CURRENT_DATE, Last_Updated_By = 'appointmentapp', Customer_ID = ?, User_ID = ?, Contact_ID = ? WHERE Appointment_ID = ?;";
+                // create query
+                // String query = "SELECT * FROM appointments WHERE Customer_ID = ? AND ((? <
+                // End AND ? > End) OR (? < Start AND ? > End) OR (? < Start AND ? < End) OR (?
+                // > Start AND ? < End) OR (? = Start AND ? = End))";
 
-                    // run mysql query to search users table for user name and password
-                    dbmanager.executeUpdate(updateQuery, (ps) -> {
-                        System.out.println("Executed query: " + updateQuery);
+                String query = "SELECT * FROM appointments WHERE Customer_ID = ? AND ((? < End AND ? > End AND ? > Start AND ? > Start) OR (? < Start AND ? > End AND ? < End AND ? < Start) OR (? < Start AND ? < End AND ? < End AND ? > Start) OR (? < Start AND ? > End) OR (? > Start AND ? < End) OR (? = Start AND ? = End))";
+
+                // execute query
+                dbmanager.executeQuery(query, (rs) -> {
+
+                    boolean isOverlapping = false;
+
+                    if (rs.next()) {
+
+                        // print the title of the appointment that overlaps
+                        System.out.println("Overlap with appointment: ");
+                        System.out.println(rs.getString("Title"));
+
+                        // if its not the same appointment id, then its overlapping
+                        if (selectedAppointment != null) {
+                            if (rs.getInt("Appointment_ID") != selectedAppointment.getAppointmentId()) {
+                                isOverlapping = true;
+                            }
+                        } else {
+                            isOverlapping = true;
+                        }
+
+                    }
+
+                    if (!isOverlapping) {
+                        System.out.println("Form is valid.");
+
+                        // get the appointment data
+                        String appointmentId = appointmentIdField.getText();
+                        String title = titleField.getText();
+                        String description = descriptionField.getText();
+                        String location = locationField.getText();
+                        String type = typeField.getText();
+                        String contactId = Integer
+                                .toString(contacts.get(contactChoiceBox.getSelectionModel().getSelectedIndex())
+                                        .getContactId());
+                        // String userId = Integer.toString(getApp().getUser().getId());
+                        // String customerId = Integer.toString(getSelectedCustomer().getCustomerId());
+
+                        // parse out userId from the user choice box
+                        String userId = userChoiceBox.getValue().toString().split(":")[0].trim();
+
+                        // parse out customerId from the customer choice box
+                        String customerId = customerChoiceBox.getValue().toString().split(":")[0].trim();
+
+                        // print form data
+                        System.out.println("Appointment ID: " + appointmentId);
+                        System.out.println("Title: " + title);
+                        System.out.println("Description: " + description);
+                        System.out.println("Location: " + location);
+                        System.out.println("Type: " + type);
+                        System.out.println("Contact ID: " + contactId);
+                        System.out.println("User ID: " + userId);
+                        System.out.println("Customer ID: " + customerId);
+
+                        formAppointmentDateTimes.setSelectedLocalTimes(startHourChoiceBox.getValue().toString(),
+                                startMinuteChoiceBox.getValue().toString(), startAmPmChoiceBox.getValue().toString(),
+                                endHourChoiceBox.getValue().toString(), endMinuteChoiceBox.getValue().toString(),
+                                endAmPmChoiceBox.getValue().toString());
+
+                        formAppointmentDateTimes.printTimes();
+
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+                        String formattedStartDateTime = formAppointmentDateTimes.getSelectedStartDateTimeUTC()
+                                .format(formatter);
+                        String formattedEndDateTime = formAppointmentDateTimes.getSelectedEndDateTimeUTC()
+                                .format(formatter);
+
+                        // if there is a selected appointment, update the appointment
+                        if (selectedAppointment != null) {
+                            System.out.println("Updating appointment...");
+
+                            String updateQuery = "UPDATE appointments SET Title = ?, Description = ?, Location = ?, Type = ?, Start = ?, End = ?, Create_Date = CURRENT_DATE, Created_By = 'appointmentapp', Last_Update = CURRENT_DATE, Last_Updated_By = 'appointmentapp', Customer_ID = ?, User_ID = ?, Contact_ID = ? WHERE Appointment_ID = ?;";
+
+                            // run mysql query to search users table for user name and password
+                            dbmanager.executeUpdate(updateQuery, (ps) -> {
+                                System.out.println("Executed query: " + updateQuery);
+
+                                // alert that the appointment was updated including the appointment id and
+                                // customer name and id
+                                alertInfo("Appointment for ID: " + getSelectedAppointment().getAppointmentId() + ": "
+                                        + getSelectedCustomer().getCustomerName() + " was updated.",
+                                        "Appointment Updated");
+
+                            }, title, description, location, type,
+                                    formattedStartDateTime,
+                                    formattedEndDateTime, customerId, userId, contactId, appointmentId);
+
+                        } else {
+                            System.out.println("Creating new appointment...");
+                            // if there is no selected appointment, create a new appointment
+
+                            String insertQuery = "INSERT INTO appointments (Title, Description, Location, Type, Start, End, Create_Date, Created_By, Last_Update, Last_Updated_By, Customer_ID, User_ID, Contact_ID)"
+                                    +
+                                    "VALUES " +
+                                    "(?,?,?,?, ?, ?, CURRENT_DATE, 'appointmentapp', CURRENT_DATE, 'appointmentapp', ?, ?, ?);";
+
+                            // run mysql query to search users table for user name and password
+                            dbmanager.executeUpdate(insertQuery, (ps) -> {
+                                System.out.println("Executed query: " + insertQuery);
+
+                                // alert that the appointment was created including the customer name and id
+                                alertInfo(
+                                        "Appointment for ID: " + getSelectedCustomer().getCustomerId()
+                                                + ": " + getSelectedCustomer().getCustomerName() + " was created.",
+                                        "Appointment Created");
+
+                            }, title, description, location, type,
+                                    formattedStartDateTime,
+                                    formattedEndDateTime, customerId, userId, contactId);
+
+                        }
 
                         // switch form to main view
                         try {
@@ -185,44 +276,25 @@ public class AppointmentsController extends AppController implements FormValidat
                                     "Appointments Manager");
                             ((MainController) appController).setApp(this.getApp());
                             ((MainController) appController).refreshCustomerContent();
+                            ((MainController) appController).onAppointmentsButtonClick();
 
                         } catch (IOException e) {
                             System.out.println("IOException: " + e.getMessage());
                         }
+                    } else {
+                        alertWarning("Appointment overlaps with another appointment. Please select a new timeframe",
+                                "Appointment Overlap");
+                    }
 
-                    }, title, description, location, type,
-                            formattedStartDateTime,
-                            formattedEndDateTime, customerId, userId, contactId, appointmentId);
-
-                } else {
-                    System.out.println("Creating new appointment...");
-                    // if there is no selected appointment, create a new appointment
-
-                    String insertQuery = "INSERT INTO appointments (Title, Description, Location, Type, Start, End, Create_Date, Created_By, Last_Update, Last_Updated_By, Customer_ID, User_ID, Contact_ID)"
-                            +
-                            "VALUES " +
-                            "(?,?,?,?, ?, ?, CURRENT_DATE, 'appointmentapp', CURRENT_DATE, 'appointmentapp', ?, ?, ?);";
-
-                    // run mysql query to search users table for user name and password
-                    dbmanager.executeUpdate(insertQuery, (ps) -> {
-                        System.out.println("Executed query: " + insertQuery);
-
-                    }, title, description, location, type,
-                            formattedStartDateTime,
-                            formattedEndDateTime, customerId, userId, contactId);
-
-                }
-
-                // switch form to main view
-                try {
-                    AppController appController = this.getApp().setShowScene("main.fxml",
-                            "Appointments Manager");
-                    ((MainController) appController).setApp(this.getApp());
-                    ((MainController) appController).refreshCustomerContent();
-
-                } catch (IOException e) {
-                    System.out.println("IOException: " + e.getMessage());
-                }
+                }, getSelectedCustomer().getCustomerId(), selectedStartDateTimeUTC, selectedEndDateTimeUTC,
+                        selectedStartDateTimeUTC, selectedEndDateTimeUTC, selectedStartDateTimeUTC,
+                        selectedEndDateTimeUTC,
+                        selectedStartDateTimeUTC, selectedEndDateTimeUTC, selectedStartDateTimeUTC,
+                        selectedEndDateTimeUTC,
+                        selectedStartDateTimeUTC, selectedEndDateTimeUTC, selectedStartDateTimeUTC,
+                        selectedEndDateTimeUTC,
+                        selectedStartDateTimeUTC, selectedEndDateTimeUTC, selectedStartDateTimeUTC,
+                        selectedEndDateTimeUTC);
 
             } else {
                 // display the form validation state
@@ -618,15 +690,6 @@ public class AppointmentsController extends AppController implements FormValidat
                 errorMessage += "End time cannot be after business hours \n";
             }
 
-            // check if the appointment overlaps with another appointment for the same
-            if (isAppointmentOverlapping()) {
-                isValid = false;
-                errorMessage += "Appointment time is taken, please select another time \n";
-
-                // add to error message the next available timeframe
-
-            }
-
             // apppointments that are being modified can only modify the appointment times
             // if they are in the future
             // apppointments that are being modified can only modify the appointment times
@@ -673,102 +736,6 @@ public class AppointmentsController extends AppController implements FormValidat
         formValidationState = new FormValidationState(isValid, errorMessage);
 
         return formValidationState;
-    }
-
-    /**
-     * This method checks the database to check if the appointment times are
-     * overlapping any other appointment times.
-     * 
-     * FIX ME: this method should connect to the database to make an accurate check
-     * for overlapping appointments. Currently it is only checking the appointments
-     * in the list in the app.
-     * 
-     * @return isOverlapping if the appointment times are overlapping with another
-     */
-    private boolean isAppointmentOverlapping() {
-        boolean isOverlapping = false;
-        getApp().getAppointmentsFromDB(null, null); // refresh the appointments from the database
-
-        // get the start and end times for the appointment
-        LocalTime selectedStartTimeLocal = formAppointmentDateTimes.getSelectedStartTimeLocal();
-        LocalTime selectedEndTimeLocal = formAppointmentDateTimes.getSelectedEndTimeLocal();
-
-        // get date from formAppointmentDateTimes object
-        LocalDate selectedDateLocal = formAppointmentDateTimes.getSelectedDateLocal();
-
-        // convert the selected date and time to a LocalDateTime object
-        LocalDateTime selectedStartDateTimeLocal = LocalDateTime.of(selectedDateLocal, selectedStartTimeLocal);
-        LocalDateTime selectedEndDateTimeLocal = LocalDateTime.of(selectedDateLocal, selectedEndTimeLocal);
-
-        // look through all of the app's appointments
-        for (Appointment appointment : getApp().getAppointments()) {
-
-            // if the appointment is the same as the selected appointment, skip it
-            if (selectedAppointment != null
-                    && appointment.getAppointmentId() == selectedAppointment.getAppointmentId()) {
-                continue;
-            }
-
-            // get the start and end times for the appointment
-            String appointmentStartTimeLocalStr = appointment.getStart();
-            String appointmentEndTimeLocalStr = appointment.getEnd();
-
-            // convert strings to utc zone date time
-            LocalDateTime appointmentStartDateTimeLocalUTC = LocalDateTime
-                    .parse(appointmentStartTimeLocalStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            LocalDateTime appointmentEndDateTimeLocalUTC = LocalDateTime
-                    .parse(appointmentEndTimeLocalStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-
-            // convert the appointment start and end times from utc to the user's local time
-            // zone
-            LocalDateTime appointmentStartDateTimeLocal = appointmentStartDateTimeLocalUTC
-                    .atZone(ZoneOffset.UTC)
-                    .withZoneSameInstant(defaultTimeZone)
-                    .toLocalDateTime();
-            LocalDateTime appointmentEndDateTimeLocal = appointmentEndDateTimeLocalUTC
-                    .atZone(ZoneOffset.UTC)
-                    .withZoneSameInstant(defaultTimeZone)
-                    .toLocalDateTime();
-
-            // check if the selected start time is between the start and end times of the
-            // appointment and the User_ID is the same
-            if (selectedStartDateTimeLocal.isAfter(appointmentStartDateTimeLocal)
-                    && selectedStartDateTimeLocal.isBefore(appointmentEndDateTimeLocal)
-                    && appointment.getUserId() == getApp().getUser().getId()) {
-                isOverlapping = true;
-                break;
-            }
-
-            // check if the selected end time is between the start and end times of the
-            // appointment and the User_ID is the same
-            if (selectedStartDateTimeLocal.isBefore(appointmentEndDateTimeLocal)
-                    && appointmentEndDateTimeLocal.isBefore(appointmentStartDateTimeLocal)
-                    && appointment.getUserId() == getApp().getUser().getId()) {
-                isOverlapping = true;
-                break;
-            }
-
-            // check if selected end time is not between the start and end times of the
-            // appointment and the User_ID is the same
-            if (selectedEndDateTimeLocal.isBefore(appointmentEndDateTimeLocal)
-                    && selectedStartDateTimeLocal.isAfter(appointmentEndDateTimeLocal)
-                    && appointment.getUserId() == getApp().getUser().getId()) {
-                isOverlapping = true;
-                break;
-            }
-
-            // check if selected start time is not between the start and end times of the
-            // appointment and the User_ID is the same
-            if (selectedEndDateTimeLocal.isAfter(appointmentStartDateTimeLocal)
-                    && selectedStartDateTimeLocal.isBefore(appointmentStartDateTimeLocal)
-                    && appointment.getUserId() == getApp().getUser().getId()) {
-                isOverlapping = true;
-                break;
-            }
-
-        }
-
-        return isOverlapping;
     }
 
     /**

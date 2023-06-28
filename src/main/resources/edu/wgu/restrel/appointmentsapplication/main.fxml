@@ -65,6 +65,7 @@
 -->
 
             <HBox alignment="TOP_RIGHT" spacing="10.0">
+                <RadioButton fx:id="allRadioButton" text="All" onAction="#onAllRadioButtonSelected" styleClass="radio_button"/>
                 <RadioButton fx:id="monthRadioButton" text="Next 30 Days" onAction="#onMonthRadioButtonSelected" styleClass="radio_button"/>
                 <RadioButton fx:id="weekRadioButton" text="Next 7 Days" onAction="#onWeekRadioButtonSelected" styleClass="radio_button"/>
             </HBox>

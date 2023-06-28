@@ -139,6 +139,9 @@ public class MainController extends AppController {
      */
 
     @FXML
+    private RadioButton allRadioButton;
+
+    @FXML
     private RadioButton monthRadioButton;
 
     @FXML
@@ -227,7 +230,8 @@ public class MainController extends AppController {
         addressColumn.prefWidthProperty().bind(appointmentsTable.widthProperty().multiply(0.15));
 
         // select the month radio button
-        monthRadioButton.setSelected(true);
+        allRadioButton.setSelected(true);
+        monthRadioButton.setSelected(false);
         weekRadioButton.setSelected(false);
 
         // columns for appointments table
@@ -408,7 +412,7 @@ public class MainController extends AppController {
      * view
      */
     @FXML
-    private void onAppointmentsButtonClick() {
+    public void onAppointmentsButtonClick() {
         System.out.println("Appointments button clicked");
         selectNavButton(appointmentsButton);
 
@@ -535,6 +539,12 @@ public class MainController extends AppController {
                         dbmanager.executeUpdate(query2, (rs2) -> {
                             try {
                                 System.out.println("customer deleted");
+
+                                // alert the user that the customer was deleted, include the customer id,
+                                // customer name, and number of appointments that were deleted
+                                alertInfo("Customer ID: " + selectedCustomer.getCustomerId() + "\n Name: "
+                                        + selectedCustomer.getCustomerName(), "Customer Successfully Deleted");
+
                             } catch (Exception e) {
                                 System.out.println("Error: " + e.getMessage());
                             }
@@ -867,6 +877,26 @@ public class MainController extends AppController {
      * }
      */
 
+    @FXML
+    private void onAllRadioButtonSelected() { // add the radio button object in the parameter
+        System.out.println("all Radio button selected");
+
+        // if the all radio button is selected then set the month and week radio buttons
+        // to false
+        monthRadioButton.setSelected(false);
+        weekRadioButton.setSelected(false);
+
+        // refresh the appointments table
+        this.refreshAppointmentContent();
+
+        // if month and week radio buttons are not selected then set the all radio
+        // button to true
+        if (!monthRadioButton.isSelected() && !weekRadioButton.isSelected()) {
+            allRadioButton.setSelected(true);
+        }
+
+    }
+
     /**
      * This method will handle the event when the user clicks the month radio button
      */
@@ -874,13 +904,13 @@ public class MainController extends AppController {
     private void onMonthRadioButtonSelected() {
         System.out.println("Month radio button selected: " + monthRadioButton.isSelected());
 
-        if (weekRadioButton.isSelected()) {
-            weekRadioButton.setSelected(false);
+        allRadioButton.setSelected(false);
+        weekRadioButton.setSelected(false);
 
-        } else {
-            if (!monthRadioButton.isSelected() && !weekRadioButton.isSelected()) {
-                monthRadioButton.setSelected(true);
-            }
+        // if the week and all radio buttons are not selected then set the month radio
+        // button to true
+        if (!weekRadioButton.isSelected() && !allRadioButton.isSelected()) {
+            monthRadioButton.setSelected(true);
         }
 
         this.refreshAppointmentContent();
@@ -894,13 +924,13 @@ public class MainController extends AppController {
     private void onWeekRadioButtonSelected() {
         System.out.println("Week radio button selected: " + weekRadioButton.isSelected());
 
-        if (monthRadioButton.isSelected()) {
-            monthRadioButton.setSelected(false);
+        allRadioButton.setSelected(false);
+        monthRadioButton.setSelected(false);
 
-        } else {
-            if (!monthRadioButton.isSelected() && !weekRadioButton.isSelected()) {
-                weekRadioButton.setSelected(true);
-            }
+        // if the month and all radio buttons are not selected then set the week radio
+        // button to true
+        if (!monthRadioButton.isSelected() && !allRadioButton.isSelected()) {
+            weekRadioButton.setSelected(true);
         }
 
         // get appointments from database
@@ -924,6 +954,7 @@ public class MainController extends AppController {
 
         String query = "";
         String reportTitle = "";
+        boolean hasSubChoiceBox = false;
 
         ArrayList<String> queryParameters = new ArrayList<String>();
 
@@ -938,6 +969,8 @@ public class MainController extends AppController {
             case 2:
                 // set the sub choice box to visible'
                 subChoiceBox.setVisible(true);
+
+                hasSubChoiceBox = true;
 
                 // get contact list from db
                 DatabaseManager dbmanager = new DatabaseManager();
@@ -988,7 +1021,7 @@ public class MainController extends AppController {
             // execute the query
             dbmanager.executeQuery(query, (rs) -> {
                 try {
-                    // Clear existing columns and data from the table view
+                    // Clear existing columns and data from the table viewamdin
                     reportTableView.getColumns().clear();
                     reportTableView.getItems().clear();
 
@@ -1202,6 +1235,7 @@ public class MainController extends AppController {
      */
     public void getAppointmentsFromDatabase() {
         // intialize the start and end datetimes query parameters
+        boolean isAll = false;
         String start = "";
         String end = "";
 
@@ -1221,46 +1255,83 @@ public class MainController extends AppController {
             start = utcStartDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             end = utcEndDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-        } else {
+        } else if (weekRadioButton.isSelected()) {
             // get the end date time
             ZonedDateTime utcEndDateTime = utcStartDateTime.plusDays(7);
 
             // format the start and end datetimes
             start = utcStartDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             end = utcEndDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        } else {
+            isAll = true;
         }
 
         // clear the appointments array list
         getApp().getAppointments().clear();
 
-        DatabaseManager dbmanager = new DatabaseManager();
+        if (!isAll) {
+            DatabaseManager dbmanager = new DatabaseManager();
 
-        // get appointments from the database
-        String query = "SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, contacts.Contact_ID, Contact_Name FROM appointments appt INNER JOIN contacts contacts ON contacts.Contact_ID = appt.Contact_ID WHERE Start >= ? AND End <= ? order by start desc;";
+            // get appointments from the database
+            String query = "SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, contacts.Contact_ID, Contact_Name FROM appointments appt INNER JOIN contacts contacts ON contacts.Contact_ID = appt.Contact_ID WHERE Start >= ? AND End <= ? order by start asc;";
 
-        // execute the query
-        dbmanager.executeQuery(query, (rs) -> {
-            try {
-                while (rs.next()) {
-                    System.out.println(rs.getString("Title"));
+            // execute the query
+            dbmanager.executeQuery(query, (rs) -> {
+                try {
+                    while (rs.next()) {
+                        System.out.println(rs.getString("Title"));
 
-                    // create a new appointment object
-                    Appointment appointment = new Appointment(rs.getInt("Appointment_ID"), rs.getString("Title"),
-                            rs.getString("Description"), rs.getString("Location"), rs.getString("Type"),
-                            rs.getString("Start"), rs.getString("End"), rs.getInt("Customer_ID"),
-                            rs.getInt("User_ID"), rs.getInt("Contact_ID"), rs.getString("Contact_Name"));
+                        // create a new appointment object
+                        Appointment appointment = new Appointment(rs.getInt("Appointment_ID"), rs.getString("Title"),
+                                rs.getString("Description"), rs.getString("Location"), rs.getString("Type"),
+                                rs.getString("Start"), rs.getString("End"), rs.getInt("Customer_ID"),
+                                rs.getInt("User_ID"), rs.getInt("Contact_ID"), rs.getString("Contact_Name"));
 
-                    // add the appointment to the appointments array list
-                    getApp().addAppointment(appointment);
+                        // add the appointment to the appointments array list
+                        getApp().addAppointment(appointment);
 
-                    System.out.println("appointment added: " + appointment.getTitle());
+                        System.out.println("appointment added: " + appointment.getTitle());
 
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error: " + e.getMessage());
                 }
-            } catch (Exception e) {
-                System.out.println("Error: " + e.getMessage());
-            }
 
-        }, start, end);
+            }, start, end);
+
+            dbmanager.disconnect();
+        } else {
+            DatabaseManager dbmanager = new DatabaseManager();
+
+            // get appointments from the database
+            String query = "SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, contacts.Contact_ID, Contact_Name FROM appointments appt INNER JOIN contacts contacts ON contacts.Contact_ID = appt.Contact_ID order by start asc;";
+
+            // execute the query
+            dbmanager.executeQuery(query, (rs) -> {
+                try {
+                    while (rs.next()) {
+                        System.out.println(rs.getString("Title"));
+
+                        // create a new appointment object
+                        Appointment appointment = new Appointment(rs.getInt("Appointment_ID"), rs.getString("Title"),
+                                rs.getString("Description"), rs.getString("Location"), rs.getString("Type"),
+                                rs.getString("Start"), rs.getString("End"), rs.getInt("Customer_ID"),
+                                rs.getInt("User_ID"), rs.getInt("Contact_ID"), rs.getString("Contact_Name"));
+
+                        // add the appointment to the appointments array list
+                        getApp().addAppointment(appointment);
+
+                        System.out.println("appointment added: " + appointment.getTitle());
+
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error: " + e.getMessage());
+                }
+
+            });
+
+            dbmanager.disconnect();
+        }
 
     }
 
