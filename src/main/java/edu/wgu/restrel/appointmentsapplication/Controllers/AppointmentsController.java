@@ -27,9 +27,9 @@ public class AppointmentsController extends AppController implements FormValidat
 
     List<Contact> contacts;
 
-    // List<User> users;
+    List<User> users;
 
-    // List<Customer> customers;
+    List<Customer> customers;
 
     private Customer selectedCustomer;
     private Appointment selectedAppointment;
@@ -77,6 +77,12 @@ public class AppointmentsController extends AppController implements FormValidat
     private ChoiceBox endAmPmChoiceBox;
 
     @FXML
+    private ChoiceBox customerChoiceBox;
+
+    @FXML
+    private ChoiceBox userChoiceBox;
+
+    @FXML
     private Label businessHoursLabel;
 
     FormAppointmentDateTimes formAppointmentDateTimes;
@@ -84,6 +90,8 @@ public class AppointmentsController extends AppController implements FormValidat
     @FXML
     public void initialize() {
         contacts = new ArrayList<Contact>();
+        users = new ArrayList<User>();
+        customers = new ArrayList<Customer>();
 
         formAppointmentDateTimes = new FormAppointmentDateTimes();
 
@@ -129,8 +137,14 @@ public class AppointmentsController extends AppController implements FormValidat
                 String type = typeField.getText();
                 String contactId = Integer
                         .toString(contacts.get(contactChoiceBox.getSelectionModel().getSelectedIndex()).getContactId());
-                String userId = Integer.toString(getApp().getUser().getId());
-                String customerId = Integer.toString(getSelectedCustomer().getCustomerId());
+                // String userId = Integer.toString(getApp().getUser().getId());
+                // String customerId = Integer.toString(getSelectedCustomer().getCustomerId());
+
+                // parse out userId from the user choice box
+                String userId = userChoiceBox.getValue().toString().split(":")[0].trim();
+
+                // parse out customerId from the customer choice box
+                String customerId = customerChoiceBox.getValue().toString().split(":")[0].trim();
 
                 // print form data
                 System.out.println("Appointment ID: " + appointmentId);
@@ -183,8 +197,6 @@ public class AppointmentsController extends AppController implements FormValidat
                 } else {
                     System.out.println("Creating new appointment...");
                     // if there is no selected appointment, create a new appointment
-
-                    // reset the selected times to apointmentDateTimes
 
                     String insertQuery = "INSERT INTO appointments (Title, Description, Location, Type, Start, End, Create_Date, Created_By, Last_Update, Last_Updated_By, Customer_ID, User_ID, Contact_ID)"
                             +
@@ -240,6 +252,47 @@ public class AppointmentsController extends AppController implements FormValidat
         } catch (IOException e) {
             System.out.println("IOException: " + e.getMessage());
         }
+    }
+
+    /**
+     * Handles the event the customer choicebox is changed.
+     * If the customer is changed, the whole form needs to be updated to match the
+     * new selected customer
+     */
+    @FXML
+    public void onCustomerChoiceBoxChange() {
+        System.out.println("Customer choice box changed");
+
+        // parse the customer name out of the choice, (<Customer Id>: <Customer Name>)
+        String parsedCustomerName = customerChoiceBox.getValue().toString().split(":")[1].trim();
+
+        // if the selected customer is not null and selected customer is not the same as
+        // the customer choice box selection, update the title "Scheduling appointment
+        // for {customer name}"
+        if (getSelectedCustomer() != null) {
+            if (!getSelectedCustomer().getCustomerName().equals(parsedCustomerName)) {
+                formStateLabel.setText("Scheduling appointment for " + parsedCustomerName);
+            } else {
+
+                if (selectedAppointment != null) {
+                    formStateLabel.setText("Modifying appointment for " + parsedCustomerName);
+                } else {
+                    formStateLabel.setText("Scheduling appointment for " + parsedCustomerName);
+                }
+
+            }
+
+        }
+
+    }
+
+    /**
+     * Handles the event the user choicebox is changed.
+     */
+    @FXML
+    public void onUserChoiceBoxChange() {
+        System.out.println("User choice box changed");
+
     }
 
     /**
@@ -569,6 +622,9 @@ public class AppointmentsController extends AppController implements FormValidat
             if (isAppointmentOverlapping()) {
                 isValid = false;
                 errorMessage += "Appointment time is taken, please select another time \n";
+
+                // add to error message the next available timeframe
+
             }
 
             // apppointments that are being modified can only modify the appointment times
@@ -709,6 +765,122 @@ public class AppointmentsController extends AppController implements FormValidat
         }
 
         return isOverlapping;
+    }
+
+    /**
+     * This method gets the users from the database and populates the users list so
+     * that the usersChoiceBox can be populated
+     */
+    public void getUsersFromDB() {
+
+        try {
+            String query = "SELECT * FROM users order by User_ID; ";
+
+            // create DatabaseManager instance
+            DatabaseManager dbmanager = new DatabaseManager();
+
+            // run mysql query to search users table for user name and password
+            dbmanager.executeQuery(query, (rs) -> {
+                while (rs.next()) {
+                    int userId = rs.getInt("User_ID");
+                    String userName = rs.getString("User_Name");
+                    String password = rs.getString("Password");
+
+                    User user = new User(userId, userName, password);
+
+                    this.users.add(user);
+                }
+            });
+
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    /**
+     * This method populates the users choice box with the users from the database
+     */
+    public void populateUsersChoiceBox() {
+
+        // populate users choice box (<UserID>: <UserName>)
+        for (User user : users) {
+            userChoiceBox.getItems().add(user.getId() + ": " + user.getUserName());
+        }
+
+        Appointment selectedAppointment = getSelectedAppointment();
+
+        if (selectedAppointment != null) {
+            String userId = Integer.toString(getSelectedAppointment().getUserId());
+            User user = getApp().findUserById(Integer.parseInt(userId));
+            String userName = user.getUserName();
+
+            // select the user that is assigned to that appointment
+            userChoiceBox.getSelectionModel().select(userId + ": " + userName);
+        } else {
+            String userId = Integer.toString(getApp().getUser().getId());
+            User user = getApp().findUserById(Integer.parseInt(userId));
+            String userName = user.getUserName();
+
+            // select the current user
+            userChoiceBox.getSelectionModel().select(userId + ": " + userName);
+        }
+
+    }
+
+    /**
+     * This method populates the customers choice box with the customers from the
+     * database
+     */
+    public void populateCustomersChoiceBox() {
+
+        // populate customers choice box (<CustomerID>: <CustomerName>)
+        for (Customer customer : customers) {
+            customerChoiceBox.getItems().add(customer.getCustomerId() + ": " + customer.getCustomerName());
+        }
+
+        // select the current customer
+        customerChoiceBox.getSelectionModel()
+                .select(getSelectedCustomer().getCustomerId() + ": " + getSelectedCustomer().getCustomerName());
+    }
+
+    /**
+     * This method gets the customers from the database and populates the customers
+     * in the choicebox.
+     */
+    public void getCustomersFromDB() {
+
+        try {
+
+            String query = "SELECT * FROM customers cust INNER JOIN first_level_divisions divv ON divv.Division_ID = cust.Division_ID INNER JOIN countries countr ON countr.Country_ID = divv.Country_ID order by Customer_ID; ";
+
+            // create DatabaseManager instance
+            DatabaseManager dbmanager = new DatabaseManager();
+
+            // run mysql query to search users table for user name and password
+            dbmanager.executeQuery(query, (rs) -> {
+                while (rs.next()) {
+                    int customerId = rs.getInt("Customer_ID");
+                    String customerName = rs.getString("Customer_Name");
+                    String address = rs.getString("Address");
+                    String postalCode = rs.getString("Postal_Code");
+                    String phone = rs.getString("Phone");
+                    int divisionId = rs.getInt("Division_ID");
+
+                    // Customer(int customerId, String customer_Name, String address, String
+                    // postalCode, String phone, int divisionId, String division, int countryId,
+                    // String country)
+                    Customer customer = new Customer(customerId, customerName, address, postalCode, phone, divisionId,
+                            rs.getString("Division"), rs.getInt("Country_ID"), rs.getString("Country"));
+
+                    this.customers.add(customer);
+                }
+            });
+
+        } catch (Exception e) {
+
+        }
+
     }
 
 }

@@ -156,17 +156,13 @@ public class DatabaseManager {
      * @param args     1,2,3,...,n
      */
     public void executeUpdate(String sql, QueryExecutor executor, Object... args) {
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            // set the parameters using a List
+        try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             List<Object> argList = Arrays.asList(args);
             for (int i = 0; i < argList.size(); i++) {
                 pstmt.setObject(i + 1, argList.get(i));
             }
-
-            // execute the query and pass the result set to the executor
             pstmt.executeUpdate();
             System.out.println("Update statement executed successfully.");
-
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
                 executor.execute(rs);
             } catch (SQLException e) {

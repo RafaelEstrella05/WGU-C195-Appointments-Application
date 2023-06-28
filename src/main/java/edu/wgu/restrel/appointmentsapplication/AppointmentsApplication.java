@@ -32,6 +32,7 @@ public class AppointmentsApplication extends Application {
     private LoginController loginController;
     private MainController mainController;
 
+    private ArrayList<User> users = new ArrayList<User>();
     private ArrayList<Country> countries = new ArrayList<Country>();
     private ObservableList<Customer> customers;
     private ObservableList<Appointment> appointments;
@@ -47,6 +48,9 @@ public class AppointmentsApplication extends Application {
 
         customers = FXCollections.observableArrayList();
         appointments = FXCollections.observableArrayList();
+
+        // get the users from the database
+        getUsersFromDB();
 
         // Load the login scene
         loginController = (LoginController) setShowScene("login.fxml", "Appointment Manager");
@@ -106,6 +110,20 @@ public class AppointmentsApplication extends Application {
      */
     public User getUser() {
         return user;
+    }
+
+    /**
+     * This method looks for a user in the users list based on the ID,
+     * returns null if not found
+     * 
+     * @return user User from appointments list
+     */
+    public User findUserById(int id) {
+        return users.stream()
+                .filter(user -> user.getId() == id)
+                .findFirst()
+                .orElse(null);
+
     }
 
     /**
@@ -337,6 +355,36 @@ public class AppointmentsApplication extends Application {
             dbmanager.disconnect();
         }
 
+    }
+
+    private void getUsersFromDB() {
+        DatabaseManager dbmanager = new DatabaseManager();
+
+        // get appointments from the database
+        String query = "SELECT * FROM users;";
+
+        // execute the query
+        dbmanager.executeQuery(query, (rs) -> {
+            try {
+                while (rs.next()) {
+                    System.out.println(rs.getString("User_Name"));
+
+                    // create a new user object
+                    User user = new User(rs.getInt("User_ID"), rs.getString("User_Name"), rs.getString("Password"));
+
+                    // add the user to the users array list
+                    users.add(user);
+
+                    System.out.println("user added: " + user.getUserName());
+
+                }
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+
+        });
+
+        dbmanager.disconnect();
     }
 
     /**

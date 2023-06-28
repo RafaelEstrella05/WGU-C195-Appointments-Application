@@ -79,9 +79,22 @@
                 <ChoiceBox fx:id="endAmPmChoiceBox" styleClass="time_field"/>
             </HBox>
 
+        </VBox>
+
+
+        <VBox alignment="TOP_RIGHT" spacing="10.0"  styleClass="users_customers_section">
+
             <Label text="Contact:" />
 
             <ChoiceBox fx:id="contactChoiceBox" styleClass="form_field"/>
+
+            <Label text="Customer:" />
+
+            <ChoiceBox fx:id="customerChoiceBox" styleClass="form_field" onAction="#onCustomerChoiceBoxChange"/>
+
+            <Label text="User:" />
+
+            <ChoiceBox fx:id="userChoiceBox" styleClass="form_field" onAction="#onUserChoiceBoxChange"/>
 
         </VBox>
 
