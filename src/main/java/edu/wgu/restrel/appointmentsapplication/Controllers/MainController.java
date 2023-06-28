@@ -130,10 +130,13 @@ public class MainController extends AppController {
     @FXML
     private Button deleteAppointmentButton;
 
-    @FXML
-    private ChoiceBox monthChoiceBox;
-    @FXML
-    private ChoiceBox weekChoiceBox;
+    /*
+     * @FXML
+     * private ChoiceBox monthChoiceBox;
+     * 
+     * @FXML
+     * private ChoiceBox weekChoiceBox;
+     */
 
     @FXML
     private RadioButton monthRadioButton;
@@ -223,6 +226,10 @@ public class MainController extends AppController {
         phoneNumberColumn.prefWidthProperty().bind(appointmentsTable.widthProperty().multiply(0.1));
         addressColumn.prefWidthProperty().bind(appointmentsTable.widthProperty().multiply(0.15));
 
+        // select the month radio button
+        monthRadioButton.setSelected(true);
+        weekRadioButton.setSelected(false);
+
         // columns for appointments table
         appointmentIdColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("appointmentId"));
         appointmentTitleColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("title"));
@@ -241,7 +248,7 @@ public class MainController extends AppController {
         appointmentStartColumn.prefWidthProperty().bind(appointmentsTable.widthProperty().multiply(0.15));
         appointmentEndColumn.prefWidthProperty().bind(appointmentsTable.widthProperty().multiply(0.15));
 
-        refreshMonthsInChoiceBox();
+        // refreshMonthsInChoiceBox();
 
         // select the first item in the report choice box
         reportChoiceBox.getSelectionModel().selectFirst();
@@ -326,54 +333,60 @@ public class MainController extends AppController {
      * next 6 months including the year, so that the user can select a month filter
      * for the appointments table
      */
-    private void refreshMonthsInChoiceBox() {
-
-        // clear the choice box
-        monthChoiceBox.getItems().clear();
-
-        LocalDate scrolledDate = null;
-
-        // find the scrolled date based on the offset of the monthScrollIndex
-        if (monthScrollIndex < 0) {
-
-            scrolledDate = LocalDate.now().minusMonths(Math.abs(monthScrollIndex));
-
-        } else {
-
-            scrolledDate = LocalDate.now().plusMonths(monthScrollIndex);
-
-        }
-
-        // add default value to month choice box
-        monthChoiceBox.getItems().add("Filter By Month");
-
-        // select that value
-        monthChoiceBox.getSelectionModel().selectFirst();
-
-        // add a value that will indicate that the user wants to look at 6 more previous
-        // months
-        monthChoiceBox.getItems().add("<Previous 6 Months>");
-
-        // loop through the last 6 months and add them to the choice box
-        for (int i = 6; i > 0; i--) {
-            LocalDate date = scrolledDate.minusMonths(i);
-            monthChoiceBox.getItems().add(date.getYear() + " " + date.getMonth().toString());
-        }
-
-        // loop through the next 6 months and add them to the choice box
-        for (int i = 0; i < 6; i++) {
-            LocalDate date = scrolledDate.plusMonths(i);
-            monthChoiceBox.getItems().add(date.getYear() + " " + date.getMonth().toString());
-        }
-
-        // add a value that will indicate that the user wants to look at 6 more future
-        // months
-        monthChoiceBox.getItems().add("<Next 6 Months>");
-
-        // hide the weekChoiceBox
-        weekChoiceBox.setVisible(false);
-
-    }
+    /*
+     * private void refreshMonthsInChoiceBox() {
+     * 
+     * // clear the choice box
+     * monthChoiceBox.getItems().clear();
+     * 
+     * LocalDate scrolledDate = null;
+     * 
+     * // find the scrolled date based on the offset of the monthScrollIndex
+     * if (monthScrollIndex < 0) {
+     * 
+     * scrolledDate = LocalDate.now().minusMonths(Math.abs(monthScrollIndex));
+     * 
+     * } else {
+     * 
+     * scrolledDate = LocalDate.now().plusMonths(monthScrollIndex);
+     * 
+     * }
+     * 
+     * // add default value to month choice box
+     * monthChoiceBox.getItems().add("Filter By Month");
+     * 
+     * // select that value
+     * monthChoiceBox.getSelectionModel().selectFirst();
+     * 
+     * // add a value that will indicate that the user wants to look at 6 more
+     * previous
+     * // months
+     * monthChoiceBox.getItems().add("<Previous 6 Months>");
+     * 
+     * // loop through the last 6 months and add them to the choice box
+     * for (int i = 6; i > 0; i--) {
+     * LocalDate date = scrolledDate.minusMonths(i);
+     * monthChoiceBox.getItems().add(date.getYear() + " " +
+     * date.getMonth().toString());
+     * }
+     * 
+     * // loop through the next 6 months and add them to the choice box
+     * for (int i = 0; i < 6; i++) {
+     * LocalDate date = scrolledDate.plusMonths(i);
+     * monthChoiceBox.getItems().add(date.getYear() + " " +
+     * date.getMonth().toString());
+     * }
+     * 
+     * // add a value that will indicate that the user wants to look at 6 more
+     * future
+     * // months
+     * monthChoiceBox.getItems().add("<Next 6 Months>");
+     * 
+     * // hide the weekChoiceBox
+     * weekChoiceBox.setVisible(false);
+     * 
+     * }
+     */
 
     /**
      * Button click event handler for the customers button
@@ -403,7 +416,7 @@ public class MainController extends AppController {
         refreshAppointmentContent();
 
         // in the monthChoiceBox, select first item
-        monthChoiceBox.getSelectionModel().selectFirst();
+        // monthChoiceBox.getSelectionModel().selectFirst();
     }
 
     /**
@@ -495,8 +508,12 @@ public class MainController extends AppController {
             System.out.println("validation passed");
 
             // prompt the user to confirm that they want to delete the customer
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
-                    "Are you sure you want to delete this customer? \n by doing so you will also delete all of the appointments associated with this customer");
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setHeaderText(null);
+            alert.setContentText(
+                    "Are you sure you want to delete this customer? \n\nBy doing so, you will also delete all of the appointments associated with this customer");
+            alert.getDialogPane().setMinHeight(200);
+            alert.getDialogPane().setMinWidth(600);
             alert.showAndWait();
 
             if (alert.getResult().getText().equals("Cancel")) {
@@ -691,47 +708,51 @@ public class MainController extends AppController {
      * This method will populate the week choice box based on the month selected and
      * also display the appointments for the selected month in the appointments
      * table
-     */
-    @FXML
-    private void onMonthChoiceBoxChange() {
-        System.out.println("Month choice box changed");
-
-        // set the week choice box to the default value
-        weekChoiceBox.getSelectionModel().selectFirst();
-
-        // get value of the selected item
-        String monthChoiceValue = (String) monthChoiceBox.getSelectionModel().getSelectedItem();
-
-        // if the user selects the default value, then return
-        if (monthChoiceValue.equals("Filter By Month")) {
-            return;
-        }
-
-        // if the user selects the go back 6 months value, then go back 6 months
-        else if (monthChoiceValue.equals("<Previous 6 Months>")) {
-            monthScrollIndex -= 6;
-            refreshMonthsInChoiceBox();
-        }
-
-        // if the user selects the go forward 6 months value, then go forward 6 months
-        else if (monthChoiceValue.equals("<Next 6 Months>")) {
-            monthScrollIndex += 6;
-            refreshMonthsInChoiceBox();
-        } else {
-
-            // refresh appointments from db
-            getApp().getAppointmentsFromDB(monthChoiceValue, null);
-
-            // displayed new appointments
-            displayAppointmentsTable();
-
-            // populate the week choice box with a list of all of the weeks in the selected
-            // month.
-            populateWeeksChoicBox(monthChoiceValue);
-
-        }
-
-    }
+     *//*
+        * @FXML
+        * private void onMonthChoiceBoxChange() {
+        * System.out.println("Month choice box changed");
+        * 
+        * // set the week choice box to the default value
+        * weekChoiceBox.getSelectionModel().selectFirst();
+        * 
+        * // get value of the selected item
+        * String monthChoiceValue = (String)
+        * monthChoiceBox.getSelectionModel().getSelectedItem();
+        * 
+        * // if the user selects the default value, then return
+        * if (monthChoiceValue.equals("Filter By Month")) {
+        * return;
+        * }
+        * 
+        * // if the user selects the go back 6 months value, then go back 6 months
+        * else if (monthChoiceValue.equals("<Previous 6 Months>")) {
+        * monthScrollIndex -= 6;
+        * refreshMonthsInChoiceBox();
+        * }
+        * 
+        * // if the user selects the go forward 6 months value, then go forward 6
+        * months
+        * else if (monthChoiceValue.equals("<Next 6 Months>")) {
+        * monthScrollIndex += 6;
+        * refreshMonthsInChoiceBox();
+        * } else {
+        * 
+        * // refresh appointments from db
+        * // getApp().getAppointmentsFromDB(monthChoiceValue, null);
+        * 
+        * // displayed new appointments
+        * displayAppointmentsTable();
+        * 
+        * // populate the week choice box with a list of all of the weeks in the
+        * selected
+        * // month.
+        * populateWeeksChoicBox(monthChoiceValue);
+        * 
+        * }
+        * 
+        * }
+        */
 
     /**
      * This method will populate the week choice box with a list of all of the weeks
@@ -742,108 +763,127 @@ public class MainController extends AppController {
      * 
      * @param monthChoiceValue The month that was selected in the month choice box
      */
-    private void populateWeeksChoicBox(String monthChoiceValue) {
-
-        // show the week choice box
-        weekChoiceBox.setVisible(true);
-
-        // add default value to week choice box
-        weekChoiceBox.getItems().clear();
-        weekChoiceBox.getItems().add("By Week");
-
-        // add "all weeks" option
-        weekChoiceBox.getItems().add("All Weeks");
-
-        // select the default value
-        weekChoiceBox.getSelectionModel().selectFirst();
-
-        // Split the monthChoiceValue into year and month
-        String[] parts = monthChoiceValue.split(" ");
-        String year = parts[0];
-        String month = parts[1]; // convert string month to number month
-
-        // Get the numeric month value
-        String numericMonth = monthMap.get(month);
-
-        // Get the first day of the month as a local date based on the selected month
-        LocalDate firstDayOfMonth = LocalDate.parse(year + "-" + numericMonth + "-01");
-
-        System.out.println("First day of month: " + firstDayOfMonth);
-
-        // Find out the day of the week for the first day
-        DayOfWeek dayOfWeek = firstDayOfMonth.getDayOfWeek();
-        int dayOfWeekValue = dayOfWeek.getValue(); // 1 (Monday) to 7 (Sunday)
-
-        System.out.println("Day of the week: " + dayOfWeek);
-
-        // Calculate the start and end dates for each week
-        LocalDate startDate = firstDayOfMonth;
-        while (startDate.getMonthValue() == Integer.parseInt(numericMonth)) {
-            LocalDate endDate = startDate.plusDays(6 - dayOfWeekValue);
-
-            int startDay = startDate.getDayOfMonth();
-            int endDay = endDate.getDayOfMonth();
-
-            String weekRange = startDay + " - " + endDay;
-            System.out.println("Week range: " + weekRange);
-
-            // Add week range to choice box
-            weekChoiceBox.getItems().add(weekRange);
-
-            startDate = endDate.plusDays(1);
-            dayOfWeekValue = 0; // Reset day of the week value for the next week
-        }
-
-        System.out.println("");
-    }
+    /*
+     * private void populateWeeksChoicBox(String monthChoiceValue) {
+     * 
+     * // show the week choice box
+     * weekChoiceBox.setVisible(true);
+     * 
+     * // add default value to week choice box
+     * weekChoiceBox.getItems().clear();
+     * weekChoiceBox.getItems().add("By Week");
+     * 
+     * // add "all weeks" option
+     * weekChoiceBox.getItems().add("All Weeks");
+     * 
+     * // select the default value
+     * weekChoiceBox.getSelectionModel().selectFirst();
+     * 
+     * // Split the monthChoiceValue into year and month
+     * String[] parts = monthChoiceValue.split(" ");
+     * String year = parts[0];
+     * String month = parts[1]; // convert string month to number month
+     * 
+     * // Get the numeric month value
+     * String numericMonth = monthMap.get(month);
+     * 
+     * // Get the first day of the month as a local date based on the selected month
+     * LocalDate firstDayOfMonth = LocalDate.parse(year + "-" + numericMonth +
+     * "-01");
+     * 
+     * System.out.println("First day of month: " + firstDayOfMonth);
+     * 
+     * // Find out the day of the week for the first day
+     * DayOfWeek dayOfWeek = firstDayOfMonth.getDayOfWeek();
+     * int dayOfWeekValue = dayOfWeek.getValue(); // 1 (Monday) to 7 (Sunday)
+     * 
+     * System.out.println("Day of the week: " + dayOfWeek);
+     * 
+     * // Calculate the start and end dates for each week
+     * LocalDate startDate = firstDayOfMonth;
+     * while (startDate.getMonthValue() == Integer.parseInt(numericMonth)) {
+     * LocalDate endDate = startDate.plusDays(6 - dayOfWeekValue);
+     * 
+     * int startDay = startDate.getDayOfMonth();
+     * int endDay = endDate.getDayOfMonth();
+     * 
+     * String weekRange = startDay + " - " + endDay;
+     * System.out.println("Week range: " + weekRange);
+     * 
+     * // Add week range to choice box
+     * weekChoiceBox.getItems().add(weekRange);
+     * 
+     * startDate = endDate.plusDays(1);
+     * dayOfWeekValue = 0; // Reset day of the week value for the next week
+     * }
+     * 
+     * System.out.println("");
+     * }
+     */
 
     /**
      * Handles the week choice box change event
      * This method will display the appointments for the selected week in the table
      */
-    @FXML
-    private void onWeekChoiceBoxChange() {
-        System.out.println("Week choice box changed");
-        // get value of the selected item of the week
-        String weekChoiceValue = (String) weekChoiceBox.getSelectionModel().getSelectedItem();
-
-        if (weekChoiceValue != null) {
-            // if the user selects the default value, then return
-            if (weekChoiceValue.equals("By Week")) {
-                return;
-            } else if (weekChoiceValue.equals("All Weeks")) {
-
-                // get value of the selected item of the month
-                String monthChoiceValue = (String) monthChoiceBox.getSelectionModel().getSelectedItem();
-
-                getApp().getAppointmentsFromDB(monthChoiceValue, null);
-
-                // displayed new appointments
-                displayAppointmentsTable();
-
-            } else {
-
-                // get value of the selected item of the month
-                String monthChoiceValue = (String) monthChoiceBox.getSelectionModel().getSelectedItem();
-
-                getApp().getAppointmentsFromDB(monthChoiceValue, weekChoiceValue);
-
-                // displayed new appointments
-                displayAppointmentsTable();
-            }
-
-        } else {
-            return;
-        }
-
-    }
+    /*
+     * @FXML
+     * private void onWeekChoiceBoxChange() {
+     * System.out.println("Week choice box changed");
+     * // get value of the selected item of the week
+     * String weekChoiceValue = (String)
+     * weekChoiceBox.getSelectionModel().getSelectedItem();
+     * 
+     * if (weekChoiceValue != null) {
+     * // if the user selects the default value, then return
+     * if (weekChoiceValue.equals("By Week")) {
+     * return;
+     * } else if (weekChoiceValue.equals("All Weeks")) {
+     * 
+     * // get value of the selected item of the month
+     * String monthChoiceValue = (String)
+     * monthChoiceBox.getSelectionModel().getSelectedItem();
+     * 
+     * // getApp().getAppointmentsFromDB(monthChoiceValue, null);
+     * 
+     * // displayed new appointments
+     * displayAppointmentsTable();
+     * 
+     * } else {
+     * 
+     * // get value of the selected item of the month
+     * String monthChoiceValue = (String)
+     * monthChoiceBox.getSelectionModel().getSelectedItem();
+     * 
+     * // getApp().getAppointmentsFromDB(monthChoiceValue, weekChoiceValue);
+     * 
+     * // displayed new appointments
+     * displayAppointmentsTable();
+     * }
+     * 
+     * } else {
+     * return;
+     * }
+     * 
+     * }
+     */
 
     /**
      * This method will handle the event when the user clicks the month radio button
      */
     @FXML
     private void onMonthRadioButtonSelected() {
-        System.out.println("Month radio button selected");
+        System.out.println("Month radio button selected: " + monthRadioButton.isSelected());
+
+        if (weekRadioButton.isSelected()) {
+            weekRadioButton.setSelected(false);
+
+        } else {
+            if (!monthRadioButton.isSelected() && !weekRadioButton.isSelected()) {
+                monthRadioButton.setSelected(true);
+            }
+        }
+
+        this.refreshAppointmentContent();
 
     }
 
@@ -852,7 +892,19 @@ public class MainController extends AppController {
      */
     @FXML
     private void onWeekRadioButtonSelected() {
-        System.out.println("Week radio button selected");
+        System.out.println("Week radio button selected: " + weekRadioButton.isSelected());
+
+        if (monthRadioButton.isSelected()) {
+            monthRadioButton.setSelected(false);
+
+        } else {
+            if (!monthRadioButton.isSelected() && !weekRadioButton.isSelected()) {
+                weekRadioButton.setSelected(true);
+            }
+        }
+
+        // get appointments from database
+        this.refreshAppointmentContent();
 
     }
 
@@ -1128,8 +1180,88 @@ public class MainController extends AppController {
         System.out.println("refreshing appointment content");
 
         this.getCountriesFromDB();
-        getApp().getAppointmentsFromDB(null, null);
+        // getApp().getAppointmentsFromDB(null, null);
+        this.getAppointmentsFromDatabase();
         this.displayAppointmentsTable();
+    }
+
+    /**
+     * Get the appointments from the database based on two datetimes transformed
+     * from the local timezone to UTC
+     * time format yyyy-MM-dd HH:mm:ss
+     * 
+     * NOTE: this method was made to replace the getAppointmentsFromDB() method,
+     * since choiceboxes won't be used anymore.
+     * Radio buttons will replace the choiceboxes, and also change the
+     * functionality.Before, the user could select a month and a week based on any
+     * month and year. Now there are only 2 choices, current month and current week.
+     * Current month is defined as the current 30-day rolling window starting the
+     * current date and ending 30 days later
+     * Current week is defined as the 7-day rolling window starting the current date
+     * and ending 7 days later
+     */
+    public void getAppointmentsFromDatabase() {
+        // intialize the start and end datetimes query parameters
+        String start = "";
+        String end = "";
+
+        // get the current date and time in local time
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        // convert to utc
+        ZonedDateTime utcStartDateTime = localDateTime.atZone(ZoneId.of("UTC"));
+
+        // if the month radio button is selected then get the appointments for the next
+        // 30 days
+        if (monthRadioButton.isSelected()) {
+            // get the end date time
+            ZonedDateTime utcEndDateTime = utcStartDateTime.plusDays(30);
+
+            // format the start and end datetimes
+            start = utcStartDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            end = utcEndDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+        } else {
+            // get the end date time
+            ZonedDateTime utcEndDateTime = utcStartDateTime.plusDays(7);
+
+            // format the start and end datetimes
+            start = utcStartDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            end = utcEndDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        }
+
+        // clear the appointments array list
+        getApp().getAppointments().clear();
+
+        DatabaseManager dbmanager = new DatabaseManager();
+
+        // get appointments from the database
+        String query = "SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, contacts.Contact_ID, Contact_Name FROM appointments appt INNER JOIN contacts contacts ON contacts.Contact_ID = appt.Contact_ID WHERE Start >= ? AND End <= ? order by start desc;";
+
+        // execute the query
+        dbmanager.executeQuery(query, (rs) -> {
+            try {
+                while (rs.next()) {
+                    System.out.println(rs.getString("Title"));
+
+                    // create a new appointment object
+                    Appointment appointment = new Appointment(rs.getInt("Appointment_ID"), rs.getString("Title"),
+                            rs.getString("Description"), rs.getString("Location"), rs.getString("Type"),
+                            rs.getString("Start"), rs.getString("End"), rs.getInt("Customer_ID"),
+                            rs.getInt("User_ID"), rs.getInt("Contact_ID"), rs.getString("Contact_Name"));
+
+                    // add the appointment to the appointments array list
+                    getApp().addAppointment(appointment);
+
+                    System.out.println("appointment added: " + appointment.getTitle());
+
+                }
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+
+        }, start, end);
+
     }
 
     /**

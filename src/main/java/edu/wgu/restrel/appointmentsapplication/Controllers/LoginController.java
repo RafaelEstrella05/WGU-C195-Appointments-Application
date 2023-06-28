@@ -101,7 +101,8 @@ public class LoginController extends AppController {
                         ((MainController) appController).refreshCustomerContent();
 
                         // get appointments from db
-                        getApp().getAppointmentsFromDB(null, null);
+                        // getApp().getAppointmentsFromDB(null, null);
+                        ((MainController) appController).refreshAppointmentContent();
 
                         // check for upcoming appointments
                         ((MainController) appController).checkForUpcomingAppointments();

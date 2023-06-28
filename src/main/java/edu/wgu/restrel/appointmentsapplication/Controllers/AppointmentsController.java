@@ -679,6 +679,10 @@ public class AppointmentsController extends AppController implements FormValidat
      * This method checks the database to check if the appointment times are
      * overlapping any other appointment times.
      * 
+     * FIX ME: this method should connect to the database to make an accurate check
+     * for overlapping appointments. Currently it is only checking the appointments
+     * in the list in the app.
+     * 
      * @return isOverlapping if the appointment times are overlapping with another
      */
     private boolean isAppointmentOverlapping() {

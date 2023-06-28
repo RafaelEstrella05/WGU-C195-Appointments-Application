@@ -57,14 +57,16 @@
 
             <Label styleClass="section-labels" text="Appointments" />
 
+<!--
             <HBox alignment="TOP_RIGHT" spacing="10.0">
                 <ChoiceBox fx:id="monthChoiceBox" onAction="#onMonthChoiceBoxChange" styleClass="choicebox"/>
                 <ChoiceBox fx:id="weekChoiceBox" onAction="#onWeekChoiceBoxChange" styleClass="choicebox"/>
             </HBox>
+-->
 
             <HBox alignment="TOP_RIGHT" spacing="10.0">
-                <RadioButton fx:id="monthRadioButton" text="Month" onAction="#onMonthRadioButtonSelected" />
-                <RadioButton fx:id="weekRadioButton" text="Week" onAction="#onWeekRadioButtonSelected" />
+                <RadioButton fx:id="monthRadioButton" text="Next 30 Days" onAction="#onMonthRadioButtonSelected" styleClass="radio_button"/>
+                <RadioButton fx:id="weekRadioButton" text="Next 7 Days" onAction="#onWeekRadioButtonSelected" styleClass="radio_button"/>
             </HBox>
 
             <!--appointments tableview-->

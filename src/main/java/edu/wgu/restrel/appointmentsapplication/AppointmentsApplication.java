@@ -241,7 +241,9 @@ public class AppointmentsApplication extends Application {
      * Get the appointments from the database based on the date string and or day
      * 
      * @param dateString the date string in format yyyy MMMM
-     * @param dayString  the day string in format dd-dd
+     * @param dayString  the day string in format dd-dd where the first dd is the
+     *                   day of the month and the second dd is the last day of the
+     *                   month
      */
     public void getAppointmentsFromDB(String dateString, String dayString) {
         // clear the appointments array list

@@ -8,6 +8,10 @@
     -fx-background-color: rgb(169, 186, 228);
 }
 
+.radio_button{
+    -fx-text-fill: white;
+    -fx-padding: 10px;
+}
 
 .form_field{
     -fx-background-color: white;
