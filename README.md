@@ -34,41 +34,20 @@ The Appointments Application is designed to help businesses with multiple locati
 
 ---
 
-## 🚀 How to Run the Application in IntelliJ
+## 🗃️ Database Setup
 
-### 1. Dependency Setup
-1. Open the project in IntelliJ IDEA.
-2. Go to `File` → `Project Structure` → `Modules` → `Dependencies`.
-3. Ensure `mysql-connector-java-8.0.33.jar` is listed as a dependency.
+To populate the required database schema and data:
 
-### 2. Database Setup
-1. Navigate to `src/main/resources/database.properties`.
-2. Update the following fields:
-   - `server`: Set to your MySQL server IP or `localhost`.
-   - `port`: Match your MySQL port (default is 3306).
-   - `username` and `password`: Enter credentials with access to the `client_schedule` database.
+1. Ensure MySQL Server is running.
+2. Use the provided `Dump20230414.sql` file to set up the `client_schedule` database.
+   - You can run this file using MySQL Workbench or the MySQL command line:
 
-### 3. Start the Application
-1. Run `src/main/java/restrel/appointmentsapplication/AppointmentsApplication`.
-2. The login screen should appear.
-3. Enter the user credentials and click **Submit** to log in.
+   **Using MySQL Workbench:**
+   - Open MySQL Workbench.
+   - Connect to your server.
+   - Open the `Dump20230414.sql` file.
+   - Execute the script to create and populate the database.
 
----
-
-## 📊 Additional Report – Customer Count by Division and Country
-
-This report provides a summary of the number of customers grouped by division and country. It helps identify:
-- Areas with the highest customer concentration.
-- Opportunities for marketing and staffing.
-
-### 💡 Use Case
-Use this data to compare customer count against appointment frequency. If divisions with high customer counts have low appointments, consider boosting marketing or support in those regions.
-
-### 📄 SQL Query
-```sql
-SELECT d.Division, co.Country, COUNT(c.Customer_ID) AS `Total Customers`
-FROM customers c
-JOIN first_level_divisions d ON d.Division_ID = c.Division_ID
-JOIN countries co ON co.Country_ID = d.Country_ID
-GROUP BY d.Division, co.Country
-ORDER BY d.Division, co.Country;
+   **Using MySQL CLI:**
+   ```bash
+   mysql -u your_username -p < Dump20230414.sql
